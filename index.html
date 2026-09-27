@@ -145,6 +145,10 @@
       gap: 0.7rem;
       align-items: center;
     }
+    .speak-row {
+      justify-content: center;
+      margin: 0 0 1rem;
+    }
     .btn {
       padding: 0.75rem 1.25rem;
       border-radius: 999px;
@@ -208,20 +212,20 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.45rem;
+      gap: 0.5rem;
       margin: 0.4rem 0 1.2rem;
-      min-height: 3.4rem;
+      min-height: 3.9rem;
     }
     .slot {
-      width: 2.55rem;
-      height: 3.1rem;
-      border-radius: 0.75rem;
+      width: 3rem;
+      height: 3.6rem;
+      border-radius: 0.85rem;
       border: 3px solid #cfe8dc;
       background: #f7fffb;
       display: grid;
       place-items: center;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.45rem;
+      font-size: 1.7rem;
       font-weight: 600;
       text-transform: uppercase;
       color: var(--ink);
@@ -231,6 +235,13 @@
       background: #e8f7ef;
       border-color: rgba(31, 157, 108, 0.35);
       color: var(--leaf-dark);
+    }
+    .slot.space {
+      width: 1rem;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      pointer-events: none;
     }
     .slot.active {
       border-color: var(--sky);
@@ -381,9 +392,9 @@
 
     <section id="setup" class="screen active" aria-labelledby="setup-title">
       <h2 id="setup-title" class="section-title">輸入生字</h2>
-      <p class="hint">每行一個英文單字。可加中文提示，例如 <code>apple 蘋果</code> 或 <code>happy = 開心</code>。</p>
+      <p class="hint">每行一個練習詞（可多個字），用 <code>:</code> 分隔提示，例如 <code>Swimming Pool : 游泳池</code>。</p>
       <label class="sr-only" for="word-input">生字清單</label>
-      <textarea id="word-input" spellcheck="false" placeholder="apple 蘋果&#10;school 學校&#10;friend 朋友"></textarea>
+      <textarea id="word-input" spellcheck="false" placeholder="Swimming Pool : 游泳池&#10;apple : 蘋果&#10;happy : 開心"></textarea>
       <div class="sample-row" aria-label="範例字庫">
         <button type="button" class="chip" data-sample="animals">動物 Animals</button>
         <button type="button" class="chip" data-sample="school">學校 School</button>
@@ -408,6 +419,9 @@
       <div class="play-card">
         <h2 id="play-title" class="section-title">拼出這個字</h2>
         <p class="meaning" id="word-meaning">—</p>
+        <div class="actions speak-row">
+          <button type="button" class="btn secondary" id="speak-btn" aria-label="讀出發音">🔊 讀音</button>
+        </div>
         <div class="slots" id="slots" aria-live="polite"></div>
         <p class="feedback" id="feedback" role="status"></p>
         <div class="keyboard" id="keyboard" aria-label="字母鍵盤"></div>
@@ -436,34 +450,34 @@
   <script>
     const SAMPLES = {
       animals: [
-        'cat 貓',
-        'dog 狗',
-        'bird 鳥',
-        'fish 魚',
-        'rabbit 兔子',
-        'tiger 老虎',
-        'elephant 大象',
-        'monkey 猴子'
+        'cat : 貓',
+        'dog : 狗',
+        'bird : 鳥',
+        'fish : 魚',
+        'rabbit : 兔子',
+        'polar bear : 北極熊',
+        'tiger : 老虎',
+        'monkey : 猴子'
       ].join('\n'),
       school: [
-        'book 書',
-        'pencil 鉛筆',
-        'teacher 老師',
-        'student 學生',
-        'school 學校',
-        'classroom 課室',
-        'homework 功課',
-        'friend 朋友'
+        'book : 書',
+        'pencil : 鉛筆',
+        'teacher : 老師',
+        'student : 學生',
+        'swimming pool : 游泳池',
+        'classroom : 課室',
+        'homework : 功課',
+        'best friend : 最好的朋友'
       ].join('\n'),
       feelings: [
-        'happy 開心',
-        'sad 傷心',
-        'angry 生氣',
-        'tired 疲倦',
-        'brave 勇敢',
-        'kind 善良',
-        'excited 興奮',
-        'calm 平靜'
+        'happy : 開心',
+        'sad : 傷心',
+        'angry : 生氣',
+        'tired : 疲倦',
+        'brave : 勇敢',
+        'kind : 善良',
+        'excited : 興奮',
+        'calm : 平靜'
       ].join('\n')
     };
 
@@ -485,6 +499,7 @@
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
+      speakBtn: document.getElementById('speak-btn'),
       checkBtn: document.getElementById('check-btn'),
       revealBtn: document.getElementById('reveal-btn'),
       quitBtn: document.getElementById('quit-btn'),
@@ -512,18 +527,25 @@
       });
     }
 
+    function isValidPhrase(phrase) {
+      const parts = phrase.trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return false;
+      const letterCount = phrase.replace(/[^a-z]/gi, '').length;
+      if (letterCount < 2) return false;
+      return parts.every((part) => /^[a-z]+(?:'[a-z]+)?$/i.test(part));
+    }
+
     function parseWords(raw) {
       return raw
         .split(/\n+/)
         .map((line) => line.trim())
         .filter(Boolean)
         .map((line) => {
-          const match = line.match(/^([A-Za-z][A-Za-z'-]*)\s*(?:[=:：\-–—]?\s*)?(.*)$/);
-          if (!match) return null;
-          const word = match[1].toLowerCase();
-          const meaning = (match[2] || '').trim();
-          if (!/^[a-z]+(?:'[a-z]+)?$/.test(word) || word.length < 2) return null;
-          return { word, meaning };
+          const colon = line.indexOf(':');
+          const phraseRaw = (colon >= 0 ? line.slice(0, colon) : line).trim().replace(/\s+/g, ' ');
+          const meaning = colon >= 0 ? line.slice(colon + 1).trim() : '';
+          if (!isValidPhrase(phraseRaw)) return null;
+          return { word: phraseRaw.toLowerCase(), meaning };
         })
         .filter(Boolean);
     }
@@ -579,7 +601,11 @@
         slot.className = 'slot';
         slot.dataset.index = String(i);
 
-        if (!/[a-z]/i.test(ch)) {
+        if (ch === ' ') {
+          slot.classList.add('given', 'space');
+          slot.textContent = '';
+          slot.setAttribute('aria-hidden', 'true');
+        } else if (!/[a-z]/i.test(ch)) {
           slot.textContent = ch;
           slot.classList.add('given');
         } else if (!blankSet.has(i)) {
@@ -646,6 +672,20 @@
       els.keyboard.appendChild(del);
     }
 
+    function speakCurrentWord() {
+      const item = currentWord();
+      if (!item || !window.speechSynthesis) {
+        els.feedback.textContent = '此瀏覽器不支援讀音功能。';
+        els.feedback.className = 'feedback bad';
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(item.word);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
     function loadCard() {
       const item = currentWord();
       if (!item) {
@@ -661,11 +701,13 @@
         .map((index) => ({ index, value: '' }));
       state.cursor = 0;
 
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       els.meaning.textContent = item.meaning || '（沒有中文提示）';
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
       els.checkBtn.disabled = false;
       els.revealBtn.disabled = false;
+      els.speakBtn.disabled = false;
       updateMeta();
       renderSlots();
     }
@@ -768,7 +810,7 @@
     function startGame() {
       const parsed = uniqueWords(parseWords(els.input.value));
       if (!parsed.length) {
-        els.setupError.textContent = '請至少輸入 1 個有效英文單字（可加中文提示）。';
+        els.setupError.textContent = '請至少輸入 1 個有效練習詞，格式：Swimming Pool : 游泳池';
         return;
       }
       els.setupError.textContent = '';
@@ -794,6 +836,7 @@
       els.setupError.textContent = '';
       els.input.focus();
     });
+    els.speakBtn.addEventListener('click', speakCurrentWord);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.revealBtn.addEventListener('click', revealAnswer);
     els.quitBtn.addEventListener('click', finishGame);
@@ -821,7 +864,6 @@
       }
     });
 
-    els.input.value = SAMPLES.school;
   </script>
 </body>
 </html>
