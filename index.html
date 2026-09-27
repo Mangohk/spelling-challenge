@@ -273,22 +273,22 @@
     }
     .keyboard {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(2.4rem, 1fr));
-      gap: 0.4rem;
+      grid-template-columns: repeat(auto-fit, minmax(4.8rem, 1fr));
+      gap: 0.65rem;
       margin-bottom: 1rem;
     }
     .key {
-      height: 2.7rem;
+      height: 5.4rem;
       border: none;
-      border-radius: 0.7rem;
+      border-radius: 1rem;
       background: #eef6f2;
       color: var(--ink);
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.15rem;
+      font-size: 2.3rem;
       font-weight: 600;
       cursor: pointer;
       text-transform: uppercase;
-      box-shadow: 0 3px 0 #c5d9cf;
+      box-shadow: 0 4px 0 #c5d9cf;
       transition: transform 0.1s ease;
     }
     .key:hover { background: #e2f1ea; }
@@ -299,7 +299,7 @@
     .key.wide {
       grid-column: span 2;
       font-family: 'Nunito', system-ui, sans-serif;
-      font-size: 0.85rem;
+      font-size: 1.7rem;
       font-weight: 800;
     }
     .feedback {
@@ -370,9 +370,9 @@
     }
     @media (max-width: 480px) {
       .slot {
-        width: 2.5rem;
-        height: 3.1rem;
-        font-size: 1.4rem;
+        width: 3.75rem;
+        height: 4.65rem;
+        font-size: 2.1rem;
       }
       .key { height: 2.45rem; font-size: 1rem; }
     }
@@ -495,55 +495,73 @@
         return ctx;
       }
 
-      function tone(freq, start, dur, type, gain) {
-        const audio = ensure();
-        if (!audio) return;
+      function tone(audio, freq, start, dur, type, gain) {
         const osc = audio.createOscillator();
         const amp = audio.createGain();
+        const peak = Math.max(gain, 0.001);
         osc.type = type;
-        osc.frequency.value = freq;
+        osc.frequency.setValueAtTime(freq, start);
         amp.gain.setValueAtTime(0.0001, start);
-        amp.gain.exponentialRampToValueAtTime(gain, start + 0.02);
-        amp.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+        amp.gain.linearRampToValueAtTime(peak, start + Math.min(0.03, dur * 0.35));
+        amp.gain.linearRampToValueAtTime(0.0001, start + dur);
         osc.connect(amp);
         amp.connect(audio.destination);
         osc.start(start);
-        osc.stop(start + dur + 0.02);
+        osc.stop(start + dur + 0.03);
+      }
+
+      function schedule(name, audio) {
+        const t = audio.currentTime + 0.01;
+
+        if (name === 'tap') {
+          tone(audio, 720, t, 0.08, 'triangle', 0.18);
+        } else if (name === 'backspace') {
+          tone(audio, 300, t, 0.09, 'sine', 0.14);
+        } else if (name === 'correct') {
+          tone(audio, 523.25, t, 0.14, 'triangle', 0.22);
+          tone(audio, 659.25, t + 0.11, 0.16, 'triangle', 0.22);
+          tone(audio, 783.99, t + 0.22, 0.24, 'sine', 0.24);
+        } else if (name === 'wrong') {
+          tone(audio, 220, t, 0.18, 'square', 0.12);
+          tone(audio, 165, t + 0.14, 0.22, 'square', 0.1);
+        } else if (name === 'warn') {
+          tone(audio, 380, t, 0.12, 'triangle', 0.16);
+          tone(audio, 300, t + 0.12, 0.14, 'triangle', 0.14);
+        } else if (name === 'reveal') {
+          tone(audio, 440, t, 0.16, 'sine', 0.18);
+          tone(audio, 554.37, t + 0.14, 0.2, 'sine', 0.16);
+        } else if (name === 'start') {
+          tone(audio, 392, t, 0.12, 'triangle', 0.2);
+          tone(audio, 523.25, t + 0.1, 0.14, 'triangle', 0.2);
+          tone(audio, 659.25, t + 0.2, 0.2, 'sine', 0.22);
+        } else if (name === 'finish') {
+          tone(audio, 523.25, t, 0.14, 'triangle', 0.2);
+          tone(audio, 659.25, t + 0.12, 0.14, 'triangle', 0.2);
+          tone(audio, 783.99, t + 0.24, 0.16, 'triangle', 0.22);
+          tone(audio, 1046.5, t + 0.4, 0.3, 'sine', 0.24);
+        } else if (name === 'click') {
+          tone(audio, 520, t, 0.07, 'sine', 0.16);
+        }
       }
 
       function play(name) {
         const audio = ensure();
         if (!audio) return;
-        const t = audio.currentTime;
 
-        if (name === 'tap') {
-          tone(620, t, 0.06, 'triangle', 0.045);
-        } else if (name === 'backspace') {
-          tone(280, t, 0.07, 'sine', 0.04);
-        } else if (name === 'correct') {
-          tone(523.25, t, 0.12, 'triangle', 0.08);
-          tone(659.25, t + 0.1, 0.14, 'triangle', 0.08);
-          tone(783.99, t + 0.2, 0.22, 'sine', 0.09);
-        } else if (name === 'wrong') {
-          tone(220, t, 0.16, 'square', 0.05);
-          tone(165, t + 0.12, 0.2, 'square', 0.045);
-        } else if (name === 'warn') {
-          tone(360, t, 0.1, 'triangle', 0.05);
-          tone(300, t + 0.1, 0.12, 'triangle', 0.04);
-        } else if (name === 'reveal') {
-          tone(440, t, 0.14, 'sine', 0.06);
-          tone(554.37, t + 0.12, 0.18, 'sine', 0.055);
-        } else if (name === 'start') {
-          tone(392, t, 0.1, 'triangle', 0.07);
-          tone(523.25, t + 0.09, 0.12, 'triangle', 0.07);
-          tone(659.25, t + 0.18, 0.18, 'sine', 0.08);
-        } else if (name === 'finish') {
-          tone(523.25, t, 0.12, 'triangle', 0.07);
-          tone(659.25, t + 0.11, 0.12, 'triangle', 0.07);
-          tone(783.99, t + 0.22, 0.14, 'triangle', 0.08);
-          tone(1046.5, t + 0.36, 0.28, 'sine', 0.09);
-        } else if (name === 'click') {
-          tone(480, t, 0.05, 'sine', 0.04);
+        const run = () => {
+          try {
+            schedule(name, audio);
+          } catch (err) {
+            console.warn('SFX failed:', err);
+          }
+        };
+
+        // Browsers keep AudioContext suspended until a user gesture; resume() is async.
+        // Scheduling tones before resume completes is why SFX often sounded broken.
+        if (audio.state === 'running') {
+          run();
+        } else {
+          audio.resume().then(run).catch(() => {});
         }
       }
 
@@ -964,6 +982,7 @@
     });
 
     document.addEventListener('pointerdown', () => Sfx.ensure(), { once: true });
+    document.addEventListener('keydown', () => Sfx.ensure(), { once: true });
   </script>
 </body>
 </html>
