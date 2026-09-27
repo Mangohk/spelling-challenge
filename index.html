@@ -145,6 +145,10 @@
       gap: 0.7rem;
       align-items: center;
     }
+    .speak-row {
+      justify-content: center;
+      margin: 0 0 1rem;
+    }
     .btn {
       padding: 0.75rem 1.25rem;
       border-radius: 999px;
@@ -415,6 +419,9 @@
       <div class="play-card">
         <h2 id="play-title" class="section-title">拼出這個字</h2>
         <p class="meaning" id="word-meaning">—</p>
+        <div class="actions speak-row">
+          <button type="button" class="btn secondary" id="speak-btn" aria-label="讀出發音">🔊 讀音</button>
+        </div>
         <div class="slots" id="slots" aria-live="polite"></div>
         <p class="feedback" id="feedback" role="status"></p>
         <div class="keyboard" id="keyboard" aria-label="字母鍵盤"></div>
@@ -492,6 +499,7 @@
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
+      speakBtn: document.getElementById('speak-btn'),
       checkBtn: document.getElementById('check-btn'),
       revealBtn: document.getElementById('reveal-btn'),
       quitBtn: document.getElementById('quit-btn'),
@@ -664,6 +672,20 @@
       els.keyboard.appendChild(del);
     }
 
+    function speakCurrentWord() {
+      const item = currentWord();
+      if (!item || !window.speechSynthesis) {
+        els.feedback.textContent = '此瀏覽器不支援讀音功能。';
+        els.feedback.className = 'feedback bad';
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(item.word);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
     function loadCard() {
       const item = currentWord();
       if (!item) {
@@ -679,11 +701,13 @@
         .map((index) => ({ index, value: '' }));
       state.cursor = 0;
 
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       els.meaning.textContent = item.meaning || '（沒有中文提示）';
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
       els.checkBtn.disabled = false;
       els.revealBtn.disabled = false;
+      els.speakBtn.disabled = false;
       updateMeta();
       renderSlots();
     }
@@ -812,6 +836,7 @@
       els.setupError.textContent = '';
       els.input.focus();
     });
+    els.speakBtn.addEventListener('click', speakCurrentWord);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.revealBtn.addEventListener('click', revealAnswer);
     els.quitBtn.addEventListener('click', finishGame);
