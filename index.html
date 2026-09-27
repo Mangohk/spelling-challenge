@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生字填空卡 · Vocab Spell Cards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0f2a24;
+      --muted: #4d6b62;
+      --panel: #fffdf7;
+      --leaf: #1f9d6c;
+      --leaf-dark: #147a52;
+      --sky: #2f9fbf;
+      --sun: #f0b429;
+      --coral: #e85d4c;
+      --mist: #d8f3e7;
+      --shadow: 0 10px 28px rgba(15, 42, 36, 0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Nunito', system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(240, 180, 41, 0.28), transparent 32%),
+        radial-gradient(circle at 88% 10%, rgba(47, 159, 191, 0.22), transparent 30%),
+        linear-gradient(160deg, #e8faf2 0%, #f7fbff 45%, #fff6e8 100%);
+      padding: clamp(0.9rem, 3vw, 1.6rem);
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .logo {
+      width: 3.1rem;
+      height: 3.1rem;
+      border-radius: 1rem;
+      display: grid;
+      place-items: center;
+      font-size: 1.55rem;
+      background: linear-gradient(145deg, #39c989, #1f9d6c);
+      color: #fff;
+      box-shadow: 0 6px 0 #147a52;
+      animation: bob 2.4s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    h1 {
+      margin: 0;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.35rem, 4vw, 1.85rem);
+      letter-spacing: 0.02em;
+    }
+    .sub {
+      margin: 0.15rem 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+    .screen {
+      display: none;
+      background: var(--panel);
+      border: 3px solid rgba(31, 157, 108, 0.18);
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow);
+      padding: clamp(1.1rem, 3vw, 1.6rem);
+      animation: rise 0.35s ease;
+    }
+    .screen.active { display: block; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section-title {
+      margin: 0 0 0.4rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.25rem;
+    }
+    .hint {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      resize: vertical;
+      border: 3px solid #cfe8dc;
+      border-radius: 1rem;
+      padding: 0.9rem 1rem;
+      font: 700 1rem/1.5 'Nunito', system-ui, sans-serif;
+      color: var(--ink);
+      background: #f7fffb;
+      outline: none;
+    }
+    textarea:focus {
+      border-color: var(--leaf);
+      box-shadow: 0 0 0 4px rgba(31, 157, 108, 0.15);
+    }
+    .sample-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 0.85rem 0 1.1rem;
+    }
+    .chip, .btn {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 800;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .chip {
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      background: var(--mist);
+      color: var(--leaf-dark);
+      font-size: 0.88rem;
+    }
+    .chip:hover { transform: translateY(-1px); background: #c5ecda; }
+    .chip:active { transform: translateY(1px); }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+    }
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      color: #fff;
+      background: linear-gradient(145deg, #39c989, var(--leaf));
+      box-shadow: 0 5px 0 var(--leaf-dark);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 var(--leaf-dark);
+    }
+    .btn.secondary {
+      background: linear-gradient(145deg, #4db8d4, var(--sky));
+      box-shadow: 0 5px 0 #1f7f99;
+    }
+    .btn.ghost {
+      background: transparent;
+      color: var(--muted);
+      box-shadow: none;
+      border: 2px solid #cfe8dc;
+    }
+    .btn.ghost:active { transform: translateY(1px); }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: #eef9f3;
+      color: var(--leaf-dark);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+    .pill.sky { background: #e7f6fb; color: #1a6f86; }
+    .pill.sun { background: #fff4d6; color: #8a6508; }
+    .play-card {
+      text-align: center;
+      padding: 0.4rem 0 0.2rem;
+    }
+    .meaning {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      font-weight: 800;
+      min-height: 1.4em;
+    }
+    .slots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.45rem;
+      margin: 0.4rem 0 1.2rem;
+      min-height: 3.4rem;
+    }
+    .slot {
+      width: 2.55rem;
+      height: 3.1rem;
+      border-radius: 0.75rem;
+      border: 3px solid #cfe8dc;
+      background: #f7fffb;
+      display: grid;
+      place-items: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--ink);
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+    .slot.given {
+      background: #e8f7ef;
+      border-color: rgba(31, 157, 108, 0.35);
+      color: var(--leaf-dark);
+    }
+    .slot.active {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 4px rgba(47, 159, 191, 0.18);
+      transform: translateY(-2px);
+    }
+    .slot.filled { border-color: var(--leaf); }
+    .slot.correct {
+      background: #d8f3e7;
+      border-color: var(--leaf);
+      color: var(--leaf-dark);
+      animation: pop 0.35s ease;
+    }
+    .slot.wrong {
+      background: #ffe8e4;
+      border-color: var(--coral);
+      color: #b53a2c;
+      animation: shake 0.35s ease;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.92); }
+      60% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(2.4rem, 1fr));
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .key {
+      height: 2.7rem;
+      border: none;
+      border-radius: 0.7rem;
+      background: #eef6f2;
+      color: var(--ink);
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 3px 0 #c5d9cf;
+      transition: transform 0.1s ease;
+    }
+    .key:hover { background: #e2f1ea; }
+    .key:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #c5d9cf;
+    }
+    .key.wide {
+      grid-column: span 2;
+      font-family: 'Nunito', system-ui, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+    .feedback {
+      min-height: 1.5rem;
+      margin: 0 0 0.9rem;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .feedback.ok { color: var(--leaf-dark); }
+    .feedback.bad { color: #b53a2c; }
+    .progress-track {
+      height: 0.65rem;
+      border-radius: 999px;
+      background: #e5f2eb;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--leaf), var(--sky));
+      border-radius: inherit;
+      transition: width 0.3s ease;
+    }
+    .result-hero {
+      text-align: center;
+      padding: 0.5rem 0 1rem;
+    }
+    .result-score {
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(2.4rem, 8vw, 3.4rem);
+      margin: 0.2rem 0;
+      color: var(--leaf-dark);
+      animation: pop 0.5s ease;
+    }
+    .result-list {
+      list-style: none;
+      margin: 0 0 1.1rem;
+      padding: 0;
+      display: grid;
+      gap: 0.45rem;
+    }
+    .result-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.9rem;
+      background: #f4fbf7;
+      font-weight: 800;
+    }
+    .result-list .miss { background: #fff1ee; }
+    .error {
+      color: #b53a2c;
+      font-weight: 800;
+      margin: 0.4rem 0 0;
+      min-height: 1.3rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    @media (max-width: 480px) {
+      .slot {
+        width: 2.15rem;
+        height: 2.7rem;
+        font-size: 1.2rem;
+      }
+      .key { height: 2.45rem; font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">✏️</div>
+        <div>
+          <h1>生字填空卡</h1>
+          <p class="sub">Vocab Spell Cards · 填字母學串字</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="setup" class="screen active" aria-labelledby="setup-title">
+      <h2 id="setup-title" class="section-title">輸入生字</h2>
+      <p class="hint">每行一個英文單字。可加中文提示，例如 <code>apple 蘋果</code> 或 <code>happy = 開心</code>。</p>
+      <label class="sr-only" for="word-input">生字清單</label>
+      <textarea id="word-input" spellcheck="false" placeholder="apple 蘋果&#10;school 學校&#10;friend 朋友"></textarea>
+      <div class="sample-row" aria-label="範例字庫">
+        <button type="button" class="chip" data-sample="animals">動物 Animals</button>
+        <button type="button" class="chip" data-sample="school">學校 School</button>
+        <button type="button" class="chip" data-sample="feelings">心情 Feelings</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="start-btn">開始練習</button>
+        <button type="button" class="btn ghost" id="clear-btn">清空</button>
+      </div>
+      <p class="error" id="setup-error" role="status"></p>
+    </section>
+
+    <section id="play" class="screen" aria-labelledby="play-title">
+      <div class="meta-bar">
+        <span class="pill" id="progress-pill">1 / 1</span>
+        <span class="pill sky" id="score-pill">★ 0</span>
+        <span class="pill sun" id="hint-pill">提示開啟</span>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="play-card">
+        <h2 id="play-title" class="section-title">拼出這個字</h2>
+        <p class="meaning" id="word-meaning">—</p>
+        <div class="slots" id="slots" aria-live="polite"></div>
+        <p class="feedback" id="feedback" role="status"></p>
+        <div class="keyboard" id="keyboard" aria-label="字母鍵盤"></div>
+        <div class="actions">
+          <button type="button" class="btn secondary" id="check-btn">檢查</button>
+          <button type="button" class="btn ghost" id="reveal-btn">看答案</button>
+          <button type="button" class="btn ghost" id="quit-btn">結束</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" class="screen" aria-labelledby="result-title">
+      <div class="result-hero">
+        <h2 id="result-title" class="section-title">練習完成！</h2>
+        <p class="hint" id="result-message">做得好！</p>
+        <p class="result-score" id="result-score">0 / 0</p>
+      </div>
+      <ul class="result-list" id="result-list"></ul>
+      <div class="actions">
+        <button type="button" class="btn" id="again-btn">再玩一次</button>
+        <button type="button" class="btn ghost" id="edit-btn">改生字</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const SAMPLES = {
+      animals: [
+        'cat 貓',
+        'dog 狗',
+        'bird 鳥',
+        'fish 魚',
+        'rabbit 兔子',
+        'tiger 老虎',
+        'elephant 大象',
+        'monkey 猴子'
+      ].join('\n'),
+      school: [
+        'book 書',
+        'pencil 鉛筆',
+        'teacher 老師',
+        'student 學生',
+        'school 學校',
+        'classroom 課室',
+        'homework 功課',
+        'friend 朋友'
+      ].join('\n'),
+      feelings: [
+        'happy 開心',
+        'sad 傷心',
+        'angry 生氣',
+        'tired 疲倦',
+        'brave 勇敢',
+        'kind 善良',
+        'excited 興奮',
+        'calm 平靜'
+      ].join('\n')
+    };
+
+    const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+    const els = {
+      setup: document.getElementById('setup'),
+      play: document.getElementById('play'),
+      result: document.getElementById('result'),
+      input: document.getElementById('word-input'),
+      setupError: document.getElementById('setup-error'),
+      startBtn: document.getElementById('start-btn'),
+      clearBtn: document.getElementById('clear-btn'),
+      progressPill: document.getElementById('progress-pill'),
+      scorePill: document.getElementById('score-pill'),
+      hintPill: document.getElementById('hint-pill'),
+      progressFill: document.getElementById('progress-fill'),
+      meaning: document.getElementById('word-meaning'),
+      slots: document.getElementById('slots'),
+      feedback: document.getElementById('feedback'),
+      keyboard: document.getElementById('keyboard'),
+      checkBtn: document.getElementById('check-btn'),
+      revealBtn: document.getElementById('reveal-btn'),
+      quitBtn: document.getElementById('quit-btn'),
+      resultScore: document.getElementById('result-score'),
+      resultMessage: document.getElementById('result-message'),
+      resultList: document.getElementById('result-list'),
+      againBtn: document.getElementById('again-btn'),
+      editBtn: document.getElementById('edit-btn')
+    };
+
+    const state = {
+      words: [],
+      index: 0,
+      score: 0,
+      answers: [],
+      blanks: [],
+      cursor: 0,
+      revealed: false,
+      locked: false
+    };
+
+    function showScreen(name) {
+      [els.setup, els.play, els.result].forEach((screen) => {
+        screen.classList.toggle('active', screen.id === name);
+      });
+    }
+
+    function parseWords(raw) {
+      return raw
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const match = line.match(/^([A-Za-z][A-Za-z'-]*)\s*(?:[=:：\-–—]?\s*)?(.*)$/);
+          if (!match) return null;
+          const word = match[1].toLowerCase();
+          const meaning = (match[2] || '').trim();
+          if (!/^[a-z]+(?:'[a-z]+)?$/.test(word) || word.length < 2) return null;
+          return { word, meaning };
+        })
+        .filter(Boolean);
+    }
+
+    function uniqueWords(list) {
+      const seen = new Set();
+      return list.filter((item) => {
+        if (seen.has(item.word)) return false;
+        seen.add(item.word);
+        return true;
+      });
+    }
+
+    function shuffle(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pickBlankIndexes(word) {
+      const letters = word.replace(/'/g, '').length;
+      const count = Math.max(1, Math.min(letters - 1, Math.ceil(letters * 0.45)));
+      const candidates = [];
+      for (let i = 0; i < word.length; i += 1) {
+        if (/[a-z]/i.test(word[i])) candidates.push(i);
+      }
+      return new Set(shuffle(candidates).slice(0, count));
+    }
+
+    function currentWord() {
+      return state.words[state.index];
+    }
+
+    function updateMeta() {
+      const total = state.words.length;
+      const current = Math.min(state.index + 1, total);
+      els.progressPill.textContent = `${current} / ${total}`;
+      els.scorePill.textContent = `★ ${state.score}`;
+      els.hintPill.textContent = currentWord()?.meaning ? '提示開啟' : '無中文提示';
+      els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
+    }
+
+    function renderSlots() {
+      const item = currentWord();
+      const blankSet = new Set(state.blanks.map((b) => b.index));
+      els.slots.innerHTML = '';
+
+      [...item.word].forEach((ch, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        slot.dataset.index = String(i);
+
+        if (!/[a-z]/i.test(ch)) {
+          slot.textContent = ch;
+          slot.classList.add('given');
+        } else if (!blankSet.has(i)) {
+          slot.textContent = ch.toUpperCase();
+          slot.classList.add('given');
+        } else {
+          const blank = state.blanks.find((b) => b.index === i);
+          slot.textContent = blank.value ? blank.value.toUpperCase() : '';
+          if (blank.value) slot.classList.add('filled');
+          if (state.blanks[state.cursor]?.index === i && !state.locked) {
+            slot.classList.add('active');
+          }
+        }
+        els.slots.appendChild(slot);
+      });
+    }
+
+    function firstEmptyCursor() {
+      const idx = state.blanks.findIndex((b) => !b.value);
+      return idx === -1 ? Math.max(state.blanks.length - 1, 0) : idx;
+    }
+
+    function typeLetter(letter) {
+      if (state.locked || !state.blanks.length) return;
+      const blank = state.blanks[state.cursor];
+      if (!blank) return;
+      blank.value = letter.toLowerCase();
+      const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
+      state.cursor = next === -1 ? firstEmptyCursor() : next;
+      els.feedback.textContent = '';
+      els.feedback.className = 'feedback';
+      renderSlots();
+    }
+
+    function backspace() {
+      if (state.locked || !state.blanks.length) return;
+      const blank = state.blanks[state.cursor];
+      if (blank?.value) {
+        blank.value = '';
+      } else if (state.cursor > 0) {
+        state.cursor -= 1;
+        state.blanks[state.cursor].value = '';
+      }
+      els.feedback.textContent = '';
+      els.feedback.className = 'feedback';
+      renderSlots();
+    }
+
+    function buildKeyboard() {
+      els.keyboard.innerHTML = '';
+      LETTERS.forEach((letter) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'key';
+        btn.textContent = letter;
+        btn.addEventListener('click', () => typeLetter(letter));
+        els.keyboard.appendChild(btn);
+      });
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'key wide';
+      del.textContent = '刪除';
+      del.addEventListener('click', backspace);
+      els.keyboard.appendChild(del);
+    }
+
+    function loadCard() {
+      const item = currentWord();
+      if (!item) {
+        finishGame();
+        return;
+      }
+
+      state.revealed = false;
+      state.locked = false;
+      const blankIndexes = pickBlankIndexes(item.word);
+      state.blanks = [...blankIndexes]
+        .sort((a, b) => a - b)
+        .map((index) => ({ index, value: '' }));
+      state.cursor = 0;
+
+      els.meaning.textContent = item.meaning || '（沒有中文提示）';
+      els.feedback.textContent = '';
+      els.feedback.className = 'feedback';
+      els.checkBtn.disabled = false;
+      els.revealBtn.disabled = false;
+      updateMeta();
+      renderSlots();
+    }
+
+    function guessWord() {
+      const item = currentWord();
+      const chars = [...item.word];
+      state.blanks.forEach((blank) => {
+        chars[blank.index] = blank.value || '_';
+      });
+      return chars.join('');
+    }
+
+    function markSlots(ok) {
+      state.blanks.forEach((blank) => {
+        const slot = els.slots.querySelector(`[data-index="${blank.index}"]`);
+        if (!slot) return;
+        slot.classList.remove('active', 'filled', 'correct', 'wrong');
+        slot.classList.add(ok ? 'correct' : 'wrong');
+        slot.textContent = (ok ? currentWord().word[blank.index] : blank.value || '?').toUpperCase();
+      });
+    }
+
+    function checkAnswer() {
+      if (state.locked) return;
+      const item = currentWord();
+      const incomplete = state.blanks.some((b) => !b.value);
+      if (incomplete) {
+        els.feedback.textContent = '先填完所有空格再檢查。';
+        els.feedback.className = 'feedback bad';
+        return;
+      }
+
+      const guess = guessWord();
+      const ok = guess === item.word;
+      state.locked = true;
+      els.checkBtn.disabled = true;
+      els.revealBtn.disabled = true;
+      markSlots(ok);
+
+      if (ok) {
+        state.score += 1;
+        els.feedback.textContent = '答對了！太棒了';
+        els.feedback.className = 'feedback ok';
+        state.answers.push({ word: item.word, meaning: item.meaning, ok: true, guess });
+      } else {
+        els.feedback.textContent = `再想想～正確是 ${item.word.toUpperCase()}`;
+        els.feedback.className = 'feedback bad';
+        state.answers.push({ word: item.word, meaning: item.meaning, ok: false, guess });
+      }
+
+      updateMeta();
+      setTimeout(() => {
+        state.index += 1;
+        if (state.index >= state.words.length) finishGame();
+        else loadCard();
+      }, ok ? 750 : 1100);
+    }
+
+    function revealAnswer() {
+      if (state.locked) return;
+      const item = currentWord();
+      state.revealed = true;
+      state.locked = true;
+      els.checkBtn.disabled = true;
+      els.revealBtn.disabled = true;
+      state.blanks.forEach((blank) => {
+        blank.value = item.word[blank.index];
+      });
+      markSlots(true);
+      els.feedback.textContent = `答案是 ${item.word.toUpperCase()}`;
+      els.feedback.className = 'feedback';
+      state.answers.push({ word: item.word, meaning: item.meaning, ok: false, guess: '（已看答案）' });
+      updateMeta();
+      setTimeout(() => {
+        state.index += 1;
+        if (state.index >= state.words.length) finishGame();
+        else loadCard();
+      }, 1000);
+    }
+
+    function finishGame() {
+      const total = state.words.length;
+      const score = state.score;
+      els.progressFill.style.width = '100%';
+      els.resultScore.textContent = `${score} / ${total}`;
+      if (score === total) els.resultMessage.textContent = '全對！串字小高手！';
+      else if (score >= Math.ceil(total * 0.7)) els.resultMessage.textContent = '很不錯，繼續加油！';
+      else els.resultMessage.textContent = '再練一輪會更熟。';
+
+      els.resultList.innerHTML = state.answers.map((a) => {
+        const label = a.meaning ? `${a.word} · ${a.meaning}` : a.word;
+        const detail = a.ok ? '✓ 正確' : `✗ ${a.guess}`;
+        return `<li class="${a.ok ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
+      }).join('');
+
+      showScreen('result');
+    }
+
+    function startGame() {
+      const parsed = uniqueWords(parseWords(els.input.value));
+      if (!parsed.length) {
+        els.setupError.textContent = '請至少輸入 1 個有效英文單字（可加中文提示）。';
+        return;
+      }
+      els.setupError.textContent = '';
+      state.words = shuffle(parsed);
+      state.index = 0;
+      state.score = 0;
+      state.answers = [];
+      buildKeyboard();
+      showScreen('play');
+      loadCard();
+    }
+
+    document.querySelectorAll('[data-sample]').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        els.input.value = SAMPLES[chip.dataset.sample] || '';
+        els.setupError.textContent = '';
+      });
+    });
+
+    els.startBtn.addEventListener('click', startGame);
+    els.clearBtn.addEventListener('click', () => {
+      els.input.value = '';
+      els.setupError.textContent = '';
+      els.input.focus();
+    });
+    els.checkBtn.addEventListener('click', checkAnswer);
+    els.revealBtn.addEventListener('click', revealAnswer);
+    els.quitBtn.addEventListener('click', finishGame);
+    els.againBtn.addEventListener('click', () => {
+      state.words = shuffle(state.words);
+      state.index = 0;
+      state.score = 0;
+      state.answers = [];
+      showScreen('play');
+      loadCard();
+    });
+    els.editBtn.addEventListener('click', () => showScreen('setup'));
+
+    document.addEventListener('keydown', (event) => {
+      if (!els.play.classList.contains('active') || state.locked) return;
+      if (/^[a-zA-Z]$/.test(event.key)) {
+        event.preventDefault();
+        typeLetter(event.key);
+      } else if (event.key === 'Backspace') {
+        event.preventDefault();
+        backspace();
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        checkAnswer();
+      }
+    });
+
+    els.input.value = SAMPLES.school;
+  </script>
+</body>
+</html>
