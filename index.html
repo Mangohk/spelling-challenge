@@ -374,7 +374,8 @@
         height: 4.65rem;
         font-size: 2.1rem;
       }
-      .key { height: 2.45rem; font-size: 1rem; }
+      .key { height: 4.9rem; font-size: 2rem; }
+      .key.wide { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -421,6 +422,7 @@
         <p class="meaning" id="word-meaning">—</p>
         <div class="actions speak-row">
           <button type="button" class="btn secondary" id="speak-btn" aria-label="讀出發音">🔊 讀音</button>
+          <button type="button" class="btn secondary" id="letter-hint-btn" aria-label="提示一個字母">💡 提示</button>
         </div>
         <div class="slots" id="slots" aria-live="polite"></div>
         <p class="feedback" id="feedback" role="status"></p>
@@ -541,6 +543,9 @@
           tone(audio, 1046.5, t + 0.4, 0.3, 'sine', 0.24);
         } else if (name === 'click') {
           tone(audio, 520, t, 0.07, 'sine', 0.16);
+        } else if (name === 'hint') {
+          tone(audio, 660, t, 0.1, 'triangle', 0.16);
+          tone(audio, 880, t + 0.08, 0.12, 'sine', 0.14);
         }
       }
 
@@ -585,6 +590,7 @@
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
       speakBtn: document.getElementById('speak-btn'),
+      letterHintBtn: document.getElementById('letter-hint-btn'),
       checkBtn: document.getElementById('check-btn'),
       revealBtn: document.getElementById('reveal-btn'),
       restartBtn: document.getElementById('restart-btn'),
@@ -604,7 +610,8 @@
       blanks: [],
       cursor: 0,
       revealed: false,
-      locked: false
+      locked: false,
+      usedHint: false
     };
 
     function showScreen(name) {
@@ -673,7 +680,12 @@
       const current = Math.min(state.index + 1, total);
       els.progressPill.textContent = `${current} / ${total}`;
       els.scorePill.textContent = `★ ${state.score}`;
-      els.hintPill.textContent = currentWord()?.meaning ? '提示開啟' : '無中文提示';
+      if (state.usedHint) {
+        els.hintPill.textContent = '已用提示 · 不加分';
+        els.hintPill.classList.add('sun');
+      } else {
+        els.hintPill.textContent = currentWord()?.meaning ? '中文提示開啟' : '無中文提示';
+      }
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
     }
 
@@ -760,6 +772,35 @@
       els.keyboard.appendChild(del);
     }
 
+    function useLetterHint() {
+      if (state.locked || !state.blanks.length) return;
+      const item = currentWord();
+      if (!item) return;
+
+      let target = state.blanks[state.cursor];
+      if (!target || target.value) {
+        const emptyIdx = state.blanks.findIndex((b) => !b.value);
+        if (emptyIdx !== -1) {
+          state.cursor = emptyIdx;
+          target = state.blanks[emptyIdx];
+        } else if (!target) {
+          return;
+        }
+      }
+
+      const letter = item.word[target.index];
+      target.value = letter.toLowerCase();
+      state.usedHint = true;
+      const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
+      state.cursor = next === -1 ? firstEmptyCursor() : next;
+
+      els.feedback.textContent = '已填入一個字母（本詞不加分）';
+      els.feedback.className = 'feedback';
+      Sfx.play('hint');
+      updateMeta();
+      renderSlots();
+    }
+
     function speakCurrentWord() {
       const item = currentWord();
       if (!item || !window.speechSynthesis) {
@@ -783,6 +824,7 @@
 
       state.revealed = false;
       state.locked = false;
+      state.usedHint = false;
       const blankIndexes = pickBlankIndexes(item.word);
       state.blanks = [...blankIndexes]
         .sort((a, b) => a - b)
@@ -796,6 +838,7 @@
       els.checkBtn.disabled = false;
       els.revealBtn.disabled = false;
       els.speakBtn.disabled = false;
+      els.letterHintBtn.disabled = false;
       updateMeta();
       renderSlots();
     }
@@ -835,19 +878,31 @@
       state.locked = true;
       els.checkBtn.disabled = true;
       els.revealBtn.disabled = true;
+      els.letterHintBtn.disabled = true;
       markSlots(ok);
 
-      if (ok) {
+      if (ok && !state.usedHint) {
         state.score += 1;
         els.feedback.textContent = '答對了！太棒了';
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
-        state.answers.push({ word: item.word, meaning: item.meaning, ok: true, guess });
+        state.answers.push({ word: item.word, meaning: item.meaning, ok: true, usedHint: false, guess });
+      } else if (ok && state.usedHint) {
+        els.feedback.textContent = '答對了，但用過提示，不加分';
+        els.feedback.className = 'feedback';
+        Sfx.play('reveal');
+        state.answers.push({ word: item.word, meaning: item.meaning, ok: true, usedHint: true, guess });
       } else {
         els.feedback.textContent = `再想想～正確是 ${item.word.toUpperCase()}`;
         els.feedback.className = 'feedback bad';
         Sfx.play('wrong');
-        state.answers.push({ word: item.word, meaning: item.meaning, ok: false, guess });
+        state.answers.push({
+          word: item.word,
+          meaning: item.meaning,
+          ok: false,
+          usedHint: state.usedHint,
+          guess
+        });
       }
 
       updateMeta();
@@ -865,6 +920,7 @@
       state.locked = true;
       els.checkBtn.disabled = true;
       els.revealBtn.disabled = true;
+      els.letterHintBtn.disabled = true;
       state.blanks.forEach((blank) => {
         blank.value = item.word[blank.index];
       });
@@ -872,7 +928,13 @@
       els.feedback.textContent = `答案是 ${item.word.toUpperCase()}`;
       els.feedback.className = 'feedback';
       Sfx.play('reveal');
-      state.answers.push({ word: item.word, meaning: item.meaning, ok: false, guess: '（已看答案）' });
+      state.answers.push({
+        word: item.word,
+        meaning: item.meaning,
+        ok: false,
+        usedHint: true,
+        guess: '（已看答案）'
+      });
       updateMeta();
       setTimeout(() => {
         state.index += 1;
@@ -893,8 +955,11 @@
 
       els.resultList.innerHTML = state.answers.map((a) => {
         const label = a.meaning ? `${a.word} · ${a.meaning}` : a.word;
-        const detail = a.ok ? '✓ 正確' : `✗ ${a.guess}`;
-        return `<li class="${a.ok ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
+        let detail;
+        if (a.ok && a.usedHint) detail = '✓ 正確（用過提示）';
+        else if (a.ok) detail = '✓ 正確';
+        else detail = `✗ ${a.guess}`;
+        return `<li class="${a.ok && !a.usedHint ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
       }).join('');
 
       Sfx.play('finish');
@@ -910,6 +975,7 @@
       state.cursor = 0;
       state.locked = false;
       state.revealed = false;
+      state.usedHint = false;
       els.setupError.textContent = '';
       Sfx.play('click');
       showScreen('setup');
@@ -952,6 +1018,7 @@
       Sfx.ensure();
       speakCurrentWord();
     });
+    els.letterHintBtn.addEventListener('click', useLetterHint);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.revealBtn.addEventListener('click', revealAnswer);
     els.restartBtn.addEventListener('click', restartToSetup);
