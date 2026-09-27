@@ -212,20 +212,20 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
       margin: 0.4rem 0 1.2rem;
-      min-height: 3.9rem;
+      min-height: 5.85rem;
     }
     .slot {
-      width: 3rem;
-      height: 3.6rem;
-      border-radius: 0.85rem;
+      width: 4.5rem;
+      height: 5.4rem;
+      border-radius: 1.25rem;
       border: 3px solid #cfe8dc;
       background: #f7fffb;
       display: grid;
       place-items: center;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.7rem;
+      font-size: 2.55rem;
       font-weight: 600;
       text-transform: uppercase;
       color: var(--ink);
@@ -237,7 +237,7 @@
       color: var(--leaf-dark);
     }
     .slot.space {
-      width: 1rem;
+      width: 1.5rem;
       border: none;
       background: transparent;
       box-shadow: none;
@@ -370,9 +370,9 @@
     }
     @media (max-width: 480px) {
       .slot {
-        width: 2.15rem;
-        height: 2.7rem;
-        font-size: 1.2rem;
+        width: 2.5rem;
+        height: 3.1rem;
+        font-size: 1.4rem;
       }
       .key { height: 2.45rem; font-size: 1rem; }
     }
@@ -428,6 +428,7 @@
         <div class="actions">
           <button type="button" class="btn secondary" id="check-btn">檢查</button>
           <button type="button" class="btn ghost" id="reveal-btn">看答案</button>
+          <button type="button" class="btn ghost" id="restart-btn">重新遊玩</button>
           <button type="button" class="btn ghost" id="quit-btn">結束</button>
         </div>
       </div>
@@ -442,7 +443,7 @@
       <ul class="result-list" id="result-list"></ul>
       <div class="actions">
         <button type="button" class="btn" id="again-btn">再玩一次</button>
-        <button type="button" class="btn ghost" id="edit-btn">改生字</button>
+        <button type="button" class="btn ghost" id="restart-result-btn">重新遊玩</button>
       </div>
     </section>
   </div>
@@ -483,6 +484,72 @@
 
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
+    const Sfx = (() => {
+      let ctx = null;
+
+      function ensure() {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        if (!ctx) ctx = new AC();
+        if (ctx.state === 'suspended') ctx.resume();
+        return ctx;
+      }
+
+      function tone(freq, start, dur, type, gain) {
+        const audio = ensure();
+        if (!audio) return;
+        const osc = audio.createOscillator();
+        const amp = audio.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        amp.gain.setValueAtTime(0.0001, start);
+        amp.gain.exponentialRampToValueAtTime(gain, start + 0.02);
+        amp.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+        osc.connect(amp);
+        amp.connect(audio.destination);
+        osc.start(start);
+        osc.stop(start + dur + 0.02);
+      }
+
+      function play(name) {
+        const audio = ensure();
+        if (!audio) return;
+        const t = audio.currentTime;
+
+        if (name === 'tap') {
+          tone(620, t, 0.06, 'triangle', 0.045);
+        } else if (name === 'backspace') {
+          tone(280, t, 0.07, 'sine', 0.04);
+        } else if (name === 'correct') {
+          tone(523.25, t, 0.12, 'triangle', 0.08);
+          tone(659.25, t + 0.1, 0.14, 'triangle', 0.08);
+          tone(783.99, t + 0.2, 0.22, 'sine', 0.09);
+        } else if (name === 'wrong') {
+          tone(220, t, 0.16, 'square', 0.05);
+          tone(165, t + 0.12, 0.2, 'square', 0.045);
+        } else if (name === 'warn') {
+          tone(360, t, 0.1, 'triangle', 0.05);
+          tone(300, t + 0.1, 0.12, 'triangle', 0.04);
+        } else if (name === 'reveal') {
+          tone(440, t, 0.14, 'sine', 0.06);
+          tone(554.37, t + 0.12, 0.18, 'sine', 0.055);
+        } else if (name === 'start') {
+          tone(392, t, 0.1, 'triangle', 0.07);
+          tone(523.25, t + 0.09, 0.12, 'triangle', 0.07);
+          tone(659.25, t + 0.18, 0.18, 'sine', 0.08);
+        } else if (name === 'finish') {
+          tone(523.25, t, 0.12, 'triangle', 0.07);
+          tone(659.25, t + 0.11, 0.12, 'triangle', 0.07);
+          tone(783.99, t + 0.22, 0.14, 'triangle', 0.08);
+          tone(1046.5, t + 0.36, 0.28, 'sine', 0.09);
+        } else if (name === 'click') {
+          tone(480, t, 0.05, 'sine', 0.04);
+        }
+      }
+
+      return { play, ensure };
+    })();
+
     const els = {
       setup: document.getElementById('setup'),
       play: document.getElementById('play'),
@@ -502,12 +569,13 @@
       speakBtn: document.getElementById('speak-btn'),
       checkBtn: document.getElementById('check-btn'),
       revealBtn: document.getElementById('reveal-btn'),
+      restartBtn: document.getElementById('restart-btn'),
       quitBtn: document.getElementById('quit-btn'),
       resultScore: document.getElementById('result-score'),
       resultMessage: document.getElementById('result-message'),
       resultList: document.getElementById('result-list'),
       againBtn: document.getElementById('again-btn'),
-      editBtn: document.getElementById('edit-btn')
+      restartResultBtn: document.getElementById('restart-result-btn')
     };
 
     const state = {
@@ -637,6 +705,7 @@
       state.cursor = next === -1 ? firstEmptyCursor() : next;
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
+      Sfx.play('tap');
       renderSlots();
     }
 
@@ -651,6 +720,7 @@
       }
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
+      Sfx.play('backspace');
       renderSlots();
     }
 
@@ -738,6 +808,7 @@
       if (incomplete) {
         els.feedback.textContent = '先填完所有空格再檢查。';
         els.feedback.className = 'feedback bad';
+        Sfx.play('warn');
         return;
       }
 
@@ -752,10 +823,12 @@
         state.score += 1;
         els.feedback.textContent = '答對了！太棒了';
         els.feedback.className = 'feedback ok';
+        Sfx.play('correct');
         state.answers.push({ word: item.word, meaning: item.meaning, ok: true, guess });
       } else {
         els.feedback.textContent = `再想想～正確是 ${item.word.toUpperCase()}`;
         els.feedback.className = 'feedback bad';
+        Sfx.play('wrong');
         state.answers.push({ word: item.word, meaning: item.meaning, ok: false, guess });
       }
 
@@ -780,6 +853,7 @@
       markSlots(true);
       els.feedback.textContent = `答案是 ${item.word.toUpperCase()}`;
       els.feedback.className = 'feedback';
+      Sfx.play('reveal');
       state.answers.push({ word: item.word, meaning: item.meaning, ok: false, guess: '（已看答案）' });
       updateMeta();
       setTimeout(() => {
@@ -790,6 +864,7 @@
     }
 
     function finishGame() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       const total = state.words.length;
       const score = state.score;
       els.progressFill.style.width = '100%';
@@ -804,13 +879,29 @@
         return `<li class="${a.ok ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
       }).join('');
 
+      Sfx.play('finish');
       showScreen('result');
+    }
+
+    function restartToSetup() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      state.index = 0;
+      state.score = 0;
+      state.answers = [];
+      state.blanks = [];
+      state.cursor = 0;
+      state.locked = false;
+      state.revealed = false;
+      els.setupError.textContent = '';
+      Sfx.play('click');
+      showScreen('setup');
     }
 
     function startGame() {
       const parsed = uniqueWords(parseWords(els.input.value));
       if (!parsed.length) {
         els.setupError.textContent = '請至少輸入 1 個有效練習詞，格式：Swimming Pool : 游泳池';
+        Sfx.play('warn');
         return;
       }
       els.setupError.textContent = '';
@@ -819,6 +910,7 @@
       state.score = 0;
       state.answers = [];
       buildKeyboard();
+      Sfx.play('start');
       showScreen('play');
       loadCard();
     }
@@ -827,6 +919,7 @@
       chip.addEventListener('click', () => {
         els.input.value = SAMPLES[chip.dataset.sample] || '';
         els.setupError.textContent = '';
+        Sfx.play('click');
       });
     });
 
@@ -835,20 +928,26 @@
       els.input.value = '';
       els.setupError.textContent = '';
       els.input.focus();
+      Sfx.play('click');
     });
-    els.speakBtn.addEventListener('click', speakCurrentWord);
+    els.speakBtn.addEventListener('click', () => {
+      Sfx.ensure();
+      speakCurrentWord();
+    });
     els.checkBtn.addEventListener('click', checkAnswer);
     els.revealBtn.addEventListener('click', revealAnswer);
+    els.restartBtn.addEventListener('click', restartToSetup);
     els.quitBtn.addEventListener('click', finishGame);
     els.againBtn.addEventListener('click', () => {
       state.words = shuffle(state.words);
       state.index = 0;
       state.score = 0;
       state.answers = [];
+      Sfx.play('start');
       showScreen('play');
       loadCard();
     });
-    els.editBtn.addEventListener('click', () => showScreen('setup'));
+    els.restartResultBtn.addEventListener('click', restartToSetup);
 
     document.addEventListener('keydown', (event) => {
       if (!els.play.classList.contains('active') || state.locked) return;
@@ -864,6 +963,7 @@
       }
     });
 
+    document.addEventListener('pointerdown', () => Sfx.ensure(), { once: true });
   </script>
 </body>
 </html>
