@@ -187,6 +187,47 @@
       align-items: center;
     }
     .actions.center { justify-content: center; }
+    .tts-control {
+      flex: 0 1 180px;
+      min-width: 140px;
+      max-width: 200px;
+      margin: 0;
+      padding: 0.45rem 0.7rem 0.5rem;
+      border-radius: 0.9rem;
+      background: #eef9f3;
+      border: 2px solid #cfe8dc;
+    }
+    .tts-control label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-weight: 800;
+      font-size: 0.78rem;
+      color: var(--leaf-dark);
+      margin-bottom: 0.2rem;
+    }
+    .tts-control output {
+      color: #1a6f86;
+      font-variant-numeric: tabular-nums;
+    }
+    .tts-control input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .tts-ends {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.05rem;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .speak-dock .btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
 
     .meta-bar {
       display: flex;
@@ -226,16 +267,16 @@
     .arena {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
     }
     @media (max-width: 560px) {
-      .arena { grid-template-columns: 1fr; }
+      .arena { grid-template-columns: 1fr 1fr; }
     }
     .fighter {
       border: 3px solid #d7ebe1;
       border-radius: 1.1rem;
-      padding: 0.75rem;
+      padding: 0.55rem 0.6rem 0.65rem;
       background: #f7fffb;
       text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -247,20 +288,20 @@
       background: linear-gradient(180deg, #fbf5ff, #fff);
     }
     .fighter img {
-      width: clamp(88px, 22vw, 120px);
-      height: clamp(88px, 22vw, 120px);
+      width: clamp(72px, 18vw, 96px);
+      height: clamp(72px, 18vw, 96px);
       object-fit: contain;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.12));
     }
     .fighter h3 {
-      margin: 0.25rem 0 0.15rem;
+      margin: 0.15rem 0 0.1rem;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.05rem;
+      font-size: 0.98rem;
     }
     .fighter .tag {
-      margin: 0 0 0.45rem;
+      margin: 0 0 0.35rem;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       font-weight: 700;
     }
     .hp-row {
@@ -290,27 +331,52 @@
       background: linear-gradient(90deg, #ff8a75, var(--coral));
     }
 
-    .meaning {
+    .hint-panel {
       text-align: center;
-      font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.35rem, 4vw, 1.8rem);
       margin: 0 0 0.75rem;
     }
-    .meaning small {
-      display: block;
-      margin-top: 0.25rem;
-      font-family: 'Nunito', system-ui, sans-serif;
-      font-size: 0.9rem;
+    .hint-panel .hint-caption {
+      margin: 0 0 0.45rem;
       color: var(--muted);
-      font-weight: 700;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+    .hint-frame {
+      display: inline-block;
+      width: min(220px, 56vw);
+      border-radius: 1.1rem;
+      border: 3px solid #cfe8dc;
+      background: #f7fffb;
+      padding: 0.35rem;
+      box-shadow: 0 6px 0 #d7ebe1;
+      overflow: hidden;
+    }
+    .hint-frame img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 0.8rem;
+      background: #fff;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
     .slots {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.45rem;
-      min-height: 5.8rem;
-      margin-bottom: 0.75rem;
+      min-height: 4.8rem;
+      margin-bottom: 0.55rem;
     }
     .slot-row {
       display: flex;
@@ -319,15 +385,15 @@
       gap: 0.4rem;
     }
     .slot {
-      width: 3.6rem;
-      height: 4.4rem;
+      width: 3.2rem;
+      height: 3.9rem;
       border-radius: 0.9rem;
       border: 3px solid #cfe8dc;
       background: #fff;
       display: grid;
       place-items: center;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.85rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: var(--ink);
       box-shadow: 0 4px 0 #d7ebe1;
@@ -378,14 +444,69 @@
     .feedback.ok { color: var(--leaf-dark); }
     .feedback.bad { color: #b53b2d; }
 
-    .keyboard {
+    .tool-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: stretch;
+      justify-content: center;
+      margin: 0 0 0.65rem;
+    }
+    .tool-row .btn {
+      padding: 0.65rem 1rem;
+      font-size: 0.92rem;
+    }
+    .speak-dock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin: 0 0 0.75rem;
+    }
+    .combat-footer {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-columns: 1fr auto;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+    }
+    .combat-footer .btn {
+      width: 100%;
+    }
+    .combat-footer .btn.attack {
+      font-size: 1.15rem;
+      padding: 0.9rem 1.2rem;
+    }
+    @media (max-width: 520px) {
+      .combat-footer {
+        grid-template-columns: 1fr;
+      }
+    }
+    .keyboard {
+      display: flex;
+      flex-direction: column;
       gap: 0.4rem;
       margin-bottom: 0.9rem;
     }
-    @media (min-width: 640px) {
-      .keyboard { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    .key-row {
+      display: grid;
+      gap: 0.35rem;
+    }
+    .key-row.row-10 { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .key-row.row-9 { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    .key-row.row-8 { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+    .keyboard.layout-qwerty .key-row.row-9 {
+      max-width: 92%;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .keyboard.layout-qwerty .key-row.row-8 {
+      max-width: 84%;
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (max-width: 560px) {
+      .key { min-height: 2.7rem; font-size: 1rem; }
     }
     .key {
       border: none;
@@ -401,7 +522,7 @@
       text-transform: uppercase;
     }
     .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #c5e4d5; }
-    .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
+    .key.wide { font-size: 0.95rem; text-transform: none; }
 
     .travel-scene {
       position: relative;
@@ -582,17 +703,38 @@
         </div>
       </div>
 
-      <p class="meaning" id="word-meaning">美術室<small>聽英文，填晒空白格再攻擊</small></p>
+      <div class="hint-panel">
+        <p class="hint-caption">睇圖，串英文嚟攻擊</p>
+        <div class="hint-frame">
+          <img id="hint-img" src="assets/hints/hint-art-room.png" alt="生字提示圖">
+        </div>
+        <span class="sr-only" id="word-meaning">美術室</span>
+      </div>
+
+      <div class="speak-dock">
+        <div class="tts-control">
+          <label for="tts-rate">
+            <span>速度</span>
+            <output id="tts-rate-value" for="tts-rate">0.63×</output>
+          </label>
+          <input type="range" id="tts-rate" min="0.40" max="1.20" step="0.01" value="0.63">
+          <div class="tts-ends"><span>慢</span><span>快</span></div>
+        </div>
+        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
+      </div>
+
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
-      <div class="keyboard" id="keyboard"></div>
-      <div class="actions center speak-row">
-        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
-        <button type="button" class="btn sun" id="letter-hint-btn">提示一個字母</button>
+
+      <div class="tool-row">
+        <button type="button" class="btn sun" id="letter-hint-btn">提示字母 (−1 HP)</button>
+        <button type="button" class="btn ghost" id="layout-btn">鍵盤：A–Z</button>
       </div>
-      <div class="actions center">
-        <button type="button" class="btn" id="check-btn">攻擊！</button>
-        <button type="button" class="btn ghost" id="quit-btn">結束冒險</button>
+      <div class="keyboard layout-alpha" id="keyboard"></div>
+
+      <div class="combat-footer">
+        <button type="button" class="btn attack" id="check-btn">攻擊！</button>
+        <button type="button" class="btn ghost" id="quit-btn">結束</button>
       </div>
     </section>
 
@@ -662,7 +804,27 @@
       { id: 'm20', name: '暗影帝王', img: 'assets/monsters/m20-shadowking.png', hp: 6, atk: 2, boss: true }
     ];
 
-    const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const LETTERS_AZ = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const KEYBOARD_LAYOUTS = {
+      alpha: {
+        label: '鍵盤：A–Z',
+        nextLabel: '切換為 QWERTY',
+        rows: [
+          LETTERS_AZ.slice(0, 9),
+          LETTERS_AZ.slice(9, 18),
+          LETTERS_AZ.slice(18)
+        ]
+      },
+      qwerty: {
+        label: '鍵盤：QWERTY',
+        nextLabel: '切換為 A–Z',
+        rows: [
+          'qwertyuiop'.split(''),
+          'asdfghjkl'.split(''),
+          'zxcvbnm'.split('')
+        ]
+      }
+    };
 
     const EQUIPMENT = [
       { id: 'wood_sword', name: '木劍', effect: '攻擊 +1', kind: 'atk', value: 1 },
@@ -785,11 +947,15 @@
       monsterHpFill: document.getElementById('monster-hp-fill'),
       monsterHpText: document.getElementById('monster-hp-text'),
       meaning: document.getElementById('word-meaning'),
+      hintImg: document.getElementById('hint-img'),
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
+      layoutBtn: document.getElementById('layout-btn'),
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
+      ttsRate: document.getElementById('tts-rate'),
+      ttsRateValue: document.getElementById('tts-rate-value'),
       checkBtn: document.getElementById('check-btn'),
       quitBtn: document.getElementById('quit-btn'),
       lootName: document.getElementById('loot-name'),
@@ -819,8 +985,12 @@
       spellLog: [],
       wins: 0,
       hero: null,
-      monster: null
+      monster: null,
+      ttsRate: 0.63,
+      keyboardLayout: 'alpha'
     };
+
+    const HINT_HP_COST = 1;
 
     function showScreen(name) {
       [els.title, els.travel, els.battle, els.loot, els.result].forEach((screen) => {
@@ -836,6 +1006,11 @@
       return parts.every((part) => /^[a-z]+(?:'[a-z]+)?$/i.test(part));
     }
 
+    function hintImageForWord(word) {
+      const slug = word.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
+      return `assets/hints/hint-${slug}.png`;
+    }
+
     function parseWords(raw) {
       return raw
         .split(/\n+/)
@@ -846,7 +1021,8 @@
           const phraseRaw = (colon >= 0 ? line.slice(0, colon) : line).trim().replace(/\s+/g, ' ');
           const meaning = colon >= 0 ? line.slice(colon + 1).trim() : '';
           if (!isValidPhrase(phraseRaw)) return null;
-          return { word: phraseRaw.toLowerCase(), meaning };
+          const word = phraseRaw.toLowerCase();
+          return { word, meaning, hintImg: hintImageForWord(word) };
         })
         .filter(Boolean);
     }
@@ -1040,38 +1216,70 @@
       renderSlots();
     }
 
+    function syncLayoutButton() {
+      const layout = KEYBOARD_LAYOUTS[state.keyboardLayout];
+      els.layoutBtn.textContent = layout.label;
+      els.layoutBtn.title = layout.nextLabel;
+      els.layoutBtn.setAttribute('aria-label', layout.nextLabel);
+    }
+
     function buildKeyboard() {
+      const layout = KEYBOARD_LAYOUTS[state.keyboardLayout];
       els.keyboard.innerHTML = '';
-      LETTERS.forEach((letter) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'key';
-        btn.textContent = letter;
-        btn.addEventListener('click', () => typeLetter(letter));
-        els.keyboard.appendChild(btn);
+      els.keyboard.classList.toggle('layout-alpha', state.keyboardLayout === 'alpha');
+      els.keyboard.classList.toggle('layout-qwerty', state.keyboardLayout === 'qwerty');
+
+      layout.rows.forEach((letters, rowIndex) => {
+        const row = document.createElement('div');
+        const isLast = rowIndex === layout.rows.length - 1;
+        const cols = letters.length + (isLast ? 1 : 0);
+        row.className = `key-row row-${cols}`;
+
+        letters.forEach((letter) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'key';
+          btn.textContent = letter;
+          btn.addEventListener('click', () => typeLetter(letter));
+          row.appendChild(btn);
+        });
+
+        if (isLast) {
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'key wide';
+          del.textContent = 'Delete';
+          del.addEventListener('click', backspace);
+          row.appendChild(del);
+        }
+
+        els.keyboard.appendChild(row);
       });
-      const del = document.createElement('button');
-      del.type = 'button';
-      del.className = 'key wide';
-      del.textContent = 'Delete';
-      del.addEventListener('click', backspace);
-      els.keyboard.appendChild(del);
+
+      syncLayoutButton();
+    }
+
+    function toggleKeyboardLayout() {
+      state.keyboardLayout = state.keyboardLayout === 'alpha' ? 'qwerty' : 'alpha';
+      Sfx.play('click');
+      buildKeyboard();
+    }
+
+    function syncTtsRateLabel() {
+      els.ttsRateValue.textContent = `${Number(state.ttsRate).toFixed(2)}×`;
     }
 
     function useLetterHint() {
-      if (state.locked || !state.blanks.length) return;
+      if (state.locked || !state.blanks.length || !state.hero) return;
       const item = currentWord();
       if (!item) return;
 
       let target = state.blanks[state.cursor];
       if (!target || target.value) {
         const emptyIdx = state.blanks.findIndex((b) => !b.value);
-        if (emptyIdx !== -1) {
-          state.cursor = emptyIdx;
-          target = state.blanks[emptyIdx];
-        } else if (!target) {
-          return;
-        }
+        if (emptyIdx === -1) return;
+        state.cursor = emptyIdx;
+        target = state.blanks[emptyIdx];
       }
 
       target.value = item.word[target.index].toLowerCase();
@@ -1079,13 +1287,33 @@
       const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
       state.cursor = next === -1 ? firstEmptyCursor() : next;
 
-      els.feedback.textContent = state.hero.hintSafe
-        ? '已填一個字母（護符生效，攻擊力不變）'
-        : '已填一個字母（今擊攻擊力減半）';
+      state.hero.hp = Math.max(0, state.hero.hp - HINT_HP_COST);
+      flash(els.heroPanel, 'hit');
+
+      const atkNote = state.hero.hintSafe
+        ? '護符生效，攻擊力不變'
+        : '今擊攻擊力減半';
+      els.feedback.textContent = `已填一個字母（−${HINT_HP_COST} HP · ${atkNote}）`;
       els.feedback.className = 'feedback';
       Sfx.play('hint');
       updateHud();
       renderSlots();
+
+      if (state.hero.hp <= 0) {
+        state.locked = true;
+        els.checkBtn.disabled = true;
+        els.letterHintBtn.disabled = true;
+        setTimeout(() => {
+          state.answers.push({
+            monster: state.monster.name,
+            ok: false,
+            boss: state.monster.boss,
+            reason: '✗ 提示耗盡體力',
+            spells: state.monster.spells.slice()
+          });
+          finishAdventure(false);
+        }, 700);
+      }
     }
 
     function speakCurrentWord() {
@@ -1098,7 +1326,7 @@
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(item.word);
       utterance.lang = 'en-US';
-      utterance.rate = 0.63;
+      utterance.rate = state.ttsRate;
       window.speechSynthesis.speak(utterance);
     }
 
@@ -1117,7 +1345,9 @@
       els.checkBtn.disabled = false;
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
-      els.meaning.innerHTML = `${item.meaning || '（無中文提示）'}<small>今次攻擊要串：聽英文，填晒空白格</small>`;
+      els.meaning.textContent = item.meaning || item.word;
+      els.hintImg.src = item.hintImg;
+      els.hintImg.alt = item.meaning ? `提示圖：${item.meaning}` : `提示圖：${item.word}`;
       renderSlots();
       updateHud();
     }
@@ -1379,11 +1609,17 @@
     els.travelScene.style.backgroundImage = "url('assets/scene.png')";
 
     els.startBtn.addEventListener('click', startAdventure);
+    els.ttsRate.addEventListener('input', () => {
+      state.ttsRate = Number(els.ttsRate.value);
+      syncTtsRateLabel();
+    });
+    syncTtsRateLabel();
     els.speakBtn.addEventListener('click', () => {
       Sfx.ensure();
       speakCurrentWord();
     });
     els.letterHintBtn.addEventListener('click', useLetterHint);
+    els.layoutBtn.addEventListener('click', toggleKeyboardLayout);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.quitBtn.addEventListener('click', () => finishAdventure(false));
     els.lootContinueBtn.addEventListener('click', () => {
