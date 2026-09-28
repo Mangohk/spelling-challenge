@@ -188,11 +188,12 @@
     }
     .actions.center { justify-content: center; }
     .tts-control {
-      width: 100%;
-      max-width: 420px;
-      margin: 0 auto 0.85rem;
-      padding: 0.7rem 0.9rem;
-      border-radius: 1rem;
+      flex: 0 1 180px;
+      min-width: 140px;
+      max-width: 200px;
+      margin: 0;
+      padding: 0.45rem 0.7rem 0.5rem;
+      border-radius: 0.9rem;
       background: #eef9f3;
       border: 2px solid #cfe8dc;
     }
@@ -200,11 +201,11 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      gap: 0.75rem;
+      gap: 0.5rem;
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 0.78rem;
       color: var(--leaf-dark);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.2rem;
     }
     .tts-control output {
       color: #1a6f86;
@@ -218,10 +219,14 @@
     .tts-ends {
       display: flex;
       justify-content: space-between;
-      margin-top: 0.15rem;
+      margin-top: 0.05rem;
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-weight: 700;
+    }
+    .speak-dock .btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     .meta-bar {
@@ -262,16 +267,16 @@
     .arena {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
     }
     @media (max-width: 560px) {
-      .arena { grid-template-columns: 1fr; }
+      .arena { grid-template-columns: 1fr 1fr; }
     }
     .fighter {
       border: 3px solid #d7ebe1;
       border-radius: 1.1rem;
-      padding: 0.75rem;
+      padding: 0.55rem 0.6rem 0.65rem;
       background: #f7fffb;
       text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -283,20 +288,20 @@
       background: linear-gradient(180deg, #fbf5ff, #fff);
     }
     .fighter img {
-      width: clamp(88px, 22vw, 120px);
-      height: clamp(88px, 22vw, 120px);
+      width: clamp(72px, 18vw, 96px);
+      height: clamp(72px, 18vw, 96px);
       object-fit: contain;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.12));
     }
     .fighter h3 {
-      margin: 0.25rem 0 0.15rem;
+      margin: 0.15rem 0 0.1rem;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.05rem;
+      font-size: 0.98rem;
     }
     .fighter .tag {
-      margin: 0 0 0.45rem;
+      margin: 0 0 0.35rem;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       font-weight: 700;
     }
     .hp-row {
@@ -326,27 +331,52 @@
       background: linear-gradient(90deg, #ff8a75, var(--coral));
     }
 
-    .meaning {
+    .hint-panel {
       text-align: center;
-      font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.35rem, 4vw, 1.8rem);
       margin: 0 0 0.75rem;
     }
-    .meaning small {
-      display: block;
-      margin-top: 0.25rem;
-      font-family: 'Nunito', system-ui, sans-serif;
-      font-size: 0.9rem;
+    .hint-panel .hint-caption {
+      margin: 0 0 0.45rem;
       color: var(--muted);
-      font-weight: 700;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+    .hint-frame {
+      display: inline-block;
+      width: min(220px, 56vw);
+      border-radius: 1.1rem;
+      border: 3px solid #cfe8dc;
+      background: #f7fffb;
+      padding: 0.35rem;
+      box-shadow: 0 6px 0 #d7ebe1;
+      overflow: hidden;
+    }
+    .hint-frame img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 0.8rem;
+      background: #fff;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
     .slots {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.45rem;
-      min-height: 5.8rem;
-      margin-bottom: 0.75rem;
+      min-height: 4.8rem;
+      margin-bottom: 0.55rem;
     }
     .slot-row {
       display: flex;
@@ -355,15 +385,15 @@
       gap: 0.4rem;
     }
     .slot {
-      width: 3.6rem;
-      height: 4.4rem;
+      width: 3.2rem;
+      height: 3.9rem;
       border-radius: 0.9rem;
       border: 3px solid #cfe8dc;
       background: #fff;
       display: grid;
       place-items: center;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.85rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: var(--ink);
       box-shadow: 0 4px 0 #d7ebe1;
@@ -414,10 +444,43 @@
     .feedback.ok { color: var(--leaf-dark); }
     .feedback.bad { color: #b53b2d; }
 
-    .keyboard-bar {
+    .tool-row {
       display: flex;
-      justify-content: flex-end;
-      margin-bottom: 0.45rem;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: stretch;
+      justify-content: center;
+      margin: 0 0 0.65rem;
+    }
+    .tool-row .btn {
+      padding: 0.65rem 1rem;
+      font-size: 0.92rem;
+    }
+    .speak-dock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin: 0 0 0.75rem;
+    }
+    .combat-footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+    }
+    .combat-footer .btn {
+      width: 100%;
+    }
+    .combat-footer .btn.attack {
+      font-size: 1.15rem;
+      padding: 0.9rem 1.2rem;
+    }
+    @media (max-width: 520px) {
+      .combat-footer {
+        grid-template-columns: 1fr;
+      }
     }
     .keyboard {
       display: flex;
@@ -640,28 +703,38 @@
         </div>
       </div>
 
-      <p class="meaning" id="word-meaning">美術室<small>聽英文，填晒空白格再攻擊</small></p>
+      <div class="hint-panel">
+        <p class="hint-caption">睇圖，串英文嚟攻擊</p>
+        <div class="hint-frame">
+          <img id="hint-img" src="assets/hints/hint-art-room.png" alt="生字提示圖">
+        </div>
+        <span class="sr-only" id="word-meaning">美術室</span>
+      </div>
+
+      <div class="speak-dock">
+        <div class="tts-control">
+          <label for="tts-rate">
+            <span>速度</span>
+            <output id="tts-rate-value" for="tts-rate">0.63×</output>
+          </label>
+          <input type="range" id="tts-rate" min="0.40" max="1.20" step="0.01" value="0.63">
+          <div class="tts-ends"><span>慢</span><span>快</span></div>
+        </div>
+        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
+      </div>
+
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
-      <div class="keyboard-bar">
+
+      <div class="tool-row">
+        <button type="button" class="btn sun" id="letter-hint-btn">提示字母 (−1 HP)</button>
         <button type="button" class="btn ghost" id="layout-btn">鍵盤：A–Z</button>
       </div>
       <div class="keyboard layout-alpha" id="keyboard"></div>
-      <div class="tts-control">
-        <label for="tts-rate">
-          <span>朗讀速度</span>
-          <output id="tts-rate-value" for="tts-rate">0.63×</output>
-        </label>
-        <input type="range" id="tts-rate" min="0.40" max="1.20" step="0.01" value="0.63">
-        <div class="tts-ends"><span>慢</span><span>快</span></div>
-      </div>
-      <div class="actions center speak-row">
-        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
-        <button type="button" class="btn sun" id="letter-hint-btn">提示一個字母 (−1 HP)</button>
-      </div>
-      <div class="actions center">
-        <button type="button" class="btn" id="check-btn">攻擊！</button>
-        <button type="button" class="btn ghost" id="quit-btn">結束冒險</button>
+
+      <div class="combat-footer">
+        <button type="button" class="btn attack" id="check-btn">攻擊！</button>
+        <button type="button" class="btn ghost" id="quit-btn">結束</button>
       </div>
     </section>
 
@@ -874,6 +947,7 @@
       monsterHpFill: document.getElementById('monster-hp-fill'),
       monsterHpText: document.getElementById('monster-hp-text'),
       meaning: document.getElementById('word-meaning'),
+      hintImg: document.getElementById('hint-img'),
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
@@ -932,6 +1006,11 @@
       return parts.every((part) => /^[a-z]+(?:'[a-z]+)?$/i.test(part));
     }
 
+    function hintImageForWord(word) {
+      const slug = word.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
+      return `assets/hints/hint-${slug}.png`;
+    }
+
     function parseWords(raw) {
       return raw
         .split(/\n+/)
@@ -942,7 +1021,8 @@
           const phraseRaw = (colon >= 0 ? line.slice(0, colon) : line).trim().replace(/\s+/g, ' ');
           const meaning = colon >= 0 ? line.slice(colon + 1).trim() : '';
           if (!isValidPhrase(phraseRaw)) return null;
-          return { word: phraseRaw.toLowerCase(), meaning };
+          const word = phraseRaw.toLowerCase();
+          return { word, meaning, hintImg: hintImageForWord(word) };
         })
         .filter(Boolean);
     }
@@ -1265,7 +1345,9 @@
       els.checkBtn.disabled = false;
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
-      els.meaning.innerHTML = `${item.meaning || '（無中文提示）'}<small>今次攻擊要串：聽英文，填晒空白格</small>`;
+      els.meaning.textContent = item.meaning || item.word;
+      els.hintImg.src = item.hintImg;
+      els.hintImg.alt = item.meaning ? `提示圖：${item.meaning}` : `提示圖：${item.word}`;
       renderSlots();
       updateHud();
     }
