@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>生字填空卡 · Vocab Spell Cards</title>
+  <title>Vocab Spell Cards</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -385,26 +385,26 @@
       <div class="brand">
         <div class="logo" aria-hidden="true">✏️</div>
         <div>
-          <h1>生字填空卡</h1>
-          <p class="sub">Vocab Spell Cards · 填字母學串字</p>
+          <h1>Vocab Spell Cards</h1>
+          <p class="sub">Fill in the letters · Learn to spell</p>
         </div>
       </div>
     </header>
 
     <section id="setup" class="screen active" aria-labelledby="setup-title">
-      <h2 id="setup-title" class="section-title">輸入生字</h2>
-      <p class="hint">每行一個練習詞（可多個字），用 <code>:</code> 分隔提示，例如 <code>Swimming Pool : 游泳池</code>。</p>
-      <label class="sr-only" for="word-input">生字清單</label>
+      <h2 id="setup-title" class="section-title">Enter words</h2>
+      <p class="hint">One practice word per line (multi-word phrases OK). Use <code>:</code> to add a hint, e.g. <code>Swimming Pool : 游泳池</code>.</p>
+      <label class="sr-only" for="word-input">Word list</label>
       <textarea id="word-input" spellcheck="false" placeholder="Swimming Pool : 游泳池&#10;apple : 蘋果&#10;happy : 開心"></textarea>
-      <div class="sample-row" aria-label="範例字庫">
-        <button type="button" class="chip" data-sample="animals">動物 Animals</button>
-        <button type="button" class="chip" data-sample="school">學校 School</button>
-        <button type="button" class="chip" data-sample="feelings">心情 Feelings</button>
+      <div class="sample-row" aria-label="Sample word lists">
+        <button type="button" class="chip" data-sample="animals">Animals</button>
+        <button type="button" class="chip" data-sample="school">School</button>
+        <button type="button" class="chip" data-sample="feelings">Feelings</button>
         <button type="button" class="chip" data-sample="dictation1">1st dictation</button>
       </div>
       <div class="actions">
-        <button type="button" class="btn" id="start-btn">開始練習</button>
-        <button type="button" class="btn ghost" id="clear-btn">清空</button>
+        <button type="button" class="btn" id="start-btn">Start practice</button>
+        <button type="button" class="btn ghost" id="clear-btn">Clear</button>
       </div>
       <p class="error" id="setup-error" role="status"></p>
     </section>
@@ -413,40 +413,40 @@
       <div class="meta-bar">
         <span class="pill" id="progress-pill">1 / 1</span>
         <span class="pill sky" id="score-pill">★ 0</span>
-        <span class="pill sun" id="hint-pill">提示開啟</span>
+        <span class="pill sun" id="hint-pill">Hint on</span>
       </div>
       <div class="progress-track" aria-hidden="true">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
       <div class="play-card">
-        <h2 id="play-title" class="section-title">拼出這個字</h2>
+        <h2 id="play-title" class="section-title">Spell this word</h2>
         <p class="meaning" id="word-meaning">—</p>
         <div class="actions speak-row">
-          <button type="button" class="btn secondary" id="speak-btn" aria-label="讀出發音">🔊 讀音</button>
-          <button type="button" class="btn secondary" id="letter-hint-btn" aria-label="提示一個字母">💡 提示</button>
+          <button type="button" class="btn secondary" id="speak-btn" aria-label="Speak the word">🔊 Speak</button>
+          <button type="button" class="btn secondary" id="letter-hint-btn" aria-label="Reveal one letter">💡 Hint</button>
         </div>
         <div class="slots" id="slots" aria-live="polite"></div>
         <p class="feedback" id="feedback" role="status"></p>
-        <div class="keyboard" id="keyboard" aria-label="字母鍵盤"></div>
+        <div class="keyboard" id="keyboard" aria-label="Letter keyboard"></div>
         <div class="actions">
-          <button type="button" class="btn secondary" id="check-btn">檢查</button>
-          <button type="button" class="btn ghost" id="reveal-btn">看答案</button>
-          <button type="button" class="btn ghost" id="restart-btn">重新遊玩</button>
-          <button type="button" class="btn ghost" id="quit-btn">結束</button>
+          <button type="button" class="btn secondary" id="check-btn">Check</button>
+          <button type="button" class="btn ghost" id="reveal-btn">Show answer</button>
+          <button type="button" class="btn ghost" id="restart-btn">Restart</button>
+          <button type="button" class="btn ghost" id="quit-btn">Quit</button>
         </div>
       </div>
     </section>
 
     <section id="result" class="screen" aria-labelledby="result-title">
       <div class="result-hero">
-        <h2 id="result-title" class="section-title">練習完成！</h2>
-        <p class="hint" id="result-message">做得好！</p>
+        <h2 id="result-title" class="section-title">Practice complete!</h2>
+        <p class="hint" id="result-message">Well done!</p>
         <p class="result-score" id="result-score">0 / 0</p>
       </div>
       <ul class="result-list" id="result-list"></ul>
       <div class="actions">
-        <button type="button" class="btn" id="again-btn">再玩一次</button>
-        <button type="button" class="btn ghost" id="restart-result-btn">重新遊玩</button>
+        <button type="button" class="btn" id="again-btn">Play again</button>
+        <button type="button" class="btn ghost" id="restart-result-btn">Restart</button>
       </div>
     </section>
   </div>
@@ -695,10 +695,10 @@
       els.progressPill.textContent = `${current} / ${total}`;
       els.scorePill.textContent = `★ ${state.score}`;
       if (state.usedHint) {
-        els.hintPill.textContent = '已用提示 · 不加分';
+        els.hintPill.textContent = 'Hint used · no points';
         els.hintPill.classList.add('sun');
       } else {
-        els.hintPill.textContent = currentWord()?.meaning ? '中文提示開啟' : '無中文提示';
+        els.hintPill.textContent = currentWord()?.meaning ? 'Meaning hint on' : 'No meaning hint';
       }
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
     }
@@ -781,7 +781,7 @@
       const del = document.createElement('button');
       del.type = 'button';
       del.className = 'key wide';
-      del.textContent = '刪除';
+      del.textContent = 'Delete';
       del.addEventListener('click', backspace);
       els.keyboard.appendChild(del);
     }
@@ -808,7 +808,7 @@
       const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
       state.cursor = next === -1 ? firstEmptyCursor() : next;
 
-      els.feedback.textContent = '已填入一個字母（本詞不加分）';
+      els.feedback.textContent = 'Letter filled in (no points for this word)';
       els.feedback.className = 'feedback';
       Sfx.play('hint');
       updateMeta();
@@ -818,7 +818,7 @@
     function speakCurrentWord() {
       const item = currentWord();
       if (!item || !window.speechSynthesis) {
-        els.feedback.textContent = '此瀏覽器不支援讀音功能。';
+        els.feedback.textContent = 'Speech is not supported in this browser.';
         els.feedback.className = 'feedback bad';
         return;
       }
@@ -846,7 +846,7 @@
       state.cursor = 0;
 
       if (window.speechSynthesis) window.speechSynthesis.cancel();
-      els.meaning.textContent = item.meaning || '（沒有中文提示）';
+      els.meaning.textContent = item.meaning || '(No meaning hint)';
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
       els.checkBtn.disabled = false;
@@ -881,7 +881,7 @@
       const item = currentWord();
       const incomplete = state.blanks.some((b) => !b.value);
       if (incomplete) {
-        els.feedback.textContent = '先填完所有空格再檢查。';
+        els.feedback.textContent = 'Fill in all the blanks before checking.';
         els.feedback.className = 'feedback bad';
         Sfx.play('warn');
         return;
@@ -897,17 +897,17 @@
 
       if (ok && !state.usedHint) {
         state.score += 1;
-        els.feedback.textContent = '答對了！太棒了';
+        els.feedback.textContent = 'Correct! Great job!';
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
         state.answers.push({ word: item.word, meaning: item.meaning, ok: true, usedHint: false, guess });
       } else if (ok && state.usedHint) {
-        els.feedback.textContent = '答對了，但用過提示，不加分';
+        els.feedback.textContent = 'Correct, but a hint was used — no points';
         els.feedback.className = 'feedback';
         Sfx.play('reveal');
         state.answers.push({ word: item.word, meaning: item.meaning, ok: true, usedHint: true, guess });
       } else {
-        els.feedback.textContent = `再想想～正確是 ${item.word.toUpperCase()}`;
+        els.feedback.textContent = `Not quite — the answer is ${item.word.toUpperCase()}`;
         els.feedback.className = 'feedback bad';
         Sfx.play('wrong');
         state.answers.push({
@@ -939,7 +939,7 @@
         blank.value = item.word[blank.index];
       });
       markSlots(true);
-      els.feedback.textContent = `答案是 ${item.word.toUpperCase()}`;
+      els.feedback.textContent = `The answer is ${item.word.toUpperCase()}`;
       els.feedback.className = 'feedback';
       Sfx.play('reveal');
       state.answers.push({
@@ -947,7 +947,7 @@
         meaning: item.meaning,
         ok: false,
         usedHint: true,
-        guess: '（已看答案）'
+        guess: '(Answer shown)'
       });
       updateMeta();
       setTimeout(() => {
@@ -963,15 +963,15 @@
       const score = state.score;
       els.progressFill.style.width = '100%';
       els.resultScore.textContent = `${score} / ${total}`;
-      if (score === total) els.resultMessage.textContent = '全對！串字小高手！';
-      else if (score >= Math.ceil(total * 0.7)) els.resultMessage.textContent = '很不錯，繼續加油！';
-      else els.resultMessage.textContent = '再練一輪會更熟。';
+      if (score === total) els.resultMessage.textContent = 'Perfect! Spelling champion!';
+      else if (score >= Math.ceil(total * 0.7)) els.resultMessage.textContent = 'Nice work — keep it up!';
+      else els.resultMessage.textContent = 'Another round will help you remember.';
 
       els.resultList.innerHTML = state.answers.map((a) => {
         const label = a.meaning ? `${a.word} · ${a.meaning}` : a.word;
         let detail;
-        if (a.ok && a.usedHint) detail = '✓ 正確（用過提示）';
-        else if (a.ok) detail = '✓ 正確';
+        if (a.ok && a.usedHint) detail = '✓ Correct (hint used)';
+        else if (a.ok) detail = '✓ Correct';
         else detail = `✗ ${a.guess}`;
         return `<li class="${a.ok && !a.usedHint ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
       }).join('');
@@ -998,7 +998,7 @@
     function startGame() {
       const parsed = uniqueWords(parseWords(els.input.value));
       if (!parsed.length) {
-        els.setupError.textContent = '請至少輸入 1 個有效練習詞，格式：Swimming Pool : 游泳池';
+        els.setupError.textContent = 'Please enter at least 1 valid word, e.g. Swimming Pool : 游泳池';
         Sfx.play('warn');
         return;
       }
