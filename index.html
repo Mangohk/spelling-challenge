@@ -414,14 +414,36 @@
     .feedback.ok { color: var(--leaf-dark); }
     .feedback.bad { color: #b53b2d; }
 
+    .keyboard-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 0.45rem;
+    }
     .keyboard {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 0.4rem;
       margin-bottom: 0.9rem;
     }
-    @media (min-width: 640px) {
-      .keyboard { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    .key-row {
+      display: grid;
+      gap: 0.35rem;
+    }
+    .key-row.row-10 { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .key-row.row-9 { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    .key-row.row-8 { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+    .keyboard.layout-qwerty .key-row.row-9 {
+      max-width: 92%;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .keyboard.layout-qwerty .key-row.row-8 {
+      max-width: 84%;
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (max-width: 560px) {
+      .key { min-height: 2.7rem; font-size: 1rem; }
     }
     .key {
       border: none;
@@ -437,7 +459,7 @@
       text-transform: uppercase;
     }
     .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #c5e4d5; }
-    .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
+    .key.wide { font-size: 0.95rem; text-transform: none; }
 
     .travel-scene {
       position: relative;
@@ -621,7 +643,10 @@
       <p class="meaning" id="word-meaning">美術室<small>聽英文，填晒空白格再攻擊</small></p>
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
-      <div class="keyboard" id="keyboard"></div>
+      <div class="keyboard-bar">
+        <button type="button" class="btn ghost" id="layout-btn">鍵盤：A–Z</button>
+      </div>
+      <div class="keyboard layout-alpha" id="keyboard"></div>
       <div class="tts-control">
         <label for="tts-rate">
           <span>朗讀速度</span>
@@ -706,7 +731,27 @@
       { id: 'm20', name: '暗影帝王', img: 'assets/monsters/m20-shadowking.png', hp: 6, atk: 2, boss: true }
     ];
 
-    const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const LETTERS_AZ = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const KEYBOARD_LAYOUTS = {
+      alpha: {
+        label: '鍵盤：A–Z',
+        nextLabel: '切換為 QWERTY',
+        rows: [
+          LETTERS_AZ.slice(0, 9),
+          LETTERS_AZ.slice(9, 18),
+          LETTERS_AZ.slice(18)
+        ]
+      },
+      qwerty: {
+        label: '鍵盤：QWERTY',
+        nextLabel: '切換為 A–Z',
+        rows: [
+          'qwertyuiop'.split(''),
+          'asdfghjkl'.split(''),
+          'zxcvbnm'.split('')
+        ]
+      }
+    };
 
     const EQUIPMENT = [
       { id: 'wood_sword', name: '木劍', effect: '攻擊 +1', kind: 'atk', value: 1 },
@@ -832,6 +877,7 @@
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
+      layoutBtn: document.getElementById('layout-btn'),
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
       ttsRate: document.getElementById('tts-rate'),
@@ -866,7 +912,8 @@
       wins: 0,
       hero: null,
       monster: null,
-      ttsRate: 0.63
+      ttsRate: 0.63,
+      keyboardLayout: 'alpha'
     };
 
     const HINT_HP_COST = 1;
@@ -1089,22 +1136,53 @@
       renderSlots();
     }
 
+    function syncLayoutButton() {
+      const layout = KEYBOARD_LAYOUTS[state.keyboardLayout];
+      els.layoutBtn.textContent = layout.label;
+      els.layoutBtn.title = layout.nextLabel;
+      els.layoutBtn.setAttribute('aria-label', layout.nextLabel);
+    }
+
     function buildKeyboard() {
+      const layout = KEYBOARD_LAYOUTS[state.keyboardLayout];
       els.keyboard.innerHTML = '';
-      LETTERS.forEach((letter) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'key';
-        btn.textContent = letter;
-        btn.addEventListener('click', () => typeLetter(letter));
-        els.keyboard.appendChild(btn);
+      els.keyboard.classList.toggle('layout-alpha', state.keyboardLayout === 'alpha');
+      els.keyboard.classList.toggle('layout-qwerty', state.keyboardLayout === 'qwerty');
+
+      layout.rows.forEach((letters, rowIndex) => {
+        const row = document.createElement('div');
+        const isLast = rowIndex === layout.rows.length - 1;
+        const cols = letters.length + (isLast ? 1 : 0);
+        row.className = `key-row row-${cols}`;
+
+        letters.forEach((letter) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'key';
+          btn.textContent = letter;
+          btn.addEventListener('click', () => typeLetter(letter));
+          row.appendChild(btn);
+        });
+
+        if (isLast) {
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'key wide';
+          del.textContent = 'Delete';
+          del.addEventListener('click', backspace);
+          row.appendChild(del);
+        }
+
+        els.keyboard.appendChild(row);
       });
-      const del = document.createElement('button');
-      del.type = 'button';
-      del.className = 'key wide';
-      del.textContent = 'Delete';
-      del.addEventListener('click', backspace);
-      els.keyboard.appendChild(del);
+
+      syncLayoutButton();
+    }
+
+    function toggleKeyboardLayout() {
+      state.keyboardLayout = state.keyboardLayout === 'alpha' ? 'qwerty' : 'alpha';
+      Sfx.play('click');
+      buildKeyboard();
     }
 
     function syncTtsRateLabel() {
@@ -1459,6 +1537,7 @@
       speakCurrentWord();
     });
     els.letterHintBtn.addEventListener('click', useLetterHint);
+    els.layoutBtn.addEventListener('click', toggleKeyboardLayout);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.quitBtn.addEventListener('click', () => finishAdventure(false));
     els.lootContinueBtn.addEventListener('click', () => {
