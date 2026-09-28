@@ -306,15 +306,21 @@
     }
     .slots {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 0.45rem;
       min-height: 5.8rem;
       margin-bottom: 0.75rem;
     }
+    .slot-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+    }
     .slot {
-      width: 4.1rem;
-      height: 4.9rem;
+      width: 3.6rem;
+      height: 4.4rem;
       border-radius: 0.9rem;
       border: 3px solid #cfe8dc;
       background: #fff;
@@ -921,16 +927,23 @@
       const blankSet = new Set(state.blanks.map((b) => b.index));
       els.slots.innerHTML = '';
 
+      let row = document.createElement('div');
+      row.className = 'slot-row';
+      els.slots.appendChild(row);
+
       [...item.word].forEach((ch, i) => {
+        if (ch === ' ') {
+          row = document.createElement('div');
+          row.className = 'slot-row';
+          els.slots.appendChild(row);
+          return;
+        }
+
         const slot = document.createElement('div');
         slot.className = 'slot';
         slot.dataset.index = String(i);
 
-        if (ch === ' ') {
-          slot.classList.add('given', 'space');
-          slot.textContent = '';
-          slot.setAttribute('aria-hidden', 'true');
-        } else if (!/[a-z]/i.test(ch)) {
+        if (!/[a-z]/i.test(ch)) {
           slot.textContent = ch;
           slot.classList.add('given');
         } else if (!blankSet.has(i)) {
@@ -944,7 +957,7 @@
             slot.classList.add('active');
           }
         }
-        els.slots.appendChild(slot);
+        row.appendChild(slot);
       });
     }
 
