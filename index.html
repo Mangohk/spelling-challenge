@@ -187,6 +187,42 @@
       align-items: center;
     }
     .actions.center { justify-content: center; }
+    .tts-control {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 0.85rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 1rem;
+      background: #eef9f3;
+      border: 2px solid #cfe8dc;
+    }
+    .tts-control label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--leaf-dark);
+      margin-bottom: 0.35rem;
+    }
+    .tts-control output {
+      color: #1a6f86;
+      font-variant-numeric: tabular-nums;
+    }
+    .tts-control input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .tts-ends {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.15rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
 
     .meta-bar {
       display: flex;
@@ -586,9 +622,17 @@
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
       <div class="keyboard" id="keyboard"></div>
+      <div class="tts-control">
+        <label for="tts-rate">
+          <span>朗讀速度</span>
+          <output id="tts-rate-value" for="tts-rate">0.63×</output>
+        </label>
+        <input type="range" id="tts-rate" min="0.40" max="1.20" step="0.01" value="0.63">
+        <div class="tts-ends"><span>慢</span><span>快</span></div>
+      </div>
       <div class="actions center speak-row">
         <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
-        <button type="button" class="btn sun" id="letter-hint-btn">提示一個字母</button>
+        <button type="button" class="btn sun" id="letter-hint-btn">提示一個字母 (−1 HP)</button>
       </div>
       <div class="actions center">
         <button type="button" class="btn" id="check-btn">攻擊！</button>
@@ -790,6 +834,8 @@
       keyboard: document.getElementById('keyboard'),
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
+      ttsRate: document.getElementById('tts-rate'),
+      ttsRateValue: document.getElementById('tts-rate-value'),
       checkBtn: document.getElementById('check-btn'),
       quitBtn: document.getElementById('quit-btn'),
       lootName: document.getElementById('loot-name'),
@@ -819,8 +865,11 @@
       spellLog: [],
       wins: 0,
       hero: null,
-      monster: null
+      monster: null,
+      ttsRate: 0.63
     };
+
+    const HINT_HP_COST = 1;
 
     function showScreen(name) {
       [els.title, els.travel, els.battle, els.loot, els.result].forEach((screen) => {
@@ -1058,20 +1107,21 @@
       els.keyboard.appendChild(del);
     }
 
+    function syncTtsRateLabel() {
+      els.ttsRateValue.textContent = `${Number(state.ttsRate).toFixed(2)}×`;
+    }
+
     function useLetterHint() {
-      if (state.locked || !state.blanks.length) return;
+      if (state.locked || !state.blanks.length || !state.hero) return;
       const item = currentWord();
       if (!item) return;
 
       let target = state.blanks[state.cursor];
       if (!target || target.value) {
         const emptyIdx = state.blanks.findIndex((b) => !b.value);
-        if (emptyIdx !== -1) {
-          state.cursor = emptyIdx;
-          target = state.blanks[emptyIdx];
-        } else if (!target) {
-          return;
-        }
+        if (emptyIdx === -1) return;
+        state.cursor = emptyIdx;
+        target = state.blanks[emptyIdx];
       }
 
       target.value = item.word[target.index].toLowerCase();
@@ -1079,13 +1129,33 @@
       const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
       state.cursor = next === -1 ? firstEmptyCursor() : next;
 
-      els.feedback.textContent = state.hero.hintSafe
-        ? '已填一個字母（護符生效，攻擊力不變）'
-        : '已填一個字母（今擊攻擊力減半）';
+      state.hero.hp = Math.max(0, state.hero.hp - HINT_HP_COST);
+      flash(els.heroPanel, 'hit');
+
+      const atkNote = state.hero.hintSafe
+        ? '護符生效，攻擊力不變'
+        : '今擊攻擊力減半';
+      els.feedback.textContent = `已填一個字母（−${HINT_HP_COST} HP · ${atkNote}）`;
       els.feedback.className = 'feedback';
       Sfx.play('hint');
       updateHud();
       renderSlots();
+
+      if (state.hero.hp <= 0) {
+        state.locked = true;
+        els.checkBtn.disabled = true;
+        els.letterHintBtn.disabled = true;
+        setTimeout(() => {
+          state.answers.push({
+            monster: state.monster.name,
+            ok: false,
+            boss: state.monster.boss,
+            reason: '✗ 提示耗盡體力',
+            spells: state.monster.spells.slice()
+          });
+          finishAdventure(false);
+        }, 700);
+      }
     }
 
     function speakCurrentWord() {
@@ -1098,7 +1168,7 @@
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(item.word);
       utterance.lang = 'en-US';
-      utterance.rate = 0.63;
+      utterance.rate = state.ttsRate;
       window.speechSynthesis.speak(utterance);
     }
 
@@ -1379,6 +1449,11 @@
     els.travelScene.style.backgroundImage = "url('assets/scene.png')";
 
     els.startBtn.addEventListener('click', startAdventure);
+    els.ttsRate.addEventListener('input', () => {
+      state.ttsRate = Number(els.ttsRate.value);
+      syncTtsRateLabel();
+    });
+    syncTtsRateLabel();
     els.speakBtn.addEventListener('click', () => {
       Sfx.ensure();
       speakCurrentWord();
