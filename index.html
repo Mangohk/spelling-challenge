@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vocab Spell Cards</title>
+  <title>拼字勇者 · Version Two</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -30,24 +30,17 @@
         radial-gradient(circle at 12% 18%, rgba(240, 180, 41, 0.28), transparent 32%),
         radial-gradient(circle at 88% 10%, rgba(47, 159, 191, 0.22), transparent 30%),
         linear-gradient(160deg, #e8faf2 0%, #f7fbff 45%, #fff6e8 100%);
-      padding: clamp(0.9rem, 3vw, 1.6rem);
+      padding: clamp(0.7rem, 2.5vw, 1.4rem);
     }
-    .wrap {
-      max-width: 720px;
-      margin: 0 auto;
-    }
+    .wrap { max-width: 760px; margin: 0 auto; }
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      margin-bottom: 1.1rem;
+      margin-bottom: 0.9rem;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
     .logo {
       width: 3.1rem;
       height: 3.1rem;
@@ -67,13 +60,13 @@
     h1 {
       margin: 0;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.35rem, 4vw, 1.85rem);
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
       letter-spacing: 0.02em;
     }
     .sub {
       margin: 0.15rem 0 0;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
     }
     .screen {
@@ -82,16 +75,63 @@
       border: 3px solid rgba(31, 157, 108, 0.18);
       border-radius: 1.5rem;
       box-shadow: var(--shadow);
-      padding: clamp(1.1rem, 3vw, 1.6rem);
+      padding: clamp(1rem, 3vw, 1.5rem);
       animation: rise 0.35s ease;
+      overflow: hidden;
     }
     .screen.active { display: block; }
     @keyframes rise {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    .hero-scene {
+      position: relative;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      min-height: clamp(200px, 42vw, 280px);
+      background: #c8e9f5 center/cover no-repeat;
+      margin-bottom: 1rem;
+    }
+    .hero-scene::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 42, 36, 0.05), rgba(15, 42, 36, 0.35));
+      pointer-events: none;
+    }
+    .scene-copy {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 2;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+    .scene-copy h2 {
+      margin: 0 0 0.35rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.5rem, 5vw, 2.1rem);
+    }
+    .scene-copy p {
+      margin: 0;
+      font-weight: 700;
+      font-size: 0.98rem;
+      max-width: 28rem;
+    }
+    .title-hero {
+      position: absolute;
+      left: 8%;
+      bottom: 18%;
+      width: clamp(96px, 22vw, 140px);
+      z-index: 1;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.25));
+      animation: bob 2.2s ease-in-out infinite;
+    }
+
     .section-title {
-      margin: 0 0 0.4rem;
+      margin: 0 0 0.35rem;
       font-family: 'Fredoka', cursive, sans-serif;
       font-size: 1.25rem;
     }
@@ -101,61 +141,18 @@
       font-size: 0.95rem;
       line-height: 1.45;
     }
-    textarea {
-      width: 100%;
-      min-height: 180px;
-      resize: vertical;
-      border: 3px solid #cfe8dc;
-      border-radius: 1rem;
-      padding: 0.9rem 1rem;
-      font: 700 1rem/1.5 'Nunito', system-ui, sans-serif;
-      color: var(--ink);
-      background: #f7fffb;
-      outline: none;
-    }
-    textarea:focus {
-      border-color: var(--leaf);
-      box-shadow: 0 0 0 4px rgba(31, 157, 108, 0.15);
-    }
-    .sample-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin: 0.85rem 0 1.1rem;
-    }
-    .chip, .btn {
+    .btn {
       border: none;
       cursor: pointer;
       font-family: inherit;
       font-weight: 800;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-    .chip {
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      background: var(--mist);
-      color: var(--leaf-dark);
-      font-size: 0.88rem;
-    }
-    .chip:hover { transform: translateY(-1px); background: #c5ecda; }
-    .chip:active { transform: translateY(1px); }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-      align-items: center;
-    }
-    .speak-row {
-      justify-content: center;
-      margin: 0 0 1rem;
-    }
-    .btn {
       padding: 0.75rem 1.25rem;
       border-radius: 999px;
       font-size: 1rem;
       color: #fff;
       background: linear-gradient(145deg, #39c989, var(--leaf));
       box-shadow: 0 5px 0 var(--leaf-dark);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
     .btn:hover { transform: translateY(-1px); }
     .btn:active {
@@ -173,16 +170,29 @@
       border: 2px solid #cfe8dc;
     }
     .btn.ghost:active { transform: translateY(1px); }
+    .btn.sun {
+      background: linear-gradient(145deg, #ffd45a, var(--sun));
+      box-shadow: 0 5px 0 #c48c12;
+      color: #5c4300;
+    }
     .btn:disabled {
       opacity: 0.55;
       cursor: not-allowed;
       transform: none;
     }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+    }
+    .actions.center { justify-content: center; }
+
     .meta-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.65rem;
-      margin-bottom: 1rem;
+      gap: 0.55rem;
+      margin-bottom: 0.85rem;
     }
     .pill {
       display: inline-flex;
@@ -192,148 +202,287 @@
       border-radius: 999px;
       background: #eef9f3;
       color: var(--leaf-dark);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 800;
     }
     .pill.sky { background: #e7f6fb; color: #1a6f86; }
     .pill.sun { background: #fff4d6; color: #8a6508; }
-    .play-card {
-      text-align: center;
-      padding: 0.4rem 0 0.2rem;
+    .pill.coral { background: #ffe8e4; color: #a3382a; }
+    .progress {
+      height: 0.7rem;
+      border-radius: 999px;
+      background: #e7f2ec;
+      overflow: hidden;
+      margin-bottom: 1rem;
     }
-    .meaning {
-      margin: 0 0 1rem;
-      color: var(--muted);
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--leaf), var(--sky));
+      transition: width 0.35s ease;
+    }
+
+    .arena {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 560px) {
+      .arena { grid-template-columns: 1fr; }
+    }
+    .fighter {
+      border: 3px solid #d7ebe1;
+      border-radius: 1.1rem;
+      padding: 0.75rem;
+      background: #f7fffb;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fighter.hit { animation: shake 0.4s ease; }
+    .fighter.attack { animation: pop 0.35s ease; }
+    .fighter.boss {
+      border-color: #e0c6f5;
+      background: linear-gradient(180deg, #fbf5ff, #fff);
+    }
+    .fighter img {
+      width: clamp(88px, 22vw, 120px);
+      height: clamp(88px, 22vw, 120px);
+      object-fit: contain;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.12));
+    }
+    .fighter h3 {
+      margin: 0.25rem 0 0.15rem;
+      font-family: 'Fredoka', cursive, sans-serif;
       font-size: 1.05rem;
+    }
+    .fighter .tag {
+      margin: 0 0 0.45rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .hp-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.82rem;
       font-weight: 800;
-      min-height: 1.4em;
+      color: var(--muted);
+    }
+    .hp-bar {
+      flex: 1;
+      height: 0.75rem;
+      border-radius: 999px;
+      background: #e8efe9;
+      overflow: hidden;
+    }
+    .hp-bar > i {
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #39c989, #1f9d6c);
+      transition: width 0.35s ease;
+    }
+    .fighter.boss .hp-bar > i,
+    .hp-bar.enemy > i {
+      background: linear-gradient(90deg, #ff8a75, var(--coral));
+    }
+
+    .meaning {
+      text-align: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.35rem, 4vw, 1.8rem);
+      margin: 0 0 0.75rem;
+    }
+    .meaning small {
+      display: block;
+      margin-top: 0.25rem;
+      font-family: 'Nunito', system-ui, sans-serif;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 700;
     }
     .slots {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.75rem;
-      margin: 0.4rem 0 1.2rem;
-      min-height: 5.85rem;
+      gap: 0.45rem;
+      min-height: 5.8rem;
+      margin-bottom: 0.75rem;
     }
     .slot {
-      width: 4.5rem;
-      height: 5.4rem;
-      border-radius: 1.25rem;
+      width: 4.1rem;
+      height: 4.9rem;
+      border-radius: 0.9rem;
       border: 3px solid #cfe8dc;
-      background: #f7fffb;
+      background: #fff;
       display: grid;
       place-items: center;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 2.55rem;
-      font-weight: 600;
-      text-transform: uppercase;
+      font-size: 1.85rem;
+      font-weight: 700;
       color: var(--ink);
-      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+      box-shadow: 0 4px 0 #d7ebe1;
     }
     .slot.given {
-      background: #e8f7ef;
-      border-color: rgba(31, 157, 108, 0.35);
+      background: #eef9f3;
       color: var(--leaf-dark);
+      border-color: #b9dfcd;
     }
     .slot.space {
-      width: 1.5rem;
+      width: 1.4rem;
       border: none;
       background: transparent;
       box-shadow: none;
-      pointer-events: none;
     }
     .slot.active {
       border-color: var(--sky);
-      box-shadow: 0 0 0 4px rgba(47, 159, 191, 0.18);
-      transform: translateY(-2px);
+      box-shadow: 0 0 0 4px rgba(47, 159, 191, 0.18), 0 4px 0 #b7dce8;
     }
-    .slot.filled { border-color: var(--leaf); }
+    .slot.filled { background: #fff9e8; border-color: #efd27a; }
     .slot.correct {
-      background: #d8f3e7;
+      background: #e5f9ef;
       border-color: var(--leaf);
-      color: var(--leaf-dark);
       animation: pop 0.35s ease;
     }
     .slot.wrong {
       background: #ffe8e4;
       border-color: var(--coral);
-      color: #b53a2c;
-      animation: shake 0.35s ease;
+      animation: shake 0.4s ease;
     }
     @keyframes pop {
-      0% { transform: scale(0.92); }
-      60% { transform: scale(1.08); }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
       100% { transform: scale(1); }
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-    .keyboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(4.8rem, 1fr));
-      gap: 0.65rem;
-      margin-bottom: 1rem;
-    }
-    .key {
-      height: 5.4rem;
-      border: none;
-      border-radius: 1rem;
-      background: #eef6f2;
-      color: var(--ink);
-      font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 2.3rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 0 4px 0 #c5d9cf;
-      transition: transform 0.1s ease;
-    }
-    .key:hover { background: #e2f1ea; }
-    .key:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #c5d9cf;
-    }
-    .key.wide {
-      grid-column: span 2;
-      font-family: 'Nunito', system-ui, sans-serif;
-      font-size: 1.7rem;
-      font-weight: 800;
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
     }
     .feedback {
-      min-height: 1.5rem;
-      margin: 0 0 0.9rem;
+      min-height: 1.4rem;
+      text-align: center;
       font-weight: 800;
-      font-size: 1rem;
+      margin: 0 0 0.85rem;
+      color: var(--muted);
     }
     .feedback.ok { color: var(--leaf-dark); }
-    .feedback.bad { color: #b53a2c; }
-    .progress-track {
-      height: 0.65rem;
-      border-radius: 999px;
-      background: #e5f2eb;
+    .feedback.bad { color: #b53b2d; }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.4rem;
+      margin-bottom: 0.9rem;
+    }
+    @media (min-width: 640px) {
+      .keyboard { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    }
+    .key {
+      border: none;
+      cursor: pointer;
+      min-height: 3.1rem;
+      border-radius: 0.8rem;
+      background: #eef9f3;
+      color: var(--ink);
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      box-shadow: 0 4px 0 #c5e4d5;
+      text-transform: uppercase;
+    }
+    .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #c5e4d5; }
+    .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
+
+    .travel-scene {
+      position: relative;
+      border-radius: 1.2rem;
       overflow: hidden;
+      min-height: 240px;
+      background: #c8e9f5 center/cover no-repeat;
       margin-bottom: 1rem;
     }
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--leaf), var(--sky));
-      border-radius: inherit;
-      transition: width 0.3s ease;
+    .walker {
+      position: absolute;
+      bottom: 18%;
+      left: 8%;
+      width: clamp(90px, 24vw, 130px);
+      filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
+      animation: walkAcross 1.8s ease-in-out forwards;
     }
-    .result-hero {
+    @keyframes walkAcross {
+      0% { left: 6%; transform: translateY(0); }
+      25% { transform: translateY(-8px); }
+      50% { left: 40%; transform: translateY(0); }
+      75% { transform: translateY(-8px); }
+      100% { left: 72%; transform: translateY(0); }
+    }
+    .travel-caption {
       text-align: center;
-      padding: 0.5rem 0 1rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.35rem;
+      margin: 0 0 0.4rem;
     }
+
+    .loot-card {
+      text-align: center;
+      padding: 0.5rem 0 0.25rem;
+    }
+    .loot-art {
+      width: min(220px, 70vw);
+      margin: 0 auto 0.75rem;
+      border-radius: 1.1rem;
+      border: 3px solid #efe0a8;
+      background: #fff9e8;
+      padding: 0.6rem;
+      box-shadow: 0 8px 0 #e6d28a;
+      animation: pop 0.45s ease;
+    }
+    .loot-art img {
+      width: 100%;
+      display: block;
+      border-radius: 0.7rem;
+    }
+    .loot-name {
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.5rem;
+      margin: 0 0 0.35rem;
+    }
+    .loot-effect {
+      color: var(--muted);
+      font-weight: 700;
+      margin: 0 0 1rem;
+    }
+    .equip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: center;
+      margin: 0 0 1rem;
+    }
+    .equip-chip {
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: #fff4d6;
+      color: #8a6508;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
     .result-score {
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(2.4rem, 8vw, 3.4rem);
-      margin: 0.2rem 0;
-      color: var(--leaf-dark);
-      animation: pop 0.5s ease;
+      font-size: clamp(2rem, 8vw, 2.8rem);
+      text-align: center;
+      margin: 0.4rem 0;
+    }
+    .result-message {
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+      margin: 0 0 1rem;
     }
     .result-list {
       list-style: none;
@@ -346,36 +495,18 @@
       display: flex;
       justify-content: space-between;
       gap: 0.75rem;
-      padding: 0.65rem 0.85rem;
+      padding: 0.65rem 0.8rem;
       border-radius: 0.9rem;
-      background: #f4fbf7;
+      background: #eef9f3;
       font-weight: 800;
+      font-size: 0.92rem;
     }
-    .result-list .miss { background: #fff1ee; }
-    .error {
-      color: #b53a2c;
-      font-weight: 800;
-      margin: 0.4rem 0 0;
-      min-height: 1.3rem;
-    }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-    }
-    @media (max-width: 480px) {
-      .slot {
-        width: 3.75rem;
-        height: 4.65rem;
-        font-size: 2.1rem;
-      }
-      .key { height: 4.9rem; font-size: 2rem; }
-      .key.wide { font-size: 1.5rem; }
+    .result-list li.miss { background: #ffe8e4; }
+    .result-hero {
+      display: block;
+      width: 120px;
+      margin: 0 auto 0.75rem;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.15));
     }
   </style>
 </head>
@@ -383,122 +514,136 @@
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo" aria-hidden="true">✏️</div>
+        <div class="logo" aria-hidden="true">⚔</div>
         <div>
-          <h1>Vocab Spell Cards</h1>
-          <p class="sub">Fill in the letters · Learn to spell</p>
+          <h1>拼字勇者</h1>
+          <p class="sub">Version Two · 一直線冒險</p>
         </div>
       </div>
     </header>
 
-    <section id="setup" class="screen active" aria-labelledby="setup-title">
-      <h2 id="setup-title" class="section-title">Enter words</h2>
-      <p class="hint">One practice word per line (multi-word phrases OK). Use <code>:</code> to add a hint, e.g. <code>Swimming Pool : 游泳池</code>.</p>
-      <label class="sr-only" for="word-input">Word list</label>
-      <textarea id="word-input" spellcheck="false" placeholder="Swimming Pool : 游泳池&#10;apple : 蘋果&#10;happy : 開心"></textarea>
-      <div class="sample-row" aria-label="Sample word lists">
-        <button type="button" class="chip" data-sample="animals">Animals</button>
-        <button type="button" class="chip" data-sample="school">School</button>
-        <button type="button" class="chip" data-sample="feelings">Feelings</button>
-        <button type="button" class="chip" data-sample="dictation1">1st dictation</button>
+    <section id="title" class="screen active">
+      <div class="hero-scene" id="title-scene">
+        <img class="title-hero" src="assets/hero.png" alt="勇者">
+        <div class="scene-copy">
+          <h2>拼字勇者</h2>
+          <p>向前走、遇生字怪物、串啱就攻擊！打贏可以攞裝備，中間仲有 Boss。</p>
+        </div>
       </div>
-      <div class="actions">
-        <button type="button" class="btn" id="start-btn">Start practice</button>
-        <button type="button" class="btn ghost" id="clear-btn">Clear</button>
+      <p class="hint">今次關卡用上學期默書生字。串啱扣怪物 HP，串錯扣勇者 HP。</p>
+      <div class="actions center">
+        <button type="button" class="btn" id="start-btn">開始冒險</button>
       </div>
-      <p class="error" id="setup-error" role="status"></p>
     </section>
 
-    <section id="play" class="screen" aria-labelledby="play-title">
+    <section id="travel" class="screen">
+      <p class="travel-caption" id="travel-caption">勇者向前行…</p>
+      <div class="travel-scene" id="travel-scene">
+        <img class="walker" id="walker" src="assets/hero.png" alt="勇者向前行">
+      </div>
+      <p class="hint" id="travel-hint" style="text-align:center;margin-bottom:0;">前面好像有怪物…</p>
+    </section>
+
+    <section id="battle" class="screen">
       <div class="meta-bar">
-        <span class="pill" id="progress-pill">1 / 1</span>
-        <span class="pill sky" id="score-pill">★ 0</span>
-        <span class="pill sun" id="hint-pill">Hint on</span>
+        <span class="pill" id="progress-pill">1 / 11</span>
+        <span class="pill sky" id="atk-pill">攻擊 1</span>
+        <span class="pill sky" id="def-pill">防禦 0</span>
+        <span class="pill sun" id="buff-pill">無特殊效果</span>
       </div>
-      <div class="progress-track" aria-hidden="true">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-      <div class="play-card">
-        <h2 id="play-title" class="section-title">Spell this word</h2>
-        <p class="meaning" id="word-meaning">—</p>
-        <div class="actions speak-row">
-          <button type="button" class="btn secondary" id="speak-btn" aria-label="Speak the word">🔊 Speak</button>
-          <button type="button" class="btn secondary" id="letter-hint-btn" aria-label="Reveal one letter">💡 Hint</button>
+      <div class="progress"><span id="progress-fill"></span></div>
+
+      <div class="arena">
+        <div class="fighter" id="hero-panel">
+          <img src="assets/hero.png" alt="勇者">
+          <h3>勇者</h3>
+          <p class="tag" id="hero-gear-tag">未裝備</p>
+          <div class="hp-row">
+            <span>HP</span>
+            <div class="hp-bar"><i id="hero-hp-fill"></i></div>
+            <span id="hero-hp-text">10/10</span>
+          </div>
         </div>
-        <div class="slots" id="slots" aria-live="polite"></div>
-        <p class="feedback" id="feedback" role="status"></p>
-        <div class="keyboard" id="keyboard" aria-label="Letter keyboard"></div>
-        <div class="actions">
-          <button type="button" class="btn secondary" id="check-btn">Check</button>
-          <button type="button" class="btn ghost" id="reveal-btn">Show answer</button>
-          <button type="button" class="btn ghost" id="restart-btn">Restart</button>
-          <button type="button" class="btn ghost" id="quit-btn">Quit</button>
+        <div class="fighter" id="monster-panel">
+          <img id="monster-img" src="assets/monster.png" alt="生字怪物">
+          <h3 id="monster-name">生字怪物</h3>
+          <p class="tag" id="monster-tag">普通怪</p>
+          <div class="hp-row">
+            <span>HP</span>
+            <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
+            <span id="monster-hp-text">2/2</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="meaning" id="word-meaning">美術室<small>聽英文，填晒空白格再攻擊</small></p>
+      <div class="slots" id="slots" aria-live="polite"></div>
+      <p class="feedback" id="feedback"></p>
+      <div class="keyboard" id="keyboard"></div>
+      <div class="actions center speak-row">
+        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
+        <button type="button" class="btn sun" id="letter-hint-btn">提示一個字母</button>
+      </div>
+      <div class="actions center">
+        <button type="button" class="btn" id="check-btn">攻擊！</button>
+        <button type="button" class="btn ghost" id="quit-btn">結束冒險</button>
+      </div>
+    </section>
+
+    <section id="loot" class="screen">
+      <div class="loot-card">
+        <p class="section-title">打贏啦！獲得裝備</p>
+        <div class="loot-art">
+          <img src="assets/equipment.png" alt="裝備">
+        </div>
+        <p class="loot-name" id="loot-name">木劍</p>
+        <p class="loot-effect" id="loot-effect">攻擊 +1</p>
+        <div class="equip-list" id="equip-list"></div>
+        <div class="actions center">
+          <button type="button" class="btn" id="loot-continue-btn">繼續前進</button>
         </div>
       </div>
     </section>
 
-    <section id="result" class="screen" aria-labelledby="result-title">
-      <div class="result-hero">
-        <h2 id="result-title" class="section-title">Practice complete!</h2>
-        <p class="hint" id="result-message">Well done!</p>
-        <p class="result-score" id="result-score">0 / 0</p>
-      </div>
+    <section id="result" class="screen">
+      <img class="result-hero" src="assets/hero.png" alt="勇者">
+      <p class="section-title" style="text-align:center;" id="result-title">冒險結束</p>
+      <p class="result-score" id="result-score">0 / 11</p>
+      <p class="result-message" id="result-message"></p>
       <ul class="result-list" id="result-list"></ul>
-      <div class="actions">
-        <button type="button" class="btn" id="again-btn">Play again</button>
-        <button type="button" class="btn ghost" id="restart-result-btn">Restart</button>
+      <div class="actions center">
+        <button type="button" class="btn" id="again-btn">再挑戰一次</button>
+        <button type="button" class="btn ghost" id="home-btn">返回標題</button>
       </div>
     </section>
   </div>
 
   <script>
-    const SAMPLES = {
-      animals: [
-        'cat : 貓',
-        'dog : 狗',
-        'bird : 鳥',
-        'fish : 魚',
-        'rabbit : 兔子',
-        'polar bear : 北極熊',
-        'tiger : 老虎',
-        'monkey : 猴子'
-      ].join('\n'),
-      school: [
-        'book : 書',
-        'pencil : 鉛筆',
-        'teacher : 老師',
-        'student : 學生',
-        'swimming pool : 游泳池',
-        'classroom : 課室',
-        'homework : 功課',
-        'best friend : 最好的朋友'
-      ].join('\n'),
-      feelings: [
-        'happy : 開心',
-        'sad : 傷心',
-        'angry : 生氣',
-        'tired : 疲倦',
-        'brave : 勇敢',
-        'kind : 善良',
-        'excited : 興奮',
-        'calm : 平靜'
-      ].join('\n'),
-      dictation1: [
-        'art room : 美術室',
-        'first floor : 一樓',
-        'draw : 繪畫',
-        'paint : 繪畫、油漆',
-        'puppets : 木偶、手偶',
-        'library : 圖書館',
-        'second floor : 二樓',
-        'borrow : 借入、借用',
-        'swimming pool : 游泳池',
-        'pond : 池塘',
-        'students : 學生'
-      ].join('\n')
-    };
+    const ADVENTURE_WORDS = [
+      'art room : 美術室',
+      'first floor : 一樓',
+      'draw : 繪畫',
+      'paint : 繪畫、油漆',
+      'puppets : 木偶、手偶',
+      'library : 圖書館',
+      'second floor : 二樓',
+      'borrow : 借入、借用',
+      'swimming pool : 游泳池',
+      'pond : 池塘',
+      'students : 學生'
+    ].join('\n');
 
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+    const EQUIPMENT = [
+      { id: 'wood_sword', name: '木劍', effect: '攻擊 +1', kind: 'atk', value: 1 },
+      { id: 'iron_sword', name: '鐵劍', effect: '攻擊 +2', kind: 'atk', value: 2 },
+      { id: 'cloth_armor', name: '布甲', effect: '防禦 +1', kind: 'def', value: 1 },
+      { id: 'wood_shield', name: '木盾', effect: '防禦 +1', kind: 'def', value: 1 },
+      { id: 'herb', name: '回復藥草', effect: '即時回復 3 HP', kind: 'heal', value: 3 },
+      { id: 'lucky_feather', name: '幸運羽', effect: '下一擊雙倍傷害', kind: 'double', value: 1 },
+      { id: 'hint_amulet', name: '提示護符', effect: '提示字母唔減攻擊', kind: 'hintSafe', value: 1 }
+    ];
 
     const Sfx = (() => {
       let ctx = null;
@@ -528,7 +673,6 @@
 
       function schedule(name, audio) {
         const t = audio.currentTime + 0.01;
-
         if (name === 'tap') {
           tone(audio, 720, t, 0.08, 'triangle', 0.18);
         } else if (name === 'backspace') {
@@ -560,45 +704,57 @@
         } else if (name === 'hint') {
           tone(audio, 660, t, 0.1, 'triangle', 0.16);
           tone(audio, 880, t + 0.08, 0.12, 'sine', 0.14);
+        } else if (name === 'loot') {
+          tone(audio, 587.33, t, 0.12, 'triangle', 0.2);
+          tone(audio, 783.99, t + 0.12, 0.14, 'triangle', 0.2);
+          tone(audio, 987.77, t + 0.24, 0.22, 'sine', 0.22);
+        } else if (name === 'gameover') {
+          tone(audio, 330, t, 0.2, 'sine', 0.16);
+          tone(audio, 247, t + 0.18, 0.28, 'sine', 0.14);
+          tone(audio, 196, t + 0.4, 0.35, 'triangle', 0.12);
         }
       }
 
       function play(name) {
         const audio = ensure();
         if (!audio) return;
-
         const run = () => {
-          try {
-            schedule(name, audio);
-          } catch (err) {
-            console.warn('SFX failed:', err);
-          }
+          try { schedule(name, audio); } catch (err) { console.warn('SFX failed:', err); }
         };
-
-        // Browsers keep AudioContext suspended until a user gesture; resume() is async.
-        // Scheduling tones before resume completes is why SFX often sounded broken.
-        if (audio.state === 'running') {
-          run();
-        } else {
-          audio.resume().then(run).catch(() => {});
-        }
+        if (audio.state === 'running') run();
+        else audio.resume().then(run).catch(() => {});
       }
 
       return { play, ensure };
     })();
 
     const els = {
-      setup: document.getElementById('setup'),
-      play: document.getElementById('play'),
+      title: document.getElementById('title'),
+      travel: document.getElementById('travel'),
+      battle: document.getElementById('battle'),
+      loot: document.getElementById('loot'),
       result: document.getElementById('result'),
-      input: document.getElementById('word-input'),
-      setupError: document.getElementById('setup-error'),
+      titleScene: document.getElementById('title-scene'),
+      travelScene: document.getElementById('travel-scene'),
+      travelCaption: document.getElementById('travel-caption'),
+      travelHint: document.getElementById('travel-hint'),
+      walker: document.getElementById('walker'),
       startBtn: document.getElementById('start-btn'),
-      clearBtn: document.getElementById('clear-btn'),
       progressPill: document.getElementById('progress-pill'),
-      scorePill: document.getElementById('score-pill'),
-      hintPill: document.getElementById('hint-pill'),
+      atkPill: document.getElementById('atk-pill'),
+      defPill: document.getElementById('def-pill'),
+      buffPill: document.getElementById('buff-pill'),
       progressFill: document.getElementById('progress-fill'),
+      heroPanel: document.getElementById('hero-panel'),
+      monsterPanel: document.getElementById('monster-panel'),
+      heroHpFill: document.getElementById('hero-hp-fill'),
+      heroHpText: document.getElementById('hero-hp-text'),
+      heroGearTag: document.getElementById('hero-gear-tag'),
+      monsterImg: document.getElementById('monster-img'),
+      monsterName: document.getElementById('monster-name'),
+      monsterTag: document.getElementById('monster-tag'),
+      monsterHpFill: document.getElementById('monster-hp-fill'),
+      monsterHpText: document.getElementById('monster-hp-text'),
       meaning: document.getElementById('word-meaning'),
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
@@ -606,30 +762,36 @@
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
       checkBtn: document.getElementById('check-btn'),
-      revealBtn: document.getElementById('reveal-btn'),
-      restartBtn: document.getElementById('restart-btn'),
       quitBtn: document.getElementById('quit-btn'),
+      lootName: document.getElementById('loot-name'),
+      lootEffect: document.getElementById('loot-effect'),
+      equipList: document.getElementById('equip-list'),
+      lootContinueBtn: document.getElementById('loot-continue-btn'),
+      resultTitle: document.getElementById('result-title'),
       resultScore: document.getElementById('result-score'),
       resultMessage: document.getElementById('result-message'),
       resultList: document.getElementById('result-list'),
       againBtn: document.getElementById('again-btn'),
-      restartResultBtn: document.getElementById('restart-result-btn')
+      homeBtn: document.getElementById('home-btn')
     };
 
     const state = {
       words: [],
       index: 0,
-      score: 0,
-      answers: [],
       blanks: [],
       cursor: 0,
-      revealed: false,
       locked: false,
-      usedHint: false
+      usedHint: false,
+      pendingLoot: null,
+      travelTimer: null,
+      answers: [],
+      wins: 0,
+      hero: null,
+      monster: null
     };
 
     function showScreen(name) {
-      [els.setup, els.play, els.result].forEach((screen) => {
+      [els.title, els.travel, els.battle, els.loot, els.result].forEach((screen) => {
         screen.classList.toggle('active', screen.id === name);
       });
     }
@@ -657,15 +819,6 @@
         .filter(Boolean);
     }
 
-    function uniqueWords(list) {
-      const seen = new Set();
-      return list.filter((item) => {
-        if (seen.has(item.word)) return false;
-        seen.add(item.word);
-        return true;
-      });
-    }
-
     function shuffle(arr) {
       const copy = arr.slice();
       for (let i = copy.length - 1; i > 0; i -= 1) {
@@ -685,26 +838,86 @@
       return new Set(shuffle(candidates).slice(0, count));
     }
 
+    function createHero() {
+      return {
+        hp: 10,
+        maxHp: 10,
+        atk: 1,
+        def: 0,
+        equipment: [],
+        doubleNext: false,
+        hintSafe: false
+      };
+    }
+
+    function bossIndex(total) {
+      return Math.floor(total / 2);
+    }
+
     function currentWord() {
       return state.words[state.index];
     }
 
-    function updateMeta() {
+    function isBossEncounter() {
+      return state.index === bossIndex(state.words.length);
+    }
+
+    function createMonster() {
+      const item = currentWord();
+      const boss = isBossEncounter();
+      return {
+        name: boss ? `${item.meaning || item.word} Boss` : `${item.meaning || item.word}怪`,
+        meaning: item.meaning || item.word,
+        word: item.word,
+        hp: boss ? 5 : 2,
+        maxHp: boss ? 5 : 2,
+        atk: boss ? 2 : 1,
+        boss
+      };
+    }
+
+    function flash(el, cls) {
+      el.classList.remove(cls);
+      void el.offsetWidth;
+      el.classList.add(cls);
+      setTimeout(() => el.classList.remove(cls), 420);
+    }
+
+    function updateHud() {
       const total = state.words.length;
       const current = Math.min(state.index + 1, total);
+      const hero = state.hero;
+      const monster = state.monster;
+
       els.progressPill.textContent = `${current} / ${total}`;
-      els.scorePill.textContent = `★ ${state.score}`;
-      if (state.usedHint) {
-        els.hintPill.textContent = 'Hint used · no points';
-        els.hintPill.classList.add('sun');
-      } else {
-        els.hintPill.textContent = currentWord()?.meaning ? 'Meaning hint on' : 'No meaning hint';
-      }
+      els.atkPill.textContent = `攻擊 ${hero.atk}`;
+      els.defPill.textContent = `防禦 ${hero.def}`;
+
+      const buffs = [];
+      if (hero.doubleNext) buffs.push('下一擊雙倍');
+      if (hero.hintSafe) buffs.push('提示護符');
+      els.buffPill.textContent = buffs.length ? buffs.join(' · ') : '無特殊效果';
+
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
+      els.heroHpFill.style.width = `${Math.max(0, (hero.hp / hero.maxHp) * 100)}%`;
+      els.heroHpText.textContent = `${Math.max(0, hero.hp)}/${hero.maxHp}`;
+      els.heroGearTag.textContent = hero.equipment.length
+        ? hero.equipment.map((e) => e.name).slice(-3).join(' · ')
+        : '未裝備';
+
+      if (monster) {
+        els.monsterHpFill.style.width = `${Math.max(0, (monster.hp / monster.maxHp) * 100)}%`;
+        els.monsterHpText.textContent = `${Math.max(0, monster.hp)}/${monster.maxHp}`;
+        els.monsterName.textContent = monster.name;
+        els.monsterTag.textContent = monster.boss ? 'Boss 戰' : '普通怪';
+        els.monsterImg.src = monster.boss ? 'assets/boss.png' : 'assets/monster.png';
+        els.monsterPanel.classList.toggle('boss', monster.boss);
+      }
     }
 
     function renderSlots() {
       const item = currentWord();
+      if (!item) return;
       const blankSet = new Set(state.blanks.map((b) => b.index));
       els.slots.innerHTML = '';
 
@@ -802,23 +1015,24 @@
         }
       }
 
-      const letter = item.word[target.index];
-      target.value = letter.toLowerCase();
+      target.value = item.word[target.index].toLowerCase();
       state.usedHint = true;
       const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
       state.cursor = next === -1 ? firstEmptyCursor() : next;
 
-      els.feedback.textContent = 'Letter filled in (no points for this word)';
+      els.feedback.textContent = state.hero.hintSafe
+        ? '已填一個字母（護符生效，攻擊力不變）'
+        : '已填一個字母（今擊攻擊力減半）';
       els.feedback.className = 'feedback';
       Sfx.play('hint');
-      updateMeta();
+      updateHud();
       renderSlots();
     }
 
     function speakCurrentWord() {
       const item = currentWord();
       if (!item || !window.speechSynthesis) {
-        els.feedback.textContent = 'Speech is not supported in this browser.';
+        els.feedback.textContent = '呢個瀏覽器唔支援朗讀。';
         els.feedback.className = 'feedback bad';
         return;
       }
@@ -829,14 +1043,8 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    function loadCard() {
+    function preparePuzzle() {
       const item = currentWord();
-      if (!item) {
-        finishGame();
-        return;
-      }
-
-      state.revealed = false;
       state.locked = false;
       state.usedHint = false;
       const blankIndexes = pickBlankIndexes(item.word);
@@ -844,17 +1052,14 @@
         .sort((a, b) => a - b)
         .map((index) => ({ index, value: '' }));
       state.cursor = 0;
-
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      els.meaning.textContent = item.meaning || '(No meaning hint)';
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
       els.checkBtn.disabled = false;
-      els.revealBtn.disabled = false;
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
-      updateMeta();
+      els.meaning.innerHTML = `${item.meaning || '（無中文提示）'}<small>聽英文，填晒空白格再攻擊</small>`;
       renderSlots();
+      updateHud();
     }
 
     function guessWord() {
@@ -876,12 +1081,143 @@
       });
     }
 
+    function calcAttackDamage() {
+      let dmg = state.hero.atk;
+      if (state.usedHint && !state.hero.hintSafe) {
+        dmg = Math.max(1, Math.floor(dmg / 2));
+      }
+      if (state.hero.doubleNext) {
+        dmg *= 2;
+        state.hero.doubleNext = false;
+      }
+      return dmg;
+    }
+
+    function pickLoot() {
+      const used = new Set(state.hero.equipment.map((e) => e.id));
+      const pool = EQUIPMENT.filter((e) => {
+        if (e.kind === 'heal' || e.kind === 'double') return true;
+        return !used.has(e.id);
+      });
+      const source = pool.length ? pool : EQUIPMENT;
+      if (isBossEncounter()) {
+        const strong = source.find((e) => e.id === 'iron_sword') || source[0];
+        return { ...strong };
+      }
+      return { ...source[Math.floor(Math.random() * source.length)] };
+    }
+
+    function applyLoot(item) {
+      state.hero.equipment.push(item);
+      if (item.kind === 'atk') state.hero.atk += item.value;
+      if (item.kind === 'def') state.hero.def += item.value;
+      if (item.kind === 'heal') {
+        state.hero.hp = Math.min(state.hero.maxHp, state.hero.hp + item.value);
+      }
+      if (item.kind === 'double') state.hero.doubleNext = true;
+      if (item.kind === 'hintSafe') state.hero.hintSafe = true;
+    }
+
+    function showLoot(item) {
+      state.pendingLoot = item;
+      applyLoot(item);
+      els.lootName.textContent = item.name;
+      els.lootEffect.textContent = item.effect;
+      els.equipList.innerHTML = state.hero.equipment
+        .map((e) => `<span class="equip-chip">${e.name}</span>`)
+        .join('');
+      Sfx.play('loot');
+      showScreen('loot');
+      updateHud();
+    }
+
+    function finishAdventure(won) {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (state.travelTimer) {
+        clearTimeout(state.travelTimer);
+        state.travelTimer = null;
+      }
+      const total = state.words.length;
+      els.progressFill.style.width = won ? '100%' : `${(state.index / Math.max(total, 1)) * 100}%`;
+      els.resultTitle.textContent = won ? '通關成功！' : '勇者倒下了…';
+      els.resultScore.textContent = `${state.wins} / ${total}`;
+      if (won) {
+        els.resultMessage.textContent = state.wins === total
+          ? '完美！全部生字怪物都打贏啦！'
+          : '做得好！繼續練習會更強。';
+        Sfx.play('finish');
+      } else {
+        els.resultMessage.textContent = '下次記得用裝備同提示護符幫手啦！';
+        Sfx.play('gameover');
+      }
+
+      els.resultList.innerHTML = state.answers.map((a) => {
+        const label = a.meaning ? `${a.word} · ${a.meaning}` : a.word;
+        const detail = a.ok
+          ? (a.boss ? '✓ Boss 擊敗' : '✓ 擊敗')
+          : (a.reason || '✗ 未擊敗');
+        return `<li class="${a.ok ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
+      }).join('');
+
+      showScreen('result');
+    }
+
+    function advanceAfterVictory() {
+      state.answers.push({
+        word: state.monster.word,
+        meaning: state.monster.meaning,
+        ok: true,
+        boss: state.monster.boss
+      });
+      state.wins += 1;
+      const loot = pickLoot();
+      showLoot(loot);
+    }
+
+    function goToNextEncounter() {
+      state.index += 1;
+      if (state.index >= state.words.length) {
+        finishAdventure(true);
+        return;
+      }
+      beginTravel();
+    }
+
+    function beginBattle() {
+      state.monster = createMonster();
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      showScreen('battle');
+      preparePuzzle();
+      if (state.monster.boss) {
+        els.feedback.textContent = 'Boss 出現！串啱先可以打贏佢！';
+        els.feedback.className = 'feedback';
+      }
+    }
+
+    function beginTravel() {
+      const next = currentWord();
+      const boss = isBossEncounter();
+      els.travelCaption.textContent = '勇者向前行…';
+      els.travelHint.textContent = boss
+        ? `前方有強大嘅 ${next.meaning || next.word} Boss！`
+        : `前面出現咗「${next.meaning || next.word}」怪物…`;
+      els.walker.style.animation = 'none';
+      void els.walker.offsetWidth;
+      els.walker.style.animation = '';
+      showScreen('travel');
+      if (state.travelTimer) clearTimeout(state.travelTimer);
+      state.travelTimer = setTimeout(() => {
+        state.travelTimer = null;
+        beginBattle();
+      }, 1900);
+    }
+
     function checkAnswer() {
       if (state.locked) return;
       const item = currentWord();
       const incomplete = state.blanks.some((b) => !b.value);
       if (incomplete) {
-        els.feedback.textContent = 'Fill in all the blanks before checking.';
+        els.feedback.textContent = '請填晒所有空白格先攻擊。';
         els.feedback.className = 'feedback bad';
         Sfx.play('warn');
         return;
@@ -891,165 +1227,103 @@
       const ok = guess === item.word;
       state.locked = true;
       els.checkBtn.disabled = true;
-      els.revealBtn.disabled = true;
       els.letterHintBtn.disabled = true;
       markSlots(ok);
 
-      if (ok && !state.usedHint) {
-        state.score += 1;
-        els.feedback.textContent = 'Correct! Great job!';
+      if (ok) {
+        const dmg = calcAttackDamage();
+        state.monster.hp = Math.max(0, state.monster.hp - dmg);
+        flash(els.heroPanel, 'attack');
+        flash(els.monsterPanel, 'hit');
+        els.feedback.textContent = `串啱！造成 ${dmg} 點傷害！`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
-        state.answers.push({ word: item.word, meaning: item.meaning, ok: true, usedHint: false, guess });
-      } else if (ok && state.usedHint) {
-        els.feedback.textContent = 'Correct, but a hint was used — no points';
-        els.feedback.className = 'feedback';
-        Sfx.play('reveal');
-        state.answers.push({ word: item.word, meaning: item.meaning, ok: true, usedHint: true, guess });
-      } else {
-        els.feedback.textContent = `Not quite — the answer is ${item.word.toUpperCase()}`;
-        els.feedback.className = 'feedback bad';
-        Sfx.play('wrong');
-        state.answers.push({
-          word: item.word,
-          meaning: item.meaning,
-          ok: false,
-          usedHint: state.usedHint,
-          guess
-        });
+        updateHud();
+
+        setTimeout(() => {
+          if (state.monster.hp <= 0) {
+            advanceAfterVictory();
+          } else {
+            els.feedback.textContent = '怪物仲未倒下，再串一次！';
+            els.feedback.className = 'feedback';
+            preparePuzzle();
+          }
+        }, 850);
+        return;
       }
 
-      updateMeta();
+      const damage = Math.max(1, state.monster.atk - state.hero.def);
+      state.hero.hp = Math.max(0, state.hero.hp - damage);
+      flash(els.monsterPanel, 'attack');
+      flash(els.heroPanel, 'hit');
+      els.feedback.textContent = `串錯咗！勇者受咗 ${damage} 點傷害。再試啦！`;
+      els.feedback.className = 'feedback bad';
+      Sfx.play('wrong');
+      updateHud();
+
       setTimeout(() => {
-        state.index += 1;
-        if (state.index >= state.words.length) finishGame();
-        else loadCard();
-      }, ok ? 750 : 1100);
+        if (state.hero.hp <= 0) {
+          state.answers.push({
+            word: item.word,
+            meaning: item.meaning,
+            ok: false,
+            boss: state.monster.boss,
+            reason: '✗ 勇者倒下'
+          });
+          finishAdventure(false);
+          return;
+        }
+        preparePuzzle();
+      }, 900);
     }
 
-    function revealAnswer() {
-      if (state.locked) return;
-      const item = currentWord();
-      state.revealed = true;
-      state.locked = true;
-      els.checkBtn.disabled = true;
-      els.revealBtn.disabled = true;
-      els.letterHintBtn.disabled = true;
-      state.blanks.forEach((blank) => {
-        blank.value = item.word[blank.index];
-      });
-      markSlots(true);
-      els.feedback.textContent = `The answer is ${item.word.toUpperCase()}`;
-      els.feedback.className = 'feedback';
-      Sfx.play('reveal');
-      state.answers.push({
-        word: item.word,
-        meaning: item.meaning,
-        ok: false,
-        usedHint: true,
-        guess: '(Answer shown)'
-      });
-      updateMeta();
-      setTimeout(() => {
-        state.index += 1;
-        if (state.index >= state.words.length) finishGame();
-        else loadCard();
-      }, 1000);
-    }
-
-    function finishGame() {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      const total = state.words.length;
-      const score = state.score;
-      els.progressFill.style.width = '100%';
-      els.resultScore.textContent = `${score} / ${total}`;
-      if (score === total) els.resultMessage.textContent = 'Perfect! Spelling champion!';
-      else if (score >= Math.ceil(total * 0.7)) els.resultMessage.textContent = 'Nice work — keep it up!';
-      else els.resultMessage.textContent = 'Another round will help you remember.';
-
-      els.resultList.innerHTML = state.answers.map((a) => {
-        const label = a.meaning ? `${a.word} · ${a.meaning}` : a.word;
-        let detail;
-        if (a.ok && a.usedHint) detail = '✓ Correct (hint used)';
-        else if (a.ok) detail = '✓ Correct';
-        else detail = `✗ ${a.guess}`;
-        return `<li class="${a.ok && !a.usedHint ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
-      }).join('');
-
-      Sfx.play('finish');
-      showScreen('result');
-    }
-
-    function restartToSetup() {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    function startAdventure() {
+      state.words = parseWords(ADVENTURE_WORDS);
       state.index = 0;
-      state.score = 0;
+      state.wins = 0;
       state.answers = [];
       state.blanks = [];
       state.cursor = 0;
       state.locked = false;
-      state.revealed = false;
       state.usedHint = false;
-      els.setupError.textContent = '';
-      Sfx.play('click');
-      showScreen('setup');
-    }
-
-    function startGame() {
-      const parsed = uniqueWords(parseWords(els.input.value));
-      if (!parsed.length) {
-        els.setupError.textContent = 'Please enter at least 1 valid word, e.g. Swimming Pool : 游泳池';
-        Sfx.play('warn');
-        return;
-      }
-      els.setupError.textContent = '';
-      state.words = shuffle(parsed);
-      state.index = 0;
-      state.score = 0;
-      state.answers = [];
+      state.pendingLoot = null;
+      state.hero = createHero();
+      state.monster = null;
       buildKeyboard();
       Sfx.play('start');
-      showScreen('play');
-      loadCard();
+      beginTravel();
     }
 
-    document.querySelectorAll('[data-sample]').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        els.input.value = SAMPLES[chip.dataset.sample] || '';
-        els.setupError.textContent = '';
-        Sfx.play('click');
-      });
-    });
-
-    els.startBtn.addEventListener('click', startGame);
-    els.clearBtn.addEventListener('click', () => {
-      els.input.value = '';
-      els.setupError.textContent = '';
-      els.input.focus();
+    function goHome() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (state.travelTimer) {
+        clearTimeout(state.travelTimer);
+        state.travelTimer = null;
+      }
       Sfx.play('click');
-    });
+      showScreen('title');
+    }
+
+    els.titleScene.style.backgroundImage = "url('assets/scene.png')";
+    els.travelScene.style.backgroundImage = "url('assets/scene.png')";
+
+    els.startBtn.addEventListener('click', startAdventure);
     els.speakBtn.addEventListener('click', () => {
       Sfx.ensure();
       speakCurrentWord();
     });
     els.letterHintBtn.addEventListener('click', useLetterHint);
     els.checkBtn.addEventListener('click', checkAnswer);
-    els.revealBtn.addEventListener('click', revealAnswer);
-    els.restartBtn.addEventListener('click', restartToSetup);
-    els.quitBtn.addEventListener('click', finishGame);
-    els.againBtn.addEventListener('click', () => {
-      state.words = shuffle(state.words);
-      state.index = 0;
-      state.score = 0;
-      state.answers = [];
-      Sfx.play('start');
-      showScreen('play');
-      loadCard();
+    els.quitBtn.addEventListener('click', () => finishAdventure(false));
+    els.lootContinueBtn.addEventListener('click', () => {
+      Sfx.play('click');
+      goToNextEncounter();
     });
-    els.restartResultBtn.addEventListener('click', restartToSetup);
+    els.againBtn.addEventListener('click', startAdventure);
+    els.homeBtn.addEventListener('click', goHome);
 
     document.addEventListener('keydown', (event) => {
-      if (!els.play.classList.contains('active') || state.locked) return;
+      if (!els.battle.classList.contains('active') || state.locked) return;
       if (/^[a-zA-Z]$/.test(event.key)) {
         event.preventDefault();
         typeLetter(event.key);
