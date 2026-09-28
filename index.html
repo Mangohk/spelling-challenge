@@ -533,10 +533,10 @@
         <img class="title-hero" src="assets/hero.png" alt="勇者">
         <div class="scene-copy">
           <h2>拼字勇者</h2>
-          <p>向前走、遇生字怪物、串啱就攻擊！打贏可以攞裝備，中間仲有 Boss。</p>
+          <p>向前走、遇二十隻怪物、用拼字攻擊！打贏可以攞裝備，中間同最後有 Boss。</p>
         </div>
       </div>
-      <p class="hint">今次關卡用上學期默書生字。串啱扣怪物 HP，串錯扣勇者 HP。</p>
+      <p class="hint">每次攻擊會抽出唔同生字嚟串。串啱扣怪物 HP，串錯扣勇者 HP。</p>
       <div class="actions center">
         <button type="button" class="btn" id="start-btn">開始冒險</button>
       </div>
@@ -552,7 +552,7 @@
 
     <section id="battle" class="screen">
       <div class="meta-bar">
-        <span class="pill" id="progress-pill">1 / 11</span>
+        <span class="pill" id="progress-pill">1 / 20</span>
         <span class="pill sky" id="atk-pill">攻擊 1</span>
         <span class="pill sky" id="def-pill">防禦 0</span>
         <span class="pill sun" id="buff-pill">無特殊效果</span>
@@ -614,7 +614,7 @@
     <section id="result" class="screen">
       <img class="result-hero" src="assets/hero.png" alt="勇者">
       <p class="section-title" style="text-align:center;" id="result-title">冒險結束</p>
-      <p class="result-score" id="result-score">0 / 11</p>
+      <p class="result-score" id="result-score">0 / 20</p>
       <p class="result-message" id="result-message"></p>
       <ul class="result-list" id="result-list"></ul>
       <div class="actions center">
@@ -625,7 +625,7 @@
   </div>
 
   <script>
-    const ADVENTURE_WORDS = [
+    const SPELL_WORDS = [
       'art room : 美術室',
       'first floor : 一樓',
       'draw : 繪畫',
@@ -638,6 +638,29 @@
       'pond : 池塘',
       'students : 學生'
     ].join('\n');
+
+    const MONSTERS = [
+      { id: 'm01', name: '綠史萊姆', img: 'assets/monsters/m01-slime.png', hp: 2, atk: 1, boss: false },
+      { id: 'm02', name: '火焰蝙蝠', img: 'assets/monsters/m02-firebat.png', hp: 2, atk: 1, boss: false },
+      { id: 'm03', name: '石蘑菇', img: 'assets/monsters/m03-rockshroom.png', hp: 2, atk: 1, boss: false },
+      { id: 'm04', name: '刺刺刺蝟', img: 'assets/monsters/m04-spikehog.png', hp: 2, atk: 1, boss: false },
+      { id: 'm05', name: '影子貓', img: 'assets/monsters/m05-shadowcat.png', hp: 3, atk: 1, boss: false },
+      { id: 'm06', name: '雷電蛙', img: 'assets/monsters/m06-thunderfrog.png', hp: 3, atk: 1, boss: false },
+      { id: 'm07', name: '棉花幽靈', img: 'assets/monsters/m07-cottonghost.png', hp: 3, atk: 1, boss: false },
+      { id: 'm08', name: '鋼甲甲蟲', img: 'assets/monsters/m08-steelbeetle.png', hp: 3, atk: 1, boss: false },
+      { id: 'm09', name: '冰晶狐', img: 'assets/monsters/m09-icefox.png', hp: 3, atk: 1, boss: false },
+      { id: 'm10', name: '書卷巨龍', img: 'assets/monsters/m10-bookdragon.png', hp: 5, atk: 2, boss: true },
+      { id: 'm11', name: '沙塵蝎', img: 'assets/monsters/m11-sandscorpion.png', hp: 3, atk: 1, boss: false },
+      { id: 'm12', name: '彩虹水母', img: 'assets/monsters/m12-rainbowjelly.png', hp: 3, atk: 1, boss: false },
+      { id: 'm13', name: '木乃伊鴨', img: 'assets/monsters/m13-mummyduck.png', hp: 3, atk: 1, boss: false },
+      { id: 'm14', name: '熔岩豬', img: 'assets/monsters/m14-lavapig.png', hp: 4, atk: 1, boss: false },
+      { id: 'm15', name: '星光貓頭鷹', img: 'assets/monsters/m15-starowl.png', hp: 4, atk: 1, boss: false },
+      { id: 'm16', name: '荊棘狼', img: 'assets/monsters/m16-briarwolf.png', hp: 4, atk: 2, boss: false },
+      { id: 'm17', name: '泡泡章魚', img: 'assets/monsters/m17-bubbleocto.png', hp: 4, atk: 1, boss: false },
+      { id: 'm18', name: '水晶螃蟹', img: 'assets/monsters/m18-crystalcrab.png', hp: 4, atk: 2, boss: false },
+      { id: 'm19', name: '風暴鷹', img: 'assets/monsters/m19-stormeagle.png', hp: 4, atk: 2, boss: false },
+      { id: 'm20', name: '暗影帝王', img: 'assets/monsters/m20-shadowking.png', hp: 6, atk: 2, boss: true }
+    ];
 
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
@@ -783,6 +806,8 @@
 
     const state = {
       words: [],
+      wordDeck: [],
+      attackWord: null,
       index: 0,
       blanks: [],
       cursor: 0,
@@ -791,6 +816,7 @@
       pendingLoot: null,
       travelTimer: null,
       answers: [],
+      spellLog: [],
       wins: 0,
       hero: null,
       monster: null
@@ -856,29 +882,49 @@
       };
     }
 
-    function bossIndex(total) {
-      return Math.floor(total / 2);
-    }
-
-    function currentWord() {
-      return state.words[state.index];
+    function currentMonsterDef() {
+      return MONSTERS[state.index];
     }
 
     function isBossEncounter() {
-      return state.index === bossIndex(state.words.length);
+      return !!currentMonsterDef()?.boss;
+    }
+
+    function currentWord() {
+      return state.attackWord;
+    }
+
+    function refillWordDeck() {
+      state.wordDeck = shuffle(state.words.slice());
+    }
+
+    function pickNextAttackWord() {
+      if (!state.words.length) return null;
+      if (!state.wordDeck.length) refillWordDeck();
+      // Avoid immediately repeating the same word when the deck still has others.
+      if (state.wordDeck.length > 1 && state.attackWord) {
+        const idx = state.wordDeck.findIndex((w) => w.word !== state.attackWord.word);
+        if (idx > 0) {
+          const [picked] = state.wordDeck.splice(idx, 1);
+          state.attackWord = picked;
+          return state.attackWord;
+        }
+      }
+      state.attackWord = state.wordDeck.shift();
+      return state.attackWord;
     }
 
     function createMonster() {
-      const item = currentWord();
-      const boss = isBossEncounter();
+      const def = currentMonsterDef();
       return {
-        name: boss ? `${item.meaning || item.word} Boss` : `${item.meaning || item.word}怪`,
-        meaning: item.meaning || item.word,
-        word: item.word,
-        hp: boss ? 5 : 2,
-        maxHp: boss ? 5 : 2,
-        atk: boss ? 2 : 1,
-        boss
+        id: def.id,
+        name: def.name,
+        img: def.img,
+        hp: def.hp,
+        maxHp: def.hp,
+        atk: def.atk,
+        boss: !!def.boss,
+        spells: []
       };
     }
 
@@ -890,7 +936,7 @@
     }
 
     function updateHud() {
-      const total = state.words.length;
+      const total = MONSTERS.length;
       const current = Math.min(state.index + 1, total);
       const hero = state.hero;
       const monster = state.monster;
@@ -916,7 +962,7 @@
         els.monsterHpText.textContent = `${Math.max(0, monster.hp)}/${monster.maxHp}`;
         els.monsterName.textContent = monster.name;
         els.monsterTag.textContent = monster.boss ? 'Boss 戰' : '普通怪';
-        els.monsterImg.src = monster.boss ? 'assets/boss.png' : 'assets/monster.png';
+        els.monsterImg.src = monster.img;
         els.monsterPanel.classList.toggle('boss', monster.boss);
       }
     }
@@ -1057,7 +1103,8 @@
     }
 
     function preparePuzzle() {
-      const item = currentWord();
+      const item = pickNextAttackWord();
+      if (!item) return;
       state.locked = false;
       state.usedHint = false;
       const blankIndexes = pickBlankIndexes(item.word);
@@ -1070,7 +1117,7 @@
       els.checkBtn.disabled = false;
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
-      els.meaning.innerHTML = `${item.meaning || '（無中文提示）'}<small>聽英文，填晒空白格再攻擊</small>`;
+      els.meaning.innerHTML = `${item.meaning || '（無中文提示）'}<small>今次攻擊要串：聽英文，填晒空白格</small>`;
       renderSlots();
       updateHud();
     }
@@ -1114,7 +1161,10 @@
       });
       const source = pool.length ? pool : EQUIPMENT;
       if (isBossEncounter()) {
-        const strong = source.find((e) => e.id === 'iron_sword') || source[0];
+        const preferred = state.index === MONSTERS.length - 1 ? 'iron_sword' : 'wood_sword';
+        const strong = source.find((e) => e.id === preferred)
+          || source.find((e) => e.id === 'iron_sword')
+          || source[0];
         return { ...strong };
       }
       return { ...source[Math.floor(Math.random() * source.length)] };
@@ -1150,13 +1200,13 @@
         clearTimeout(state.travelTimer);
         state.travelTimer = null;
       }
-      const total = state.words.length;
+      const total = MONSTERS.length;
       els.progressFill.style.width = won ? '100%' : `${(state.index / Math.max(total, 1)) * 100}%`;
       els.resultTitle.textContent = won ? '通關成功！' : '勇者倒下了…';
       els.resultScore.textContent = `${state.wins} / ${total}`;
       if (won) {
         els.resultMessage.textContent = state.wins === total
-          ? '完美！全部生字怪物都打贏啦！'
+          ? '完美！二十隻怪物全部打贏啦！'
           : '做得好！繼續練習會更強。';
         Sfx.play('finish');
       } else {
@@ -1165,11 +1215,13 @@
       }
 
       els.resultList.innerHTML = state.answers.map((a) => {
-        const label = a.meaning ? `${a.word} · ${a.meaning}` : a.word;
+        const spellBits = (a.spells || [])
+          .map((s) => `${s.ok ? '✓' : '✗'} ${s.word}`)
+          .join(' · ');
         const detail = a.ok
           ? (a.boss ? '✓ Boss 擊敗' : '✓ 擊敗')
           : (a.reason || '✗ 未擊敗');
-        return `<li class="${a.ok ? '' : 'miss'}"><span>${label}</span><span>${detail}</span></li>`;
+        return `<li class="${a.ok ? '' : 'miss'}"><span>${a.monster}${spellBits ? `<br><small style="font-weight:700;color:#4d6b62">${spellBits}</small>` : ''}</span><span>${detail}</span></li>`;
       }).join('');
 
       showScreen('result');
@@ -1177,10 +1229,10 @@
 
     function advanceAfterVictory() {
       state.answers.push({
-        word: state.monster.word,
-        meaning: state.monster.meaning,
+        monster: state.monster.name,
         ok: true,
-        boss: state.monster.boss
+        boss: state.monster.boss,
+        spells: state.monster.spells.slice()
       });
       state.wins += 1;
       const loot = pickLoot();
@@ -1189,7 +1241,7 @@
 
     function goToNextEncounter() {
       state.index += 1;
-      if (state.index >= state.words.length) {
+      if (state.index >= MONSTERS.length) {
         finishAdventure(true);
         return;
       }
@@ -1202,18 +1254,17 @@
       showScreen('battle');
       preparePuzzle();
       if (state.monster.boss) {
-        els.feedback.textContent = 'Boss 出現！串啱先可以打贏佢！';
+        els.feedback.textContent = `${state.monster.name} 出現！串啱先可以打贏佢！`;
         els.feedback.className = 'feedback';
       }
     }
 
     function beginTravel() {
-      const next = currentWord();
-      const boss = isBossEncounter();
+      const next = currentMonsterDef();
       els.travelCaption.textContent = '勇者向前行…';
-      els.travelHint.textContent = boss
-        ? `前方有強大嘅 ${next.meaning || next.word} Boss！`
-        : `前面出現咗「${next.meaning || next.word}」怪物…`;
+      els.travelHint.textContent = next.boss
+        ? `前方有強大嘅 Boss：${next.name}！`
+        : `前面出現咗「${next.name}」…`;
       els.walker.style.animation = 'none';
       void els.walker.offsetWidth;
       els.walker.style.animation = '';
@@ -1244,6 +1295,8 @@
       markSlots(ok);
 
       if (ok) {
+        state.monster.spells.push({ word: item.word, meaning: item.meaning, ok: true });
+        state.spellLog.push({ word: item.word, meaning: item.meaning, ok: true });
         const dmg = calcAttackDamage();
         state.monster.hp = Math.max(0, state.monster.hp - dmg);
         flash(els.heroPanel, 'attack');
@@ -1257,7 +1310,7 @@
           if (state.monster.hp <= 0) {
             advanceAfterVictory();
           } else {
-            els.feedback.textContent = '怪物仲未倒下，再串一次！';
+            els.feedback.textContent = '怪物仲未倒下，換個生字再攻擊！';
             els.feedback.className = 'feedback';
             preparePuzzle();
           }
@@ -1265,11 +1318,13 @@
         return;
       }
 
+      state.monster.spells.push({ word: item.word, meaning: item.meaning, ok: false, guess });
+      state.spellLog.push({ word: item.word, meaning: item.meaning, ok: false, guess });
       const damage = Math.max(1, state.monster.atk - state.hero.def);
       state.hero.hp = Math.max(0, state.hero.hp - damage);
       flash(els.monsterPanel, 'attack');
       flash(els.heroPanel, 'hit');
-      els.feedback.textContent = `串錯咗！勇者受咗 ${damage} 點傷害。再試啦！`;
+      els.feedback.textContent = `串錯咗！勇者受咗 ${damage} 點傷害。換個生字再試！`;
       els.feedback.className = 'feedback bad';
       Sfx.play('wrong');
       updateHud();
@@ -1277,11 +1332,11 @@
       setTimeout(() => {
         if (state.hero.hp <= 0) {
           state.answers.push({
-            word: item.word,
-            meaning: item.meaning,
+            monster: state.monster.name,
             ok: false,
             boss: state.monster.boss,
-            reason: '✗ 勇者倒下'
+            reason: '✗ 勇者倒下',
+            spells: state.monster.spells.slice()
           });
           finishAdventure(false);
           return;
@@ -1291,10 +1346,13 @@
     }
 
     function startAdventure() {
-      state.words = parseWords(ADVENTURE_WORDS);
+      state.words = parseWords(SPELL_WORDS);
+      state.wordDeck = [];
+      state.attackWord = null;
       state.index = 0;
       state.wins = 0;
       state.answers = [];
+      state.spellLog = [];
       state.blanks = [];
       state.cursor = 0;
       state.locked = false;
