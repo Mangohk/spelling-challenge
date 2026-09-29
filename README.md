@@ -18,7 +18,7 @@ Open `index.html` to play (or visit the GitHub Pages site).
 
 | Stage | Words | Monsters |
 |-------|-------|----------|
-| Stage One | Shared school-facilities list (for now) | Own 8-monster roster; final Boss **Miss Lam** |
+| Stage One | Shared school-facilities list (for now) | Own 8-monster roster; final Boss **Miss Lam**（林老師） with teacher art `miss-lam.png` |
 | Stage Two | Same list until 第二次默書 content arrives | **Different** 8-monster roster (unused m01–m20 art) |
 
 ## Word list (for now)
