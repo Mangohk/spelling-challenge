@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>拼字勇者 · Version Two</title>
+  <title>Spelling Hero · Version Two</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -336,9 +336,18 @@
 
     .meaning {
       text-align: center;
-      font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.35rem, 4vw, 1.8rem);
       margin: 0 0 0.75rem;
+    }
+    .meaning .word-prompt-img {
+      display: block;
+      width: min(220px, 55vw);
+      height: min(220px, 55vw);
+      object-fit: cover;
+      margin: 0 auto 0.45rem;
+      border-radius: 1rem;
+      border: 3px solid #cfe6dc;
+      background: #f7fffb;
+      box-shadow: 0 6px 14px rgba(15, 42, 36, 0.1);
     }
     .meaning small {
       display: block;
@@ -566,58 +575,58 @@
       <div class="brand">
         <div class="logo" aria-hidden="true">⚔</div>
         <div>
-          <h1>拼字勇者</h1>
-          <p class="sub">Version Two · 一直線冒險</p>
+          <h1>Spelling Hero</h1>
+          <p class="sub">Version Two · Linear Adventure</p>
         </div>
       </div>
     </header>
 
     <section id="title" class="screen active">
       <div class="hero-scene" id="title-scene">
-        <img class="title-hero" src="assets/hero.png" alt="勇者">
+        <img class="title-hero" src="assets/hero.png" alt="Hero">
         <div class="scene-copy">
-          <h2>拼字勇者</h2>
-          <p>向前走、打 8 場（6 隻小怪＋Mini-Boss＋最終 Boss），用拼字攻擊攞裝備！</p>
+          <h2>Spelling Hero</h2>
+          <p>Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!</p>
         </div>
       </div>
-      <p class="hint">先揀關卡，再開始冒險。每次攻擊會抽出唔同生字嚟串。</p>
-      <div class="stage-pick" role="group" aria-label="選擇關卡">
+      <p class="hint">Pick a stage, then start. Each attack draws a different spelling word.</p>
+      <div class="stage-pick" role="group" aria-label="Choose stage">
         <button type="button" class="stage-btn" id="stage-btn-1" data-stage="stage1" aria-pressed="true">
-          <strong>第一關</strong>
-          <span>Stage One · 第一次默書</span>
+          <strong>Stage One</strong>
+          <span>First dictation set</span>
         </button>
         <button type="button" class="stage-btn" id="stage-btn-2" data-stage="stage2" aria-pressed="false">
-          <strong>第二關</strong>
-          <span>Stage Two · 第二次默書（暫用相同生字）</span>
+          <strong>Stage Two</strong>
+          <span>Second dictation set (same words for now)</span>
         </button>
       </div>
       <div class="actions center">
-        <button type="button" class="btn" id="start-btn">開始冒險</button>
+        <button type="button" class="btn" id="start-btn">Start Adventure</button>
       </div>
     </section>
 
     <section id="travel" class="screen">
-      <p class="travel-caption" id="travel-caption">勇者向前行…</p>
+      <p class="travel-caption" id="travel-caption">The hero walks on…</p>
       <div class="travel-scene" id="travel-scene">
-        <img class="walker" id="walker" src="assets/hero.png" alt="勇者向前行">
+        <img class="walker" id="walker" src="assets/hero.png" alt="Hero walking">
       </div>
-      <p class="hint" id="travel-hint" style="text-align:center;margin-bottom:0;">前面好像有怪物…</p>
+      <p class="hint" id="travel-hint" style="text-align:center;margin-bottom:0;">Something waits ahead…</p>
     </section>
 
     <section id="battle" class="screen">
       <div class="meta-bar">
         <span class="pill" id="progress-pill">1 / 8</span>
-        <span class="pill sky" id="atk-pill">攻擊 1</span>
-        <span class="pill sky" id="def-pill">防禦 0</span>
-        <span class="pill sun" id="buff-pill">無特殊效果</span>
+        <span class="pill sky" id="atk-pill">ATK 1</span>
+        <span class="pill sky" id="def-pill">DEF 0</span>
+        <span class="pill sun" id="buff-pill">No special effects</span>
       </div>
       <div class="progress"><span id="progress-fill"></span></div>
 
       <div class="arena">
         <div class="fighter" id="hero-panel">
-          <img src="assets/hero.png" alt="勇者">
-          <h3>勇者</h3>
-          <p class="tag" id="hero-gear-tag">未裝備</p>
+          <img src="assets/hero.png" alt="Hero">
+          <h3>Hero</h3>
+          <p class="tag" id="hero-gear-tag">No gear</p>
           <div class="hp-row">
             <span>HP</span>
             <div class="hp-bar"><i id="hero-hp-fill"></i></div>
@@ -625,9 +634,9 @@
           </div>
         </div>
         <div class="fighter" id="monster-panel">
-          <img id="monster-img" src="assets/monster.png" alt="生字怪物">
-          <h3 id="monster-name">生字怪物</h3>
-          <p class="tag" id="monster-tag">普通怪</p>
+          <img id="monster-img" src="assets/monster.png" alt="Monster">
+          <h3 id="monster-name">Monster</h3>
+          <p class="tag" id="monster-tag">Monster</p>
           <div class="hp-row">
             <span>HP</span>
             <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
@@ -636,101 +645,104 @@
         </div>
       </div>
 
-      <p class="meaning" id="word-meaning">美術室<small>聽英文，填晒空白格再攻擊</small></p>
+      <div class="meaning" id="word-meaning">
+        <img class="word-prompt-img" src="assets/words/art-room.png" alt="Spell this word">
+        <small>Listen, fill every blank, then Attack!</small>
+      </div>
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
       <div class="keyboard" id="keyboard"></div>
       <div class="actions center speak-row">
-        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
-        <button type="button" class="btn sun" id="letter-hint-btn">提示一個字母</button>
+        <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
+        <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
       </div>
       <div class="actions center">
-        <button type="button" class="btn" id="check-btn">攻擊！</button>
-        <button type="button" class="btn ghost" id="quit-btn">結束冒險</button>
+        <button type="button" class="btn" id="check-btn">Attack!</button>
+        <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
       </div>
     </section>
 
     <section id="loot" class="screen">
       <div class="loot-card">
-        <p class="section-title">打贏啦！獲得裝備</p>
+        <p class="section-title">Victory! New gear</p>
         <div class="loot-art">
-          <img src="assets/equipment.png" alt="裝備">
+          <img src="assets/equipment.png" alt="Equipment">
         </div>
-        <p class="loot-name" id="loot-name">木劍</p>
-        <p class="loot-effect" id="loot-effect">攻擊 +1</p>
+        <p class="loot-name" id="loot-name">Wood Sword</p>
+        <p class="loot-effect" id="loot-effect">ATK +1</p>
         <div class="equip-list" id="equip-list"></div>
         <div class="actions center">
-          <button type="button" class="btn" id="loot-continue-btn">繼續前進</button>
+          <button type="button" class="btn" id="loot-continue-btn">Keep Going</button>
         </div>
       </div>
     </section>
 
     <section id="result" class="screen">
-      <img class="result-hero" src="assets/hero.png" alt="勇者">
-      <p class="section-title" style="text-align:center;" id="result-title">冒險結束</p>
+      <img class="result-hero" src="assets/hero.png" alt="Hero">
+      <p class="section-title" style="text-align:center;" id="result-title">Adventure Over</p>
       <p class="result-score" id="result-score">0 / 8</p>
       <p class="result-message" id="result-message"></p>
       <ul class="result-list" id="result-list"></ul>
       <div class="actions center">
-        <button type="button" class="btn" id="again-btn">再挑戰一次</button>
-        <button type="button" class="btn ghost" id="home-btn">返回標題</button>
+        <button type="button" class="btn" id="again-btn">Play Again</button>
+        <button type="button" class="btn ghost" id="home-btn">Back to Title</button>
       </div>
     </section>
   </div>
 
   <script>
-    // Shared dictation bank for now; Stage Two can swap wordsRaw later (第二次默書).
-    const SCHOOL_WORDS_RAW = [
-      'art room : 美術室',
-      'first floor : 一樓',
-      'draw : 繪畫',
-      'paint : 繪畫、油漆',
-      'puppets : 木偶、手偶',
-      'library : 圖書館',
-      'second floor : 二樓',
-      'borrow : 借入、借用',
-      'swimming pool : 游泳池',
-      'pond : 池塘',
-      'students : 學生'
-    ].join('\n');
+    // Shared dictation bank for now; Stage Two can swap `words` later.
+    const SCHOOL_WORDS = [
+      { word: 'art room', img: 'assets/words/art-room.png' },
+      { word: 'first floor', img: 'assets/words/first-floor.png' },
+      { word: 'draw', img: 'assets/words/draw.png' },
+      { word: 'paint', img: 'assets/words/paint.png' },
+      { word: 'puppets', img: 'assets/words/puppets.png' },
+      { word: 'library', img: 'assets/words/library.png' },
+      { word: 'second floor', img: 'assets/words/second-floor.png' },
+      { word: 'borrow', img: 'assets/words/borrow.png' },
+      { word: 'swimming pool', img: 'assets/words/swimming-pool.png' },
+      { word: 'pond', img: 'assets/words/pond.png' },
+      { word: 'students', img: 'assets/words/students.png' }
+    ];
 
     // Typical small-monster HP = 4 → mini-boss HP = 8 (2×). Total HP ≈ 44 → ~38–44 correct spells at ATK 1→2.
     const STAGE_ONE_MONSTERS = [
-      { id: 's1-m01', name: '綠史萊姆', img: 'assets/monsters/m01-slime.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's1-m02', name: '火焰蝙蝠', img: 'assets/monsters/m02-firebat.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's1-m04', name: '刺刺刺蝟', img: 'assets/monsters/m04-spikehog.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's1-m05', name: '影子貓', img: 'assets/monsters/m05-shadowcat.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's1-m06', name: '雷電蛙', img: 'assets/monsters/m06-thunderfrog.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's1-m09', name: '冰晶狐', img: 'assets/monsters/m09-icefox.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's1-mini', name: '書卷巨龍', img: 'assets/monsters/m10-bookdragon.png', hp: 8, atk: 2, role: 'mini' },
-      { id: 's1-boss', name: 'Miss Lam', aka: '林老師', img: 'assets/monsters/miss-lam.png', hp: 12, atk: 2, role: 'boss' }
+      { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 8, atk: 2, role: 'mini' },
+      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 12, atk: 2, role: 'boss' }
     ];
 
     // Distinct roster from unused m01–m20 art (no overlap with Stage One sprites).
     const STAGE_TWO_MONSTERS = [
-      { id: 's2-m03', name: '石蘑菇', img: 'assets/monsters/m03-rockshroom.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's2-m07', name: '棉花幽靈', img: 'assets/monsters/m07-cottonghost.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's2-m08', name: '鋼甲甲蟲', img: 'assets/monsters/m08-steelbeetle.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's2-m11', name: '沙塵蝎', img: 'assets/monsters/m11-sandscorpion.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's2-m12', name: '彩虹水母', img: 'assets/monsters/m12-rainbowjelly.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's2-m13', name: '木乃伊鴨', img: 'assets/monsters/m13-mummyduck.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's2-mini', name: '荊棘狼', img: 'assets/monsters/m16-briarwolf.png', hp: 8, atk: 2, role: 'mini' },
-      { id: 's2-boss', name: '風暴鷹', img: 'assets/monsters/m19-stormeagle.png', hp: 12, atk: 2, role: 'boss' }
+      { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 8, atk: 2, role: 'mini' },
+      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 12, atk: 2, role: 'boss' }
     ];
 
     const STAGES = [
       {
         id: 'stage1',
-        label: '第一關',
+        label: 'Stage One',
         labelEn: 'Stage One',
-        wordsRaw: SCHOOL_WORDS_RAW,
+        words: SCHOOL_WORDS,
         monsters: STAGE_ONE_MONSTERS
       },
       {
         id: 'stage2',
-        label: '第二關',
+        label: 'Stage Two',
         labelEn: 'Stage Two',
-        wordsRaw: SCHOOL_WORDS_RAW, // swap later for 第二次默書
+        words: SCHOOL_WORDS, // swap later for second dictation list
         monsters: STAGE_TWO_MONSTERS
       }
     ];
@@ -738,13 +750,13 @@
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
     const EQUIPMENT = [
-      { id: 'wood_sword', name: '木劍', effect: '攻擊 +1', kind: 'atk', value: 1 },
-      { id: 'iron_sword', name: '鐵劍', effect: '攻擊 +2', kind: 'atk', value: 2 },
-      { id: 'cloth_armor', name: '布甲', effect: '防禦 +1', kind: 'def', value: 1 },
-      { id: 'wood_shield', name: '木盾', effect: '防禦 +1', kind: 'def', value: 1 },
-      { id: 'herb', name: '回復藥草', effect: '即時回復 3 HP', kind: 'heal', value: 3 },
-      { id: 'lucky_feather', name: '幸運羽', effect: '下一擊雙倍傷害', kind: 'double', value: 1 },
-      { id: 'hint_amulet', name: '提示護符', effect: '提示字母唔減攻擊', kind: 'hintSafe', value: 1 }
+      { id: 'wood_sword', name: 'Wood Sword', effect: 'ATK +1', kind: 'atk', value: 1 },
+      { id: 'iron_sword', name: 'Iron Sword', effect: 'ATK +2', kind: 'atk', value: 2 },
+      { id: 'cloth_armor', name: 'Cloth Armor', effect: 'DEF +1', kind: 'def', value: 1 },
+      { id: 'wood_shield', name: 'Wood Shield', effect: 'DEF +1', kind: 'def', value: 1 },
+      { id: 'herb', name: 'Healing Herb', effect: 'Restore 3 HP now', kind: 'heal', value: 3 },
+      { id: 'lucky_feather', name: 'Lucky Feather', effect: 'Next hit deals double damage', kind: 'double', value: 1 },
+      { id: 'hint_amulet', name: 'Hint Amulet', effect: 'Letter hints do not cut ATK', kind: 'hintSafe', value: 1 }
     ];
 
     const Sfx = (() => {
@@ -908,9 +920,9 @@
     }
 
     function roleLabel(role) {
-      if (role === 'boss') return 'Boss 戰';
+      if (role === 'boss') return 'Boss Fight';
       if (role === 'mini') return 'Mini-Boss';
-      return '普通怪';
+      return 'Monster';
     }
 
     function setStageSelection(stageId) {
@@ -937,17 +949,12 @@
       return parts.every((part) => /^[a-z]+(?:'[a-z]+)?$/i.test(part));
     }
 
-    function parseWords(raw) {
-      return raw
-        .split(/\n+/)
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => {
-          const colon = line.indexOf(':');
-          const phraseRaw = (colon >= 0 ? line.slice(0, colon) : line).trim().replace(/\s+/g, ' ');
-          const meaning = colon >= 0 ? line.slice(colon + 1).trim() : '';
+    function loadWords(list) {
+      return (list || [])
+        .map((item) => {
+          const phraseRaw = String(item.word || '').trim().replace(/\s+/g, ' ');
           if (!isValidPhrase(phraseRaw)) return null;
-          return { word: phraseRaw.toLowerCase(), meaning };
+          return { word: phraseRaw.toLowerCase(), img: item.img || '' };
         })
         .filter(Boolean);
     }
@@ -1025,7 +1032,6 @@
       return {
         id: def.id,
         name: def.name,
-        aka: def.aka || '',
         img: def.img,
         hp: def.hp,
         maxHp: def.hp,
@@ -1037,8 +1043,7 @@
     }
 
     function encounterDisplayName(def) {
-      if (!def) return '';
-      return def.aka ? `${def.name}（${def.aka}）` : def.name;
+      return def?.name || '';
     }
 
     function flash(el, cls) {
@@ -1055,20 +1060,20 @@
       const monster = state.monster;
 
       els.progressPill.textContent = `${current} / ${total}`;
-      els.atkPill.textContent = `攻擊 ${hero.atk}`;
-      els.defPill.textContent = `防禦 ${hero.def}`;
+      els.atkPill.textContent = `ATK ${hero.atk}`;
+      els.defPill.textContent = `DEF ${hero.def}`;
 
       const buffs = [];
-      if (hero.doubleNext) buffs.push('下一擊雙倍');
-      if (hero.hintSafe) buffs.push('提示護符');
-      els.buffPill.textContent = buffs.length ? buffs.join(' · ') : '無特殊效果';
+      if (hero.doubleNext) buffs.push('Next hit ×2');
+      if (hero.hintSafe) buffs.push('Hint Amulet');
+      els.buffPill.textContent = buffs.length ? buffs.join(' · ') : 'No special effects';
 
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
       els.heroHpFill.style.width = `${Math.max(0, (hero.hp / hero.maxHp) * 100)}%`;
       els.heroHpText.textContent = `${Math.max(0, hero.hp)}/${hero.maxHp}`;
       els.heroGearTag.textContent = hero.equipment.length
         ? hero.equipment.map((e) => e.name).slice(-3).join(' · ')
-        : '未裝備';
+        : 'No gear';
 
       if (monster) {
         els.monsterHpFill.style.width = `${Math.max(0, (monster.hp / monster.maxHp) * 100)}%`;
@@ -1194,8 +1199,8 @@
       state.cursor = next === -1 ? firstEmptyCursor() : next;
 
       els.feedback.textContent = state.hero.hintSafe
-        ? '已填一個字母（護符生效，攻擊力不變）'
-        : '已填一個字母（今擊攻擊力減半）';
+        ? 'One letter filled (Hint Amulet: ATK unchanged)'
+        : 'One letter filled (this attack deals half ATK)';
       els.feedback.className = 'feedback';
       Sfx.play('hint');
       updateHud();
@@ -1205,7 +1210,7 @@
     function speakCurrentWord() {
       const item = currentWord();
       if (!item || !window.speechSynthesis) {
-        els.feedback.textContent = '呢個瀏覽器唔支援朗讀。';
+        els.feedback.textContent = 'This browser cannot speak the word.';
         els.feedback.className = 'feedback bad';
         return;
       }
@@ -1231,7 +1236,8 @@
       els.checkBtn.disabled = false;
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
-      els.meaning.innerHTML = `${item.meaning || '（無中文提示）'}<small>今次攻擊要串：聽英文，填晒空白格</small>`;
+      const imgSrc = item.img || 'assets/words/art-room.png';
+      els.meaning.innerHTML = `<img class="word-prompt-img" src="${imgSrc}" alt="Spell this word"><small>Listen, fill every blank, then Attack!</small>`;
       renderSlots();
       updateHud();
     }
@@ -1315,17 +1321,17 @@
         state.travelTimer = null;
       }
       const total = activeMonsters().length;
-      const stageName = state.stage?.label || '關卡';
+      const stageName = state.stage?.label || 'Stage';
       els.progressFill.style.width = won ? '100%' : `${(state.index / Math.max(total, 1)) * 100}%`;
-      els.resultTitle.textContent = won ? '通關成功！' : '勇者倒下了…';
+      els.resultTitle.textContent = won ? 'Stage Clear!' : 'The hero fell…';
       els.resultScore.textContent = `${state.wins} / ${total}`;
       if (won) {
         els.resultMessage.textContent = state.wins === total
-          ? `完美！${stageName} 八場全部打贏啦！`
-          : '做得好！繼續練習會更強。';
+          ? `Perfect! You cleared all 8 battles in ${stageName}!`
+          : 'Nice work! Keep practicing to get stronger.';
         Sfx.play('finish');
       } else {
-        els.resultMessage.textContent = '下次記得用裝備同提示護符幫手啦！';
+        els.resultMessage.textContent = 'Try gear and the Hint Amulet next time!';
         Sfx.play('gameover');
       }
 
@@ -1334,8 +1340,8 @@
           .map((s) => `${s.ok ? '✓' : '✗'} ${s.word}`)
           .join(' · ');
         const detail = a.ok
-          ? (a.role === 'boss' ? '✓ Boss 擊敗' : a.role === 'mini' ? '✓ Mini-Boss 擊敗' : '✓ 擊敗')
-          : (a.reason || '✗ 未擊敗');
+          ? (a.role === 'boss' ? '✓ Boss defeated' : a.role === 'mini' ? '✓ Mini-Boss defeated' : '✓ Defeated')
+          : (a.reason || '✗ Not defeated');
         return `<li class="${a.ok ? '' : 'miss'}"><span>${a.monster}${spellBits ? `<br><small style="font-weight:700;color:#4d6b62">${spellBits}</small>` : ''}</span><span>${detail}</span></li>`;
       }).join('');
 
@@ -1370,7 +1376,7 @@
       showScreen('battle');
       preparePuzzle();
       if (state.monster.role === 'boss' || state.monster.role === 'mini') {
-        els.feedback.textContent = `${state.monster.name} 出現！串啱先可以打贏佢！`;
+        els.feedback.textContent = `${state.monster.name} appears! Spell correctly to win!`;
         els.feedback.className = 'feedback';
       }
     }
@@ -1378,13 +1384,13 @@
     function beginTravel() {
       const next = currentMonsterDef();
       const shown = encounterDisplayName(next);
-      els.travelCaption.textContent = '勇者向前行…';
+      els.travelCaption.textContent = 'The hero walks on…';
       if (next.role === 'boss') {
-        els.travelHint.textContent = `前方有最終 Boss：${shown}！`;
+        els.travelHint.textContent = `Final Boss ahead: ${shown}!`;
       } else if (next.role === 'mini') {
-        els.travelHint.textContent = `前方有 Mini-Boss：${shown}！`;
+        els.travelHint.textContent = `Mini-Boss ahead: ${shown}!`;
       } else {
-        els.travelHint.textContent = `前面出現咗「${shown}」…`;
+        els.travelHint.textContent = `"${shown}" appears ahead…`;
       }
       els.walker.style.animation = 'none';
       void els.walker.offsetWidth;
@@ -1402,7 +1408,7 @@
       const item = currentWord();
       const incomplete = state.blanks.some((b) => !b.value);
       if (incomplete) {
-        els.feedback.textContent = '請填晒所有空白格先攻擊。';
+        els.feedback.textContent = 'Fill every blank before you attack.';
         els.feedback.className = 'feedback bad';
         Sfx.play('warn');
         return;
@@ -1416,13 +1422,13 @@
       markSlots(ok);
 
       if (ok) {
-        state.monster.spells.push({ word: item.word, meaning: item.meaning, ok: true });
-        state.spellLog.push({ word: item.word, meaning: item.meaning, ok: true });
+        state.monster.spells.push({ word: item.word, img: item.img, ok: true });
+        state.spellLog.push({ word: item.word, img: item.img, ok: true });
         const dmg = calcAttackDamage();
         state.monster.hp = Math.max(0, state.monster.hp - dmg);
         flash(els.heroPanel, 'attack');
         flash(els.monsterPanel, 'hit');
-        els.feedback.textContent = `串啱！造成 ${dmg} 點傷害！`;
+        els.feedback.textContent = `Correct! You deal ${dmg} damage!`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
         updateHud();
@@ -1431,7 +1437,7 @@
           if (state.monster.hp <= 0) {
             advanceAfterVictory();
           } else {
-            els.feedback.textContent = '怪物仲未倒下，換個生字再攻擊！';
+            els.feedback.textContent = 'Still standing! Spell another word to attack!';
             els.feedback.className = 'feedback';
             preparePuzzle();
           }
@@ -1439,13 +1445,13 @@
         return;
       }
 
-      state.monster.spells.push({ word: item.word, meaning: item.meaning, ok: false, guess });
-      state.spellLog.push({ word: item.word, meaning: item.meaning, ok: false, guess });
+      state.monster.spells.push({ word: item.word, img: item.img, ok: false, guess });
+      state.spellLog.push({ word: item.word, img: item.img, ok: false, guess });
       const damage = Math.max(1, state.monster.atk - state.hero.def);
       state.hero.hp = Math.max(0, state.hero.hp - damage);
       flash(els.monsterPanel, 'attack');
       flash(els.heroPanel, 'hit');
-      els.feedback.textContent = `串錯咗！勇者受咗 ${damage} 點傷害。換個生字再試！`;
+      els.feedback.textContent = `Oops! The hero takes ${damage} damage. Try another word!`;
       els.feedback.className = 'feedback bad';
       Sfx.play('wrong');
       updateHud();
@@ -1457,7 +1463,7 @@
             ok: false,
             role: state.monster.role,
             boss: state.monster.boss,
-            reason: '✗ 勇者倒下',
+            reason: '✗ Hero fell',
             spells: state.monster.spells.slice()
           });
           finishAdventure(false);
@@ -1469,7 +1475,7 @@
 
     function startAdventure() {
       state.stage = getStageById(state.stageId);
-      state.words = parseWords(state.stage.wordsRaw);
+      state.words = loadWords(state.stage.words);
       state.wordDrawCounts = {};
       state.attackWord = null;
       state.index = 0;

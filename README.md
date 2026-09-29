@@ -1,14 +1,14 @@
 # spelling-challenge · Version Two
 
-**拼字勇者** — a simple linear spelling RPG for kids.
+**Spelling Hero** — a simple linear spelling RPG for kids.
 
 Open `index.html` to play (or visit the GitHub Pages site).
 
 ## How to play
 
-1. On the title screen, pick **第一關 (Stage One)** or **第二關 (Stage Two)**, then tap **開始冒險**.
+1. On the title screen, pick **Stage One** or **Stage Two**, then tap **Start Adventure**.
 2. Each stage has **8 encounters**: 6 small monsters → 1 Mini-Boss → 1 final Boss (different monster rosters per stage).
-3. Each attack draws a **spelling word** from that stage’s dictation list. Spell it in the blanks.
+3. Each attack shows a **picture clue** for a spelling word. Fill the blanks to spell it.
 4. **Correct spelling** damages the monster. **Wrong spelling** damages the hero.
 5. Defeat a monster to get **equipment** (ATK, DEF, or special effects). Mini-Boss / Boss drop stronger gear.
 6. Blank difficulty ramps from ~30% of letters to **100%** on the final Boss.
@@ -18,17 +18,18 @@ Open `index.html` to play (or visit the GitHub Pages site).
 
 | Stage | Words | Monsters |
 |-------|-------|----------|
-| Stage One | Shared school-facilities list (for now) | Own 8-monster roster; final Boss **Miss Lam**（林老師） with teacher art `miss-lam.png` |
-| Stage Two | Same list until 第二次默書 content arrives | **Different** 8-monster roster (unused m01–m20 art) |
+| Stage One | Shared school-facilities list (picture prompts) | Own 8-monster roster; final Boss **Miss Lam** (`miss-lam.png`) |
+| Stage Two | Same list until the second dictation content arrives | **Different** 8-monster roster (unused m01–m20 art) |
 
 ## Word list (for now)
 
-Spelling prompts use a fixed dictation sample (school facilities). A settings screen to edit words will come later. Stage config is ready to swap Stage Two’s `wordsRaw` independently.
+Spelling targets stay English. Chinese meanings are replaced by images in `assets/words/`. Stage config can swap Stage Two’s `words` independently later.
 
 ## Assets
 
 - `assets/` — hero, scene, equipment
-- `assets/monsters/` — monster portraits (`m01` … `m20`); each stage reuses a distinct subset
+- `assets/monsters/` — monster portraits (`m01` … `m20`, plus `miss-lam.png`)
+- `assets/words/` — picture prompts for each vocabulary item
 
 # Page
 https://mangohk.github.io/spelling-challenge/
