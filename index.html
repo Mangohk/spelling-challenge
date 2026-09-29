@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>拼字勇者 · Version Two</title>
+  <title>Spelling Hero · Version Two</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -187,47 +187,6 @@
       align-items: center;
     }
     .actions.center { justify-content: center; }
-    .tts-control {
-      flex: 0 1 180px;
-      min-width: 140px;
-      max-width: 200px;
-      margin: 0;
-      padding: 0.45rem 0.7rem 0.5rem;
-      border-radius: 0.9rem;
-      background: #eef9f3;
-      border: 2px solid #cfe8dc;
-    }
-    .tts-control label {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.5rem;
-      font-weight: 800;
-      font-size: 0.78rem;
-      color: var(--leaf-dark);
-      margin-bottom: 0.2rem;
-    }
-    .tts-control output {
-      color: #1a6f86;
-      font-variant-numeric: tabular-nums;
-    }
-    .tts-control input[type="range"] {
-      width: 100%;
-      accent-color: var(--sky);
-      cursor: pointer;
-    }
-    .tts-ends {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 0.05rem;
-      color: var(--muted);
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-    .speak-dock .btn {
-      flex: 0 0 auto;
-      white-space: nowrap;
-    }
 
     .meta-bar {
       display: flex;
@@ -267,16 +226,16 @@
     .arena {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.65rem;
-      margin-bottom: 0.85rem;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
     }
     @media (max-width: 560px) {
-      .arena { grid-template-columns: 1fr 1fr; }
+      .arena { grid-template-columns: 1fr; }
     }
     .fighter {
       border: 3px solid #d7ebe1;
       border-radius: 1.1rem;
-      padding: 0.55rem 0.6rem 0.65rem;
+      padding: 0.75rem;
       background: #f7fffb;
       text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -287,21 +246,65 @@
       border-color: #e0c6f5;
       background: linear-gradient(180deg, #fbf5ff, #fff);
     }
+    .fighter.mini {
+      border-color: #f0c98a;
+      background: linear-gradient(180deg, #fff8ec, #fff);
+    }
+    .stage-pick {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+      margin: 0.85rem 0 0.35rem;
+    }
+    @media (max-width: 480px) {
+      .stage-pick { grid-template-columns: 1fr; }
+    }
+    .stage-btn {
+      appearance: none;
+      border: 3px solid #cfe6dc;
+      border-radius: 1rem;
+      background: #f7fffb;
+      padding: 0.85rem 0.75rem;
+      cursor: pointer;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: left;
+      transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .stage-btn:hover { transform: translateY(-1px); }
+    .stage-btn[aria-pressed="true"] {
+      border-color: #3d9b7a;
+      background: linear-gradient(180deg, #e8fff5, #f7fffb);
+      box-shadow: 0 0 0 3px rgba(61, 155, 122, 0.18);
+    }
+    .stage-btn strong {
+      display: block;
+      font-size: 1.15rem;
+      margin-bottom: 0.15rem;
+    }
+    .stage-btn span {
+      display: block;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
     .fighter img {
-      width: clamp(72px, 18vw, 96px);
-      height: clamp(72px, 18vw, 96px);
+      width: clamp(88px, 22vw, 120px);
+      height: clamp(88px, 22vw, 120px);
       object-fit: contain;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.12));
     }
     .fighter h3 {
-      margin: 0.15rem 0 0.1rem;
+      margin: 0.25rem 0 0.15rem;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 0.98rem;
+      font-size: 1.05rem;
     }
     .fighter .tag {
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.45rem;
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       font-weight: 700;
     }
     .hp-row {
@@ -331,52 +334,71 @@
       background: linear-gradient(90deg, #ff8a75, var(--coral));
     }
 
-    .hint-panel {
+    .meaning {
       text-align: center;
       margin: 0 0 0.75rem;
     }
-    .hint-panel .hint-caption {
-      margin: 0 0 0.45rem;
-      color: var(--muted);
-      font-size: 0.88rem;
-      font-weight: 800;
+    .word-prompt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      margin: 0 auto 0.55rem;
     }
-    .hint-frame {
-      display: inline-block;
-      width: min(220px, 56vw);
-      border-radius: 1.1rem;
-      border: 3px solid #cfe8dc;
-      background: #f7fffb;
-      padding: 0.35rem;
-      box-shadow: 0 6px 0 #d7ebe1;
-      overflow: hidden;
-    }
-    .hint-frame img {
+    .meaning .word-prompt-img {
       display: block;
-      width: 100%;
-      aspect-ratio: 1;
+      width: min(220px, 55vw);
+      height: min(220px, 55vw);
       object-fit: cover;
-      border-radius: 0.8rem;
-      background: #fff;
+      margin: 0;
+      border-radius: 1rem;
+      border: 3px solid #cfe6dc;
+      background: #f7fffb;
+      box-shadow: 0 6px 14px rgba(15, 42, 36, 0.1);
+      flex-shrink: 0;
     }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    #speak-btn {
+      min-height: 3rem;
+      min-width: 8.5rem;
+      font-size: 1.05rem;
+      padding: 0.7rem 1.15rem;
+    }
+    /* Wide viewports: speak button sits beside the picture */
+    @media (min-width: 560px) {
+      .word-prompt {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.85rem;
+      }
+      #speak-btn {
+        min-height: 3.2rem;
+      }
+    }
+    .word-clue {
+      margin: 0 0 0.35rem;
+      padding: 0 0.35rem;
+      font-family: 'Nunito', system-ui, sans-serif;
+      font-size: clamp(0.95rem, 2.6vw, 1.08rem);
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--ink);
+    }
+    .meaning small {
+      display: block;
+      margin-top: 0.15rem;
+      font-family: 'Nunito', system-ui, sans-serif;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 700;
     }
     .slots {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.45rem;
-      min-height: 4.8rem;
-      margin-bottom: 0.55rem;
+      min-height: 5.8rem;
+      margin-bottom: 0.75rem;
     }
     .slot-row {
       display: flex;
@@ -385,15 +407,15 @@
       gap: 0.4rem;
     }
     .slot {
-      width: 3.2rem;
-      height: 3.9rem;
+      width: 3.6rem;
+      height: 4.4rem;
       border-radius: 0.9rem;
       border: 3px solid #cfe8dc;
       background: #fff;
       display: grid;
       place-items: center;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.65rem;
+      font-size: 1.85rem;
       font-weight: 700;
       color: var(--ink);
       box-shadow: 0 4px 0 #d7ebe1;
@@ -444,69 +466,14 @@
     .feedback.ok { color: var(--leaf-dark); }
     .feedback.bad { color: #b53b2d; }
 
-    .tool-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      align-items: stretch;
-      justify-content: center;
-      margin: 0 0 0.65rem;
-    }
-    .tool-row .btn {
-      padding: 0.65rem 1rem;
-      font-size: 0.92rem;
-    }
-    .speak-dock {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
-      margin: 0 0 0.75rem;
-    }
-    .combat-footer {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 0.65rem;
-      margin-top: 0.85rem;
-    }
-    .combat-footer .btn {
-      width: 100%;
-    }
-    .combat-footer .btn.attack {
-      font-size: 1.15rem;
-      padding: 0.9rem 1.2rem;
-    }
-    @media (max-width: 520px) {
-      .combat-footer {
-        grid-template-columns: 1fr;
-      }
-    }
     .keyboard {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 0.4rem;
       margin-bottom: 0.9rem;
     }
-    .key-row {
-      display: grid;
-      gap: 0.35rem;
-    }
-    .key-row.row-10 { grid-template-columns: repeat(10, minmax(0, 1fr)); }
-    .key-row.row-9 { grid-template-columns: repeat(9, minmax(0, 1fr)); }
-    .key-row.row-8 { grid-template-columns: repeat(8, minmax(0, 1fr)); }
-    .keyboard.layout-qwerty .key-row.row-9 {
-      max-width: 92%;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .keyboard.layout-qwerty .key-row.row-8 {
-      max-width: 84%;
-      margin: 0 auto;
-      width: 100%;
-    }
-    @media (max-width: 560px) {
-      .key { min-height: 2.7rem; font-size: 1rem; }
+    @media (min-width: 640px) {
+      .keyboard { grid-template-columns: repeat(9, minmax(0, 1fr)); }
     }
     .key {
       border: none;
@@ -522,7 +489,7 @@
       text-transform: uppercase;
     }
     .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #c5e4d5; }
-    .key.wide { font-size: 0.95rem; text-transform: none; }
+    .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
 
     .travel-scene {
       position: relative;
@@ -643,48 +610,58 @@
       <div class="brand">
         <div class="logo" aria-hidden="true">⚔</div>
         <div>
-          <h1>拼字勇者</h1>
-          <p class="sub">Version Two · 一直線冒險</p>
+          <h1>Spelling Hero</h1>
+          <p class="sub">Version Two · Linear Adventure</p>
         </div>
       </div>
     </header>
 
     <section id="title" class="screen active">
       <div class="hero-scene" id="title-scene">
-        <img class="title-hero" src="assets/hero.png" alt="勇者">
+        <img class="title-hero" src="assets/hero.png" alt="Hero">
         <div class="scene-copy">
-          <h2>拼字勇者</h2>
-          <p>向前走、遇二十隻怪物、用拼字攻擊！打贏可以攞裝備，中間同最後有 Boss。</p>
+          <h2>Spelling Hero</h2>
+          <p>Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!</p>
         </div>
       </div>
-      <p class="hint">每次攻擊會抽出唔同生字嚟串。串啱扣怪物 HP，串錯扣勇者 HP。</p>
+      <p class="hint">Pick a stage, then start. Each attack draws a different spelling word.</p>
+      <div class="stage-pick" role="group" aria-label="Choose stage">
+        <button type="button" class="stage-btn" id="stage-btn-1" data-stage="stage1" aria-pressed="true">
+          <strong>Stage One</strong>
+          <span>First dictation set</span>
+        </button>
+        <button type="button" class="stage-btn" id="stage-btn-2" data-stage="stage2" aria-pressed="false">
+          <strong>Stage Two</strong>
+          <span>Second dictation set (same words for now)</span>
+        </button>
+      </div>
       <div class="actions center">
-        <button type="button" class="btn" id="start-btn">開始冒險</button>
+        <button type="button" class="btn" id="start-btn">Start Adventure</button>
       </div>
     </section>
 
     <section id="travel" class="screen">
-      <p class="travel-caption" id="travel-caption">勇者向前行…</p>
+      <p class="travel-caption" id="travel-caption">The hero walks on…</p>
       <div class="travel-scene" id="travel-scene">
-        <img class="walker" id="walker" src="assets/hero.png" alt="勇者向前行">
+        <img class="walker" id="walker" src="assets/hero.png" alt="Hero walking">
       </div>
-      <p class="hint" id="travel-hint" style="text-align:center;margin-bottom:0;">前面好像有怪物…</p>
+      <p class="hint" id="travel-hint" style="text-align:center;margin-bottom:0;">Something waits ahead…</p>
     </section>
 
     <section id="battle" class="screen">
       <div class="meta-bar">
-        <span class="pill" id="progress-pill">1 / 20</span>
-        <span class="pill sky" id="atk-pill">攻擊 1</span>
-        <span class="pill sky" id="def-pill">防禦 0</span>
-        <span class="pill sun" id="buff-pill">無特殊效果</span>
+        <span class="pill" id="progress-pill">1 / 8</span>
+        <span class="pill sky" id="atk-pill">ATK 1</span>
+        <span class="pill sky" id="def-pill">DEF 0</span>
+        <span class="pill sun" id="buff-pill">No special effects</span>
       </div>
       <div class="progress"><span id="progress-fill"></span></div>
 
       <div class="arena">
         <div class="fighter" id="hero-panel">
-          <img src="assets/hero.png" alt="勇者">
-          <h3>勇者</h3>
-          <p class="tag" id="hero-gear-tag">未裝備</p>
+          <img src="assets/hero.png" alt="Hero">
+          <h3>Hero</h3>
+          <p class="tag" id="hero-gear-tag">No gear</p>
           <div class="hp-row">
             <span>HP</span>
             <div class="hp-bar"><i id="hero-hp-fill"></i></div>
@@ -692,9 +669,9 @@
           </div>
         </div>
         <div class="fighter" id="monster-panel">
-          <img id="monster-img" src="assets/monster.png" alt="生字怪物">
-          <h3 id="monster-name">生字怪物</h3>
-          <p class="tag" id="monster-tag">普通怪</p>
+          <img id="monster-img" src="assets/monster.png" alt="Monster">
+          <h3 id="monster-name">Monster</h3>
+          <p class="tag" id="monster-tag">Monster</p>
           <div class="hp-row">
             <span>HP</span>
             <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
@@ -703,137 +680,119 @@
         </div>
       </div>
 
-      <div class="hint-panel">
-        <p class="hint-caption">睇圖，串英文嚟攻擊</p>
-        <div class="hint-frame">
-          <img id="hint-img" src="assets/hints/hint-art-room.png" alt="生字提示圖">
+      <div class="meaning" id="word-meaning">
+        <div class="word-prompt">
+          <img class="word-prompt-img" id="word-prompt-img" src="assets/words/art-room.png" alt="Spell this word">
+          <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
         </div>
-        <span class="sr-only" id="word-meaning">美術室</span>
+        <p class="word-clue" id="word-clue"></p>
+        <small>Listen, fill every blank, then Attack!</small>
       </div>
-
-      <div class="speak-dock">
-        <div class="tts-control">
-          <label for="tts-rate">
-            <span>速度</span>
-            <output id="tts-rate-value" for="tts-rate">0.63×</output>
-          </label>
-          <input type="range" id="tts-rate" min="0.40" max="1.20" step="0.01" value="0.63">
-          <div class="tts-ends"><span>慢</span><span>快</span></div>
-        </div>
-        <button type="button" class="btn secondary" id="speak-btn">🔊 讀生字</button>
-      </div>
-
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
-
-      <div class="tool-row">
-        <button type="button" class="btn sun" id="letter-hint-btn">提示字母 (−1 HP)</button>
-        <button type="button" class="btn ghost" id="layout-btn">鍵盤：A–Z</button>
-      </div>
-      <div class="keyboard layout-alpha" id="keyboard"></div>
-
-      <div class="combat-footer">
-        <button type="button" class="btn attack" id="check-btn">攻擊！</button>
-        <button type="button" class="btn ghost" id="quit-btn">結束</button>
+      <div class="keyboard" id="keyboard"></div>
+      <div class="actions center">
+        <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
+        <button type="button" class="btn" id="check-btn">Attack!</button>
+        <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
       </div>
     </section>
 
     <section id="loot" class="screen">
       <div class="loot-card">
-        <p class="section-title">打贏啦！獲得裝備</p>
+        <p class="section-title">Victory! New gear</p>
         <div class="loot-art">
-          <img src="assets/equipment.png" alt="裝備">
+          <img src="assets/equipment.png" alt="Equipment">
         </div>
-        <p class="loot-name" id="loot-name">木劍</p>
-        <p class="loot-effect" id="loot-effect">攻擊 +1</p>
+        <p class="loot-name" id="loot-name">Wood Sword</p>
+        <p class="loot-effect" id="loot-effect">ATK +1</p>
         <div class="equip-list" id="equip-list"></div>
         <div class="actions center">
-          <button type="button" class="btn" id="loot-continue-btn">繼續前進</button>
+          <button type="button" class="btn" id="loot-continue-btn">Keep Going</button>
         </div>
       </div>
     </section>
 
     <section id="result" class="screen">
-      <img class="result-hero" src="assets/hero.png" alt="勇者">
-      <p class="section-title" style="text-align:center;" id="result-title">冒險結束</p>
-      <p class="result-score" id="result-score">0 / 20</p>
+      <img class="result-hero" src="assets/hero.png" alt="Hero">
+      <p class="section-title" style="text-align:center;" id="result-title">Adventure Over</p>
+      <p class="result-score" id="result-score">0 / 8</p>
       <p class="result-message" id="result-message"></p>
       <ul class="result-list" id="result-list"></ul>
       <div class="actions center">
-        <button type="button" class="btn" id="again-btn">再挑戰一次</button>
-        <button type="button" class="btn ghost" id="home-btn">返回標題</button>
+        <button type="button" class="btn" id="again-btn">Play Again</button>
+        <button type="button" class="btn ghost" id="home-btn">Back to Title</button>
       </div>
     </section>
   </div>
 
   <script>
-    const SPELL_WORDS = [
-      'art room : 美術室',
-      'first floor : 一樓',
-      'draw : 繪畫',
-      'paint : 繪畫、油漆',
-      'puppets : 木偶、手偶',
-      'library : 圖書館',
-      'second floor : 二樓',
-      'borrow : 借入、借用',
-      'swimming pool : 游泳池',
-      'pond : 池塘',
-      'students : 學生'
-    ].join('\n');
-
-    const MONSTERS = [
-      { id: 'm01', name: '綠史萊姆', img: 'assets/monsters/m01-slime.png', hp: 2, atk: 1, boss: false },
-      { id: 'm02', name: '火焰蝙蝠', img: 'assets/monsters/m02-firebat.png', hp: 2, atk: 1, boss: false },
-      { id: 'm03', name: '石蘑菇', img: 'assets/monsters/m03-rockshroom.png', hp: 2, atk: 1, boss: false },
-      { id: 'm04', name: '刺刺刺蝟', img: 'assets/monsters/m04-spikehog.png', hp: 2, atk: 1, boss: false },
-      { id: 'm05', name: '影子貓', img: 'assets/monsters/m05-shadowcat.png', hp: 3, atk: 1, boss: false },
-      { id: 'm06', name: '雷電蛙', img: 'assets/monsters/m06-thunderfrog.png', hp: 3, atk: 1, boss: false },
-      { id: 'm07', name: '棉花幽靈', img: 'assets/monsters/m07-cottonghost.png', hp: 3, atk: 1, boss: false },
-      { id: 'm08', name: '鋼甲甲蟲', img: 'assets/monsters/m08-steelbeetle.png', hp: 3, atk: 1, boss: false },
-      { id: 'm09', name: '冰晶狐', img: 'assets/monsters/m09-icefox.png', hp: 3, atk: 1, boss: false },
-      { id: 'm10', name: '書卷巨龍', img: 'assets/monsters/m10-bookdragon.png', hp: 5, atk: 2, boss: true },
-      { id: 'm11', name: '沙塵蝎', img: 'assets/monsters/m11-sandscorpion.png', hp: 3, atk: 1, boss: false },
-      { id: 'm12', name: '彩虹水母', img: 'assets/monsters/m12-rainbowjelly.png', hp: 3, atk: 1, boss: false },
-      { id: 'm13', name: '木乃伊鴨', img: 'assets/monsters/m13-mummyduck.png', hp: 3, atk: 1, boss: false },
-      { id: 'm14', name: '熔岩豬', img: 'assets/monsters/m14-lavapig.png', hp: 4, atk: 1, boss: false },
-      { id: 'm15', name: '星光貓頭鷹', img: 'assets/monsters/m15-starowl.png', hp: 4, atk: 1, boss: false },
-      { id: 'm16', name: '荊棘狼', img: 'assets/monsters/m16-briarwolf.png', hp: 4, atk: 2, boss: false },
-      { id: 'm17', name: '泡泡章魚', img: 'assets/monsters/m17-bubbleocto.png', hp: 4, atk: 1, boss: false },
-      { id: 'm18', name: '水晶螃蟹', img: 'assets/monsters/m18-crystalcrab.png', hp: 4, atk: 2, boss: false },
-      { id: 'm19', name: '風暴鷹', img: 'assets/monsters/m19-stormeagle.png', hp: 4, atk: 2, boss: false },
-      { id: 'm20', name: '暗影帝王', img: 'assets/monsters/m20-shadowking.png', hp: 6, atk: 2, boss: true }
+    // Shared dictation bank for now; Stage Two can swap `words` (+ clue sentences) later.
+    const SCHOOL_WORDS = [
+      { word: 'art room', img: 'assets/words/art-room.png', clue: 'A classroom where kids make pictures and crafts.' },
+      { word: 'first floor', img: 'assets/words/first-floor.png', clue: 'The level of a building that is closest to the ground.' },
+      { word: 'draw', img: 'assets/words/draw.png', clue: 'To make a picture with a pencil or crayon.' },
+      { word: 'paint', img: 'assets/words/paint.png', clue: 'To color a picture using a brush and wet colors.' },
+      { word: 'puppets', img: 'assets/words/puppets.png', clue: 'Toys you move with your hands to put on a show.' },
+      { word: 'library', img: 'assets/words/library.png', clue: 'A quiet place with many books to read.' },
+      { word: 'second floor', img: 'assets/words/second-floor.png', clue: 'The level above the ground floor of a building.' },
+      { word: 'borrow', img: 'assets/words/borrow.png', clue: 'To take something for a short time and give it back later.' },
+      { word: 'swimming pool', img: 'assets/words/swimming-pool.png', clue: 'A big basin filled with water where people splash and race.' },
+      { word: 'pond', img: 'assets/words/pond.png', clue: 'A small body of still water outdoors.' },
+      { word: 'students', img: 'assets/words/students.png', clue: 'Children who learn at school.' }
     ];
 
-    const LETTERS_AZ = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    const KEYBOARD_LAYOUTS = {
-      alpha: {
-        label: '鍵盤：A–Z',
-        nextLabel: '切換為 QWERTY',
-        rows: [
-          LETTERS_AZ.slice(0, 9),
-          LETTERS_AZ.slice(9, 18),
-          LETTERS_AZ.slice(18)
-        ]
+    // Typical small-monster HP = 4 → mini-boss HP = 8 (2×). Total HP ≈ 44 → ~38–44 correct spells at ATK 1→2.
+    const STAGE_ONE_MONSTERS = [
+      { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 8, atk: 2, role: 'mini' },
+      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 12, atk: 2, role: 'boss' }
+    ];
+
+    // Distinct roster from unused m01–m20 art (no overlap with Stage One sprites).
+    const STAGE_TWO_MONSTERS = [
+      { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 3, atk: 1, role: 'normal' },
+      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 4, atk: 1, role: 'normal' },
+      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 8, atk: 2, role: 'mini' },
+      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 12, atk: 2, role: 'boss' }
+    ];
+
+    const STAGES = [
+      {
+        id: 'stage1',
+        label: 'Stage One',
+        labelEn: 'Stage One',
+        words: SCHOOL_WORDS,
+        monsters: STAGE_ONE_MONSTERS
       },
-      qwerty: {
-        label: '鍵盤：QWERTY',
-        nextLabel: '切換為 A–Z',
-        rows: [
-          'qwertyuiop'.split(''),
-          'asdfghjkl'.split(''),
-          'zxcvbnm'.split('')
-        ]
+      {
+        id: 'stage2',
+        label: 'Stage Two',
+        labelEn: 'Stage Two',
+        words: SCHOOL_WORDS, // swap later for second dictation list
+        monsters: STAGE_TWO_MONSTERS
       }
-    };
+    ];
+
+    const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
     const EQUIPMENT = [
-      { id: 'wood_sword', name: '木劍', effect: '攻擊 +1', kind: 'atk', value: 1 },
-      { id: 'iron_sword', name: '鐵劍', effect: '攻擊 +2', kind: 'atk', value: 2 },
-      { id: 'cloth_armor', name: '布甲', effect: '防禦 +1', kind: 'def', value: 1 },
-      { id: 'wood_shield', name: '木盾', effect: '防禦 +1', kind: 'def', value: 1 },
-      { id: 'herb', name: '回復藥草', effect: '即時回復 3 HP', kind: 'heal', value: 3 },
-      { id: 'lucky_feather', name: '幸運羽', effect: '下一擊雙倍傷害', kind: 'double', value: 1 },
-      { id: 'hint_amulet', name: '提示護符', effect: '提示字母唔減攻擊', kind: 'hintSafe', value: 1 }
+      { id: 'wood_sword', name: 'Wood Sword', effect: 'ATK +1', kind: 'atk', value: 1 },
+      { id: 'iron_sword', name: 'Iron Sword', effect: 'ATK +2', kind: 'atk', value: 2 },
+      { id: 'cloth_armor', name: 'Cloth Armor', effect: 'DEF +1', kind: 'def', value: 1 },
+      { id: 'wood_shield', name: 'Wood Shield', effect: 'DEF +1', kind: 'def', value: 1 },
+      { id: 'herb', name: 'Healing Herb', effect: 'Restore 3 HP now', kind: 'heal', value: 3 },
+      { id: 'lucky_feather', name: 'Lucky Feather', effect: 'Next hit deals double damage', kind: 'double', value: 1 },
+      { id: 'hint_amulet', name: 'Hint Amulet', effect: 'Letter hints do not cut ATK', kind: 'hintSafe', value: 1 }
     ];
 
     const Sfx = (() => {
@@ -931,6 +890,8 @@
       travelHint: document.getElementById('travel-hint'),
       walker: document.getElementById('walker'),
       startBtn: document.getElementById('start-btn'),
+      stageBtn1: document.getElementById('stage-btn-1'),
+      stageBtn2: document.getElementById('stage-btn-2'),
       progressPill: document.getElementById('progress-pill'),
       atkPill: document.getElementById('atk-pill'),
       defPill: document.getElementById('def-pill'),
@@ -947,15 +908,13 @@
       monsterHpFill: document.getElementById('monster-hp-fill'),
       monsterHpText: document.getElementById('monster-hp-text'),
       meaning: document.getElementById('word-meaning'),
-      hintImg: document.getElementById('hint-img'),
+      wordPromptImg: document.getElementById('word-prompt-img'),
+      wordClue: document.getElementById('word-clue'),
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
-      layoutBtn: document.getElementById('layout-btn'),
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
-      ttsRate: document.getElementById('tts-rate'),
-      ttsRateValue: document.getElementById('tts-rate-value'),
       checkBtn: document.getElementById('check-btn'),
       quitBtn: document.getElementById('quit-btn'),
       lootName: document.getElementById('loot-name'),
@@ -971,8 +930,10 @@
     };
 
     const state = {
+      stageId: 'stage1',
+      stage: STAGES[0],
       words: [],
-      wordDeck: [],
+      wordDrawCounts: {},
       attackWord: null,
       index: 0,
       blanks: [],
@@ -985,12 +946,32 @@
       spellLog: [],
       wins: 0,
       hero: null,
-      monster: null,
-      ttsRate: 0.63,
-      keyboardLayout: 'alpha'
+      monster: null
     };
 
-    const HINT_HP_COST = 1;
+    function getStageById(id) {
+      return STAGES.find((s) => s.id === id) || STAGES[0];
+    }
+
+    function activeMonsters() {
+      return state.stage?.monsters || STAGES[0].monsters;
+    }
+
+    function roleLabel(role) {
+      if (role === 'boss') return 'Boss Fight';
+      if (role === 'mini') return 'Mini-Boss';
+      return 'Monster';
+    }
+
+    function setStageSelection(stageId) {
+      state.stageId = stageId;
+      state.stage = getStageById(stageId);
+      const buttons = [els.stageBtn1, els.stageBtn2];
+      buttons.forEach((btn) => {
+        if (!btn) return;
+        btn.setAttribute('aria-pressed', btn.dataset.stage === stageId ? 'true' : 'false');
+      });
+    }
 
     function showScreen(name) {
       [els.title, els.travel, els.battle, els.loot, els.result].forEach((screen) => {
@@ -1006,23 +987,16 @@
       return parts.every((part) => /^[a-z]+(?:'[a-z]+)?$/i.test(part));
     }
 
-    function hintImageForWord(word) {
-      const slug = word.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
-      return `assets/hints/hint-${slug}.png`;
-    }
-
-    function parseWords(raw) {
-      return raw
-        .split(/\n+/)
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => {
-          const colon = line.indexOf(':');
-          const phraseRaw = (colon >= 0 ? line.slice(0, colon) : line).trim().replace(/\s+/g, ' ');
-          const meaning = colon >= 0 ? line.slice(colon + 1).trim() : '';
+    function loadWords(list) {
+      return (list || [])
+        .map((item) => {
+          const phraseRaw = String(item.word || '').trim().replace(/\s+/g, ' ');
           if (!isValidPhrase(phraseRaw)) return null;
-          const word = phraseRaw.toLowerCase();
-          return { word, meaning, hintImg: hintImageForWord(word) };
+          return {
+            word: phraseRaw.toLowerCase(),
+            img: item.img || '',
+            clue: String(item.clue || '').trim()
+          };
         })
         .filter(Boolean);
     }
@@ -1036,13 +1010,21 @@
       return copy;
     }
 
-    function pickBlankIndexes(word) {
-      const letters = word.replace(/'/g, '').length;
-      const count = Math.max(1, Math.min(letters - 1, Math.ceil(letters * 0.45)));
+    function blankRatioForEncounter(index) {
+      const total = activeMonsters().length;
+      if (total <= 1) return 1;
+      // Smooth ramp: encounter 1 → 30%, final Boss → 100%.
+      return 0.3 + (index / (total - 1)) * 0.7;
+    }
+
+    function pickBlankIndexes(word, ratio) {
       const candidates = [];
       for (let i = 0; i < word.length; i += 1) {
         if (/[a-z]/i.test(word[i])) candidates.push(i);
       }
+      if (!candidates.length) return new Set();
+      const target = Math.max(1, Math.round(candidates.length * ratio));
+      const count = Math.min(candidates.length, target);
       return new Set(shuffle(candidates).slice(0, count));
     }
 
@@ -1059,34 +1041,31 @@
     }
 
     function currentMonsterDef() {
-      return MONSTERS[state.index];
+      return activeMonsters()[state.index];
     }
 
-    function isBossEncounter() {
-      return !!currentMonsterDef()?.boss;
+    function isEliteEncounter() {
+      const role = currentMonsterDef()?.role;
+      return role === 'mini' || role === 'boss';
     }
 
     function currentWord() {
       return state.attackWord;
     }
 
-    function refillWordDeck() {
-      state.wordDeck = shuffle(state.words.slice());
-    }
-
     function pickNextAttackWord() {
       if (!state.words.length) return null;
-      if (!state.wordDeck.length) refillWordDeck();
-      // Avoid immediately repeating the same word when the deck still has others.
-      if (state.wordDeck.length > 1 && state.attackWord) {
-        const idx = state.wordDeck.findIndex((w) => w.word !== state.attackWord.word);
-        if (idx > 0) {
-          const [picked] = state.wordDeck.splice(idx, 1);
-          state.attackWord = picked;
-          return state.attackWord;
-        }
+      const counts = state.words.map((w) => state.wordDrawCounts[w.word] || 0);
+      const min = Math.min(...counts);
+      let pool = state.words.filter((w) => (state.wordDrawCounts[w.word] || 0) === min);
+      // Soft anti-repeat when other under-covered words exist.
+      if (state.attackWord && pool.length > 1) {
+        const withoutLast = pool.filter((w) => w.word !== state.attackWord.word);
+        if (withoutLast.length) pool = withoutLast;
       }
-      state.attackWord = state.wordDeck.shift();
+      const picked = pool[Math.floor(Math.random() * pool.length)];
+      state.wordDrawCounts[picked.word] = (state.wordDrawCounts[picked.word] || 0) + 1;
+      state.attackWord = picked;
       return state.attackWord;
     }
 
@@ -1099,9 +1078,14 @@
         hp: def.hp,
         maxHp: def.hp,
         atk: def.atk,
-        boss: !!def.boss,
+        role: def.role || 'normal',
+        boss: def.role === 'boss' || def.role === 'mini',
         spells: []
       };
+    }
+
+    function encounterDisplayName(def) {
+      return def?.name || '';
     }
 
     function flash(el, cls) {
@@ -1112,34 +1096,35 @@
     }
 
     function updateHud() {
-      const total = MONSTERS.length;
+      const total = activeMonsters().length;
       const current = Math.min(state.index + 1, total);
       const hero = state.hero;
       const monster = state.monster;
 
       els.progressPill.textContent = `${current} / ${total}`;
-      els.atkPill.textContent = `攻擊 ${hero.atk}`;
-      els.defPill.textContent = `防禦 ${hero.def}`;
+      els.atkPill.textContent = `ATK ${hero.atk}`;
+      els.defPill.textContent = `DEF ${hero.def}`;
 
       const buffs = [];
-      if (hero.doubleNext) buffs.push('下一擊雙倍');
-      if (hero.hintSafe) buffs.push('提示護符');
-      els.buffPill.textContent = buffs.length ? buffs.join(' · ') : '無特殊效果';
+      if (hero.doubleNext) buffs.push('Next hit ×2');
+      if (hero.hintSafe) buffs.push('Hint Amulet');
+      els.buffPill.textContent = buffs.length ? buffs.join(' · ') : 'No special effects';
 
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
       els.heroHpFill.style.width = `${Math.max(0, (hero.hp / hero.maxHp) * 100)}%`;
       els.heroHpText.textContent = `${Math.max(0, hero.hp)}/${hero.maxHp}`;
       els.heroGearTag.textContent = hero.equipment.length
         ? hero.equipment.map((e) => e.name).slice(-3).join(' · ')
-        : '未裝備';
+        : 'No gear';
 
       if (monster) {
         els.monsterHpFill.style.width = `${Math.max(0, (monster.hp / monster.maxHp) * 100)}%`;
         els.monsterHpText.textContent = `${Math.max(0, monster.hp)}/${monster.maxHp}`;
         els.monsterName.textContent = monster.name;
-        els.monsterTag.textContent = monster.boss ? 'Boss 戰' : '普通怪';
+        els.monsterTag.textContent = roleLabel(monster.role);
         els.monsterImg.src = monster.img;
-        els.monsterPanel.classList.toggle('boss', monster.boss);
+        els.monsterPanel.classList.toggle('boss', monster.role === 'boss');
+        els.monsterPanel.classList.toggle('mini', monster.role === 'mini');
       }
     }
 
@@ -1216,70 +1201,38 @@
       renderSlots();
     }
 
-    function syncLayoutButton() {
-      const layout = KEYBOARD_LAYOUTS[state.keyboardLayout];
-      els.layoutBtn.textContent = layout.label;
-      els.layoutBtn.title = layout.nextLabel;
-      els.layoutBtn.setAttribute('aria-label', layout.nextLabel);
-    }
-
     function buildKeyboard() {
-      const layout = KEYBOARD_LAYOUTS[state.keyboardLayout];
       els.keyboard.innerHTML = '';
-      els.keyboard.classList.toggle('layout-alpha', state.keyboardLayout === 'alpha');
-      els.keyboard.classList.toggle('layout-qwerty', state.keyboardLayout === 'qwerty');
-
-      layout.rows.forEach((letters, rowIndex) => {
-        const row = document.createElement('div');
-        const isLast = rowIndex === layout.rows.length - 1;
-        const cols = letters.length + (isLast ? 1 : 0);
-        row.className = `key-row row-${cols}`;
-
-        letters.forEach((letter) => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'key';
-          btn.textContent = letter;
-          btn.addEventListener('click', () => typeLetter(letter));
-          row.appendChild(btn);
-        });
-
-        if (isLast) {
-          const del = document.createElement('button');
-          del.type = 'button';
-          del.className = 'key wide';
-          del.textContent = 'Delete';
-          del.addEventListener('click', backspace);
-          row.appendChild(del);
-        }
-
-        els.keyboard.appendChild(row);
+      LETTERS.forEach((letter) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'key';
+        btn.textContent = letter;
+        btn.addEventListener('click', () => typeLetter(letter));
+        els.keyboard.appendChild(btn);
       });
-
-      syncLayoutButton();
-    }
-
-    function toggleKeyboardLayout() {
-      state.keyboardLayout = state.keyboardLayout === 'alpha' ? 'qwerty' : 'alpha';
-      Sfx.play('click');
-      buildKeyboard();
-    }
-
-    function syncTtsRateLabel() {
-      els.ttsRateValue.textContent = `${Number(state.ttsRate).toFixed(2)}×`;
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'key wide';
+      del.textContent = 'Delete';
+      del.addEventListener('click', backspace);
+      els.keyboard.appendChild(del);
     }
 
     function useLetterHint() {
-      if (state.locked || !state.blanks.length || !state.hero) return;
+      if (state.locked || !state.blanks.length) return;
       const item = currentWord();
       if (!item) return;
 
       let target = state.blanks[state.cursor];
       if (!target || target.value) {
         const emptyIdx = state.blanks.findIndex((b) => !b.value);
-        if (emptyIdx === -1) return;
-        state.cursor = emptyIdx;
-        target = state.blanks[emptyIdx];
+        if (emptyIdx !== -1) {
+          state.cursor = emptyIdx;
+          target = state.blanks[emptyIdx];
+        } else if (!target) {
+          return;
+        }
       }
 
       target.value = item.word[target.index].toLowerCase();
@@ -1287,46 +1240,26 @@
       const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
       state.cursor = next === -1 ? firstEmptyCursor() : next;
 
-      state.hero.hp = Math.max(0, state.hero.hp - HINT_HP_COST);
-      flash(els.heroPanel, 'hit');
-
-      const atkNote = state.hero.hintSafe
-        ? '護符生效，攻擊力不變'
-        : '今擊攻擊力減半';
-      els.feedback.textContent = `已填一個字母（−${HINT_HP_COST} HP · ${atkNote}）`;
+      els.feedback.textContent = state.hero.hintSafe
+        ? 'One letter filled (Hint Amulet: ATK unchanged)'
+        : 'One letter filled (this attack deals half ATK)';
       els.feedback.className = 'feedback';
       Sfx.play('hint');
       updateHud();
       renderSlots();
-
-      if (state.hero.hp <= 0) {
-        state.locked = true;
-        els.checkBtn.disabled = true;
-        els.letterHintBtn.disabled = true;
-        setTimeout(() => {
-          state.answers.push({
-            monster: state.monster.name,
-            ok: false,
-            boss: state.monster.boss,
-            reason: '✗ 提示耗盡體力',
-            spells: state.monster.spells.slice()
-          });
-          finishAdventure(false);
-        }, 700);
-      }
     }
 
     function speakCurrentWord() {
       const item = currentWord();
       if (!item || !window.speechSynthesis) {
-        els.feedback.textContent = '呢個瀏覽器唔支援朗讀。';
+        els.feedback.textContent = 'This browser cannot speak the word.';
         els.feedback.className = 'feedback bad';
         return;
       }
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(item.word);
       utterance.lang = 'en-US';
-      utterance.rate = state.ttsRate;
+      utterance.rate = 0.63;
       window.speechSynthesis.speak(utterance);
     }
 
@@ -1335,7 +1268,7 @@
       if (!item) return;
       state.locked = false;
       state.usedHint = false;
-      const blankIndexes = pickBlankIndexes(item.word);
+      const blankIndexes = pickBlankIndexes(item.word, blankRatioForEncounter(state.index));
       state.blanks = [...blankIndexes]
         .sort((a, b) => a - b)
         .map((index) => ({ index, value: '' }));
@@ -1345,9 +1278,10 @@
       els.checkBtn.disabled = false;
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
-      els.meaning.textContent = item.meaning || item.word;
-      els.hintImg.src = item.hintImg;
-      els.hintImg.alt = item.meaning ? `提示圖：${item.meaning}` : `提示圖：${item.word}`;
+      const imgSrc = item.img || 'assets/words/art-room.png';
+      els.wordPromptImg.src = imgSrc;
+      els.wordPromptImg.alt = 'Spell this word';
+      els.wordClue.textContent = item.clue || 'Listen carefully, then spell the word.';
       renderSlots();
       updateHud();
     }
@@ -1390,8 +1324,8 @@
         return !used.has(e.id);
       });
       const source = pool.length ? pool : EQUIPMENT;
-      if (isBossEncounter()) {
-        const preferred = state.index === MONSTERS.length - 1 ? 'iron_sword' : 'wood_sword';
+      if (isEliteEncounter()) {
+        const preferred = currentMonsterDef()?.role === 'boss' ? 'iron_sword' : 'wood_sword';
         const strong = source.find((e) => e.id === preferred)
           || source.find((e) => e.id === 'iron_sword')
           || source[0];
@@ -1430,17 +1364,18 @@
         clearTimeout(state.travelTimer);
         state.travelTimer = null;
       }
-      const total = MONSTERS.length;
+      const total = activeMonsters().length;
+      const stageName = state.stage?.label || 'Stage';
       els.progressFill.style.width = won ? '100%' : `${(state.index / Math.max(total, 1)) * 100}%`;
-      els.resultTitle.textContent = won ? '通關成功！' : '勇者倒下了…';
+      els.resultTitle.textContent = won ? 'Stage Clear!' : 'The hero fell…';
       els.resultScore.textContent = `${state.wins} / ${total}`;
       if (won) {
         els.resultMessage.textContent = state.wins === total
-          ? '完美！二十隻怪物全部打贏啦！'
-          : '做得好！繼續練習會更強。';
+          ? `Perfect! You cleared all 8 battles in ${stageName}!`
+          : 'Nice work! Keep practicing to get stronger.';
         Sfx.play('finish');
       } else {
-        els.resultMessage.textContent = '下次記得用裝備同提示護符幫手啦！';
+        els.resultMessage.textContent = 'Try gear and the Hint Amulet next time!';
         Sfx.play('gameover');
       }
 
@@ -1449,8 +1384,8 @@
           .map((s) => `${s.ok ? '✓' : '✗'} ${s.word}`)
           .join(' · ');
         const detail = a.ok
-          ? (a.boss ? '✓ Boss 擊敗' : '✓ 擊敗')
-          : (a.reason || '✗ 未擊敗');
+          ? (a.role === 'boss' ? '✓ Boss defeated' : a.role === 'mini' ? '✓ Mini-Boss defeated' : '✓ Defeated')
+          : (a.reason || '✗ Not defeated');
         return `<li class="${a.ok ? '' : 'miss'}"><span>${a.monster}${spellBits ? `<br><small style="font-weight:700;color:#4d6b62">${spellBits}</small>` : ''}</span><span>${detail}</span></li>`;
       }).join('');
 
@@ -1461,6 +1396,7 @@
       state.answers.push({
         monster: state.monster.name,
         ok: true,
+        role: state.monster.role,
         boss: state.monster.boss,
         spells: state.monster.spells.slice()
       });
@@ -1471,7 +1407,7 @@
 
     function goToNextEncounter() {
       state.index += 1;
-      if (state.index >= MONSTERS.length) {
+      if (state.index >= activeMonsters().length) {
         finishAdventure(true);
         return;
       }
@@ -1483,18 +1419,23 @@
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       showScreen('battle');
       preparePuzzle();
-      if (state.monster.boss) {
-        els.feedback.textContent = `${state.monster.name} 出現！串啱先可以打贏佢！`;
+      if (state.monster.role === 'boss' || state.monster.role === 'mini') {
+        els.feedback.textContent = `${state.monster.name} appears! Spell correctly to win!`;
         els.feedback.className = 'feedback';
       }
     }
 
     function beginTravel() {
       const next = currentMonsterDef();
-      els.travelCaption.textContent = '勇者向前行…';
-      els.travelHint.textContent = next.boss
-        ? `前方有強大嘅 Boss：${next.name}！`
-        : `前面出現咗「${next.name}」…`;
+      const shown = encounterDisplayName(next);
+      els.travelCaption.textContent = 'The hero walks on…';
+      if (next.role === 'boss') {
+        els.travelHint.textContent = `Final Boss ahead: ${shown}!`;
+      } else if (next.role === 'mini') {
+        els.travelHint.textContent = `Mini-Boss ahead: ${shown}!`;
+      } else {
+        els.travelHint.textContent = `"${shown}" appears ahead…`;
+      }
       els.walker.style.animation = 'none';
       void els.walker.offsetWidth;
       els.walker.style.animation = '';
@@ -1511,7 +1452,7 @@
       const item = currentWord();
       const incomplete = state.blanks.some((b) => !b.value);
       if (incomplete) {
-        els.feedback.textContent = '請填晒所有空白格先攻擊。';
+        els.feedback.textContent = 'Fill every blank before you attack.';
         els.feedback.className = 'feedback bad';
         Sfx.play('warn');
         return;
@@ -1525,13 +1466,13 @@
       markSlots(ok);
 
       if (ok) {
-        state.monster.spells.push({ word: item.word, meaning: item.meaning, ok: true });
-        state.spellLog.push({ word: item.word, meaning: item.meaning, ok: true });
+        state.monster.spells.push({ word: item.word, img: item.img, ok: true });
+        state.spellLog.push({ word: item.word, img: item.img, ok: true });
         const dmg = calcAttackDamage();
         state.monster.hp = Math.max(0, state.monster.hp - dmg);
         flash(els.heroPanel, 'attack');
         flash(els.monsterPanel, 'hit');
-        els.feedback.textContent = `串啱！造成 ${dmg} 點傷害！`;
+        els.feedback.textContent = `Correct! You deal ${dmg} damage!`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
         updateHud();
@@ -1540,7 +1481,7 @@
           if (state.monster.hp <= 0) {
             advanceAfterVictory();
           } else {
-            els.feedback.textContent = '怪物仲未倒下，換個生字再攻擊！';
+            els.feedback.textContent = 'Still standing! Spell another word to attack!';
             els.feedback.className = 'feedback';
             preparePuzzle();
           }
@@ -1548,13 +1489,13 @@
         return;
       }
 
-      state.monster.spells.push({ word: item.word, meaning: item.meaning, ok: false, guess });
-      state.spellLog.push({ word: item.word, meaning: item.meaning, ok: false, guess });
+      state.monster.spells.push({ word: item.word, img: item.img, ok: false, guess });
+      state.spellLog.push({ word: item.word, img: item.img, ok: false, guess });
       const damage = Math.max(1, state.monster.atk - state.hero.def);
       state.hero.hp = Math.max(0, state.hero.hp - damage);
       flash(els.monsterPanel, 'attack');
       flash(els.heroPanel, 'hit');
-      els.feedback.textContent = `串錯咗！勇者受咗 ${damage} 點傷害。換個生字再試！`;
+      els.feedback.textContent = `Oops! The hero takes ${damage} damage. Try another word!`;
       els.feedback.className = 'feedback bad';
       Sfx.play('wrong');
       updateHud();
@@ -1564,8 +1505,9 @@
           state.answers.push({
             monster: state.monster.name,
             ok: false,
+            role: state.monster.role,
             boss: state.monster.boss,
-            reason: '✗ 勇者倒下',
+            reason: '✗ Hero fell',
             spells: state.monster.spells.slice()
           });
           finishAdventure(false);
@@ -1576,8 +1518,9 @@
     }
 
     function startAdventure() {
-      state.words = parseWords(SPELL_WORDS);
-      state.wordDeck = [];
+      state.stage = getStageById(state.stageId);
+      state.words = loadWords(state.stage.words);
+      state.wordDrawCounts = {};
       state.attackWord = null;
       state.index = 0;
       state.wins = 0;
@@ -1608,18 +1551,20 @@
     els.titleScene.style.backgroundImage = "url('assets/scene.png')";
     els.travelScene.style.backgroundImage = "url('assets/scene.png')";
 
-    els.startBtn.addEventListener('click', startAdventure);
-    els.ttsRate.addEventListener('input', () => {
-      state.ttsRate = Number(els.ttsRate.value);
-      syncTtsRateLabel();
+    setStageSelection(state.stageId);
+    [els.stageBtn1, els.stageBtn2].forEach((btn) => {
+      btn.addEventListener('click', () => {
+        Sfx.play('click');
+        setStageSelection(btn.dataset.stage);
+      });
     });
-    syncTtsRateLabel();
+
+    els.startBtn.addEventListener('click', startAdventure);
     els.speakBtn.addEventListener('click', () => {
       Sfx.ensure();
       speakCurrentWord();
     });
     els.letterHintBtn.addEventListener('click', useLetterHint);
-    els.layoutBtn.addEventListener('click', toggleKeyboardLayout);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.quitBtn.addEventListener('click', () => finishAdventure(false));
     els.lootContinueBtn.addEventListener('click', () => {
