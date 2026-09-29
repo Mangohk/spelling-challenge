@@ -338,20 +338,55 @@
       text-align: center;
       margin: 0 0 0.75rem;
     }
+    .word-prompt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      margin: 0 auto 0.55rem;
+    }
     .meaning .word-prompt-img {
       display: block;
       width: min(220px, 55vw);
       height: min(220px, 55vw);
       object-fit: cover;
-      margin: 0 auto 0.45rem;
+      margin: 0;
       border-radius: 1rem;
       border: 3px solid #cfe6dc;
       background: #f7fffb;
       box-shadow: 0 6px 14px rgba(15, 42, 36, 0.1);
+      flex-shrink: 0;
+    }
+    #speak-btn {
+      min-height: 3rem;
+      min-width: 8.5rem;
+      font-size: 1.05rem;
+      padding: 0.7rem 1.15rem;
+    }
+    /* Wide viewports: speak button sits beside the picture */
+    @media (min-width: 560px) {
+      .word-prompt {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.85rem;
+      }
+      #speak-btn {
+        min-height: 3.2rem;
+      }
+    }
+    .word-clue {
+      margin: 0 0 0.35rem;
+      padding: 0 0.35rem;
+      font-family: 'Nunito', system-ui, sans-serif;
+      font-size: clamp(0.95rem, 2.6vw, 1.08rem);
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--ink);
     }
     .meaning small {
       display: block;
-      margin-top: 0.25rem;
+      margin-top: 0.15rem;
       font-family: 'Nunito', system-ui, sans-serif;
       font-size: 0.9rem;
       color: var(--muted);
@@ -646,17 +681,18 @@
       </div>
 
       <div class="meaning" id="word-meaning">
-        <img class="word-prompt-img" src="assets/words/art-room.png" alt="Spell this word">
+        <div class="word-prompt">
+          <img class="word-prompt-img" id="word-prompt-img" src="assets/words/art-room.png" alt="Spell this word">
+          <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
+        </div>
+        <p class="word-clue" id="word-clue"></p>
         <small>Listen, fill every blank, then Attack!</small>
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="feedback" id="feedback"></p>
       <div class="keyboard" id="keyboard"></div>
-      <div class="actions center speak-row">
-        <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
-        <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
-      </div>
       <div class="actions center">
+        <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
         <button type="button" class="btn" id="check-btn">Attack!</button>
         <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
       </div>
@@ -691,19 +727,19 @@
   </div>
 
   <script>
-    // Shared dictation bank for now; Stage Two can swap `words` later.
+    // Shared dictation bank for now; Stage Two can swap `words` (+ clue sentences) later.
     const SCHOOL_WORDS = [
-      { word: 'art room', img: 'assets/words/art-room.png' },
-      { word: 'first floor', img: 'assets/words/first-floor.png' },
-      { word: 'draw', img: 'assets/words/draw.png' },
-      { word: 'paint', img: 'assets/words/paint.png' },
-      { word: 'puppets', img: 'assets/words/puppets.png' },
-      { word: 'library', img: 'assets/words/library.png' },
-      { word: 'second floor', img: 'assets/words/second-floor.png' },
-      { word: 'borrow', img: 'assets/words/borrow.png' },
-      { word: 'swimming pool', img: 'assets/words/swimming-pool.png' },
-      { word: 'pond', img: 'assets/words/pond.png' },
-      { word: 'students', img: 'assets/words/students.png' }
+      { word: 'art room', img: 'assets/words/art-room.png', clue: 'A classroom where kids make pictures and crafts.' },
+      { word: 'first floor', img: 'assets/words/first-floor.png', clue: 'The level of a building that is closest to the ground.' },
+      { word: 'draw', img: 'assets/words/draw.png', clue: 'To make a picture with a pencil or crayon.' },
+      { word: 'paint', img: 'assets/words/paint.png', clue: 'To color a picture using a brush and wet colors.' },
+      { word: 'puppets', img: 'assets/words/puppets.png', clue: 'Toys you move with your hands to put on a show.' },
+      { word: 'library', img: 'assets/words/library.png', clue: 'A quiet place with many books to read.' },
+      { word: 'second floor', img: 'assets/words/second-floor.png', clue: 'The level above the ground floor of a building.' },
+      { word: 'borrow', img: 'assets/words/borrow.png', clue: 'To take something for a short time and give it back later.' },
+      { word: 'swimming pool', img: 'assets/words/swimming-pool.png', clue: 'A big basin filled with water where people splash and race.' },
+      { word: 'pond', img: 'assets/words/pond.png', clue: 'A small body of still water outdoors.' },
+      { word: 'students', img: 'assets/words/students.png', clue: 'Children who learn at school.' }
     ];
 
     // Typical small-monster HP = 4 → mini-boss HP = 8 (2×). Total HP ≈ 44 → ~38–44 correct spells at ATK 1→2.
@@ -872,6 +908,8 @@
       monsterHpFill: document.getElementById('monster-hp-fill'),
       monsterHpText: document.getElementById('monster-hp-text'),
       meaning: document.getElementById('word-meaning'),
+      wordPromptImg: document.getElementById('word-prompt-img'),
+      wordClue: document.getElementById('word-clue'),
       slots: document.getElementById('slots'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
@@ -954,7 +992,11 @@
         .map((item) => {
           const phraseRaw = String(item.word || '').trim().replace(/\s+/g, ' ');
           if (!isValidPhrase(phraseRaw)) return null;
-          return { word: phraseRaw.toLowerCase(), img: item.img || '' };
+          return {
+            word: phraseRaw.toLowerCase(),
+            img: item.img || '',
+            clue: String(item.clue || '').trim()
+          };
         })
         .filter(Boolean);
     }
@@ -1237,7 +1279,9 @@
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
       const imgSrc = item.img || 'assets/words/art-room.png';
-      els.meaning.innerHTML = `<img class="word-prompt-img" src="${imgSrc}" alt="Spell this word"><small>Listen, fill every blank, then Attack!</small>`;
+      els.wordPromptImg.src = imgSrc;
+      els.wordPromptImg.alt = 'Spell this word';
+      els.wordClue.textContent = item.clue || 'Listen carefully, then spell the word.';
       renderSlots();
       updateHud();
     }
