@@ -632,7 +632,7 @@
         </button>
         <button type="button" class="stage-btn" id="stage-btn-2" data-stage="stage2" aria-pressed="false">
           <strong>Stage Two</strong>
-          <span>Second dictation set (same words for now)</span>
+          <span>School rules &amp; assembly dictation</span>
         </button>
       </div>
       <div class="actions center">
@@ -727,7 +727,6 @@
   </div>
 
   <script>
-    // Shared dictation bank for now; Stage Two can swap `words` (+ clue sentences) later.
     const SCHOOL_WORDS = [
       { word: 'art room', img: 'assets/words/art-room.png', clue: 'A classroom where kids make pictures and crafts.' },
       { word: 'first floor', img: 'assets/words/first-floor.png', clue: 'The level of a building that is closest to the ground.' },
@@ -740,6 +739,26 @@
       { word: 'swimming pool', img: 'assets/words/swimming-pool.png', clue: 'A big basin filled with water where people splash and race.' },
       { word: 'pond', img: 'assets/words/pond.png', clue: 'A small body of still water outdoors.' },
       { word: 'students', img: 'assets/words/students.png', clue: 'Children who learn at school.' }
+    ];
+
+    // 心圓二年級 · 二六年第二次英文默書 (unique phrases; "Sit still" listed once).
+    const RULES_WORDS = [
+      { word: 'sit still', img: 'assets/words/sit-still.jpg', clue: 'Stay in your seat and do not wriggle or jump around.' },
+      { word: 'line up', img: 'assets/words/line-up.jpg', clue: 'Stand one behind another in a neat row.' },
+      { word: 'keep quiet', img: 'assets/words/keep-quiet.jpg', clue: 'Do not talk. Stay silent in class.' },
+      { word: 'wait for your turn', img: 'assets/words/wait-for-your-turn.jpg', clue: 'Let other people go first, then it is your turn.' },
+      { word: 'keep off the grass', img: 'assets/words/keep-off-the-grass.jpg', clue: 'Do not walk or play on the green lawn.' },
+      { word: 'spit', img: 'assets/words/spit.jpg', clue: 'Push something out of your mouth, like a seed.' },
+      { word: 'litter', img: 'assets/words/litter.jpg', clue: 'Drop rubbish on the ground instead of in a bin.' },
+      { word: 'pick the flowers', img: 'assets/words/pick-the-flowers.jpg', clue: 'Pull the pretty flowers off the plants.' },
+      { word: 'climb', img: 'assets/words/climb.jpg', clue: 'Go up something with your hands and feet, like a tree.' },
+      { word: 'every', img: 'assets/words/every.jpg', clue: 'Each one; all of them, with none left out.' },
+      { word: 'friday', img: 'assets/words/friday.jpg', clue: 'The day of the week after Thursday.' },
+      { word: 'morning', img: 'assets/words/morning.jpg', clue: 'The early part of the day, when you wake up and go to school.' },
+      { word: 'assembly', img: 'assets/words/assembly.jpg', clue: 'When the whole school meets together to listen.' },
+      { word: 'school hall', img: 'assets/words/school-hall.jpg', clue: 'A large room in school where many classes can gather.' },
+      { word: 'run around', img: 'assets/words/run-around.jpg', clue: 'Run here and there instead of sitting still.' },
+      { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
     // Typical small-monster HP = 4 → mini-boss HP = 8 (2×). Total HP ≈ 44 → ~38–44 correct spells at ATK 1→2.
@@ -778,7 +797,7 @@
         id: 'stage2',
         label: 'Stage Two',
         labelEn: 'Stage Two',
-        words: SCHOOL_WORDS, // swap later for second dictation list
+        words: RULES_WORDS,
         monsters: STAGE_TWO_MONSTERS
       }
     ];
