@@ -18,12 +18,14 @@ Open `index.html` to play (or visit the GitHub Pages site).
 
 | Stage | Words | Monsters |
 |-------|-------|----------|
-| Stage One | Shared school-facilities list (picture prompts) | Own 8-monster roster; final Boss **Miss Lam** (`miss-lam.png`) |
-| Stage Two | Same list until the second dictation content arrives | **Different** 8-monster roster (unused m01–m20 art) |
+| Stage One | School facilities (art room, library, pond, …) | Own 8-monster roster; final Boss **Miss Lam** (`miss-lam.png`) |
+| Stage Two | 心圓二年級 二六年第二次英文默書 (school rules & assembly) | **Different** 8-monster roster (unused m01–m20 art) |
 
-## Word list (for now)
+## Word lists
 
-Spelling targets stay English. Chinese meanings are replaced by images in `assets/words/`. Stage config can swap Stage Two’s `words` independently later.
+Spelling targets stay English. Picture prompts live in `assets/words/`. Each stage has its own `words` array.
+
+**Stage Two** (16 unique phrases; “Sit still” appears once): sit still, line up, keep quiet, wait for your turn, keep off the grass, spit, litter, pick the flowers, climb, every, friday, morning, assembly, school hall, run around, pay attention.
 
 ## Assets
 
