@@ -425,11 +425,21 @@
       color: var(--leaf-dark);
       border-color: #b9dfcd;
     }
+    /* Non-fillable space marker between words — visual separator only. */
     .slot.space {
-      width: 1.4rem;
+      width: 1.7rem;
+      min-width: 1.7rem;
+      height: 4.4rem;
       border: none;
       background: transparent;
       box-shadow: none;
+      border-radius: 0;
+      pointer-events: none;
+      color: #6f927f;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 4.4rem;
+      align-self: stretch;
     }
     .slot.active {
       border-color: var(--sky);
@@ -761,28 +771,31 @@
       { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
-    // Typical small-monster HP = 4 → mini-boss HP = 8 (2×). Total HP ≈ 44 → ~38–44 correct spells at ATK 1→2.
+    // Encounter 1 HP unchanged. Later monsters bumped (+2/+3 normals, +4 mini, +5 boss)
+    // so a guaranteed early ATK-up still yields ~similar spell counts (ATK 1→2+).
+    // Totals: 3+5+6+7+8+8+12+17 = 66 (was 44).
     const STAGE_ONE_MONSTERS = [
       { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 8, atk: 2, role: 'mini' },
-      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 12, atk: 2, role: 'boss' }
+      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 7, atk: 1, role: 'normal' },
+      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 8, atk: 1, role: 'normal' },
+      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 8, atk: 1, role: 'normal' },
+      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 12, atk: 2, role: 'mini' },
+      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 17, atk: 2, role: 'boss' }
     ];
 
     // Distinct roster from unused m01–m20 art (no overlap with Stage One sprites).
+    // Same HP curve as Stage One (encounter 1 unchanged; later bumped for early ATK).
     const STAGE_TWO_MONSTERS = [
       { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 4, atk: 1, role: 'normal' },
-      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 8, atk: 2, role: 'mini' },
-      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 12, atk: 2, role: 'boss' }
+      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 5, atk: 1, role: 'normal' },
+      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 7, atk: 1, role: 'normal' },
+      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 8, atk: 1, role: 'normal' },
+      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 8, atk: 1, role: 'normal' },
+      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 12, atk: 2, role: 'mini' },
+      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 17, atk: 2, role: 'boss' }
     ];
 
     const STAGES = [
@@ -825,62 +838,100 @@
         return ctx;
       }
 
-      function tone(audio, freq, start, dur, type, gain) {
+      function tone(audio, freq, start, dur, type, gain, freqEnd) {
         const osc = audio.createOscillator();
         const amp = audio.createGain();
         const peak = Math.max(gain, 0.001);
         osc.type = type;
         osc.frequency.setValueAtTime(freq, start);
+        if (freqEnd && freqEnd !== freq) {
+          osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 40), start + dur);
+        }
         amp.gain.setValueAtTime(0.0001, start);
-        amp.gain.linearRampToValueAtTime(peak, start + Math.min(0.03, dur * 0.35));
-        amp.gain.linearRampToValueAtTime(0.0001, start + dur);
+        amp.gain.linearRampToValueAtTime(peak, start + Math.min(0.018, dur * 0.22));
+        amp.gain.exponentialRampToValueAtTime(0.0001, start + dur);
         osc.connect(amp);
         amp.connect(audio.destination);
         osc.start(start);
         osc.stop(start + dur + 0.03);
       }
 
+      function noiseBurst(audio, start, dur, gain, freq, q) {
+        const len = Math.max(1, Math.floor(audio.sampleRate * dur));
+        const buffer = audio.createBuffer(1, len, audio.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < len; i += 1) data[i] = Math.random() * 2 - 1;
+        const src = audio.createBufferSource();
+        src.buffer = buffer;
+        const filter = audio.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(freq, start);
+        filter.Q.setValueAtTime(q || 1.2, start);
+        const amp = audio.createGain();
+        const peak = Math.max(gain, 0.001);
+        amp.gain.setValueAtTime(0.0001, start);
+        amp.gain.linearRampToValueAtTime(peak, start + 0.008);
+        amp.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+        src.connect(filter);
+        filter.connect(amp);
+        amp.connect(audio.destination);
+        src.start(start);
+        src.stop(start + dur + 0.02);
+      }
+
       function schedule(name, audio) {
         const t = audio.currentTime + 0.01;
         if (name === 'tap') {
-          tone(audio, 720, t, 0.08, 'triangle', 0.18);
+          tone(audio, 880, t, 0.045, 'triangle', 0.14, 640);
+          tone(audio, 1320, t, 0.03, 'sine', 0.06, 900);
         } else if (name === 'backspace') {
-          tone(audio, 300, t, 0.09, 'sine', 0.14);
+          tone(audio, 340, t, 0.07, 'sine', 0.12, 220);
+          noiseBurst(audio, t, 0.04, 0.04, 600, 0.8);
         } else if (name === 'correct') {
-          tone(audio, 523.25, t, 0.14, 'triangle', 0.22);
-          tone(audio, 659.25, t + 0.11, 0.16, 'triangle', 0.22);
-          tone(audio, 783.99, t + 0.22, 0.24, 'sine', 0.24);
+          // Sword swing (whoosh) + bright hit — punchy but kid-friendly.
+          noiseBurst(audio, t, 0.1, 0.16, 1400, 0.7);
+          tone(audio, 520, t, 0.09, 'sawtooth', 0.07, 180);
+          noiseBurst(audio, t + 0.07, 0.08, 0.2, 900, 1.4);
+          tone(audio, 880, t + 0.07, 0.07, 'square', 0.09, 440);
+          tone(audio, 1318.5, t + 0.09, 0.12, 'triangle', 0.14, 990);
+          tone(audio, 1760, t + 0.11, 0.1, 'sine', 0.08, 1320);
         } else if (name === 'wrong') {
-          tone(audio, 220, t, 0.18, 'square', 0.12);
-          tone(audio, 165, t + 0.14, 0.22, 'square', 0.1);
+          // Soft thud / boing — not harsh square buzz.
+          noiseBurst(audio, t, 0.12, 0.12, 180, 0.6);
+          tone(audio, 240, t, 0.16, 'triangle', 0.14, 140);
+          tone(audio, 180, t + 0.1, 0.2, 'sine', 0.1, 110);
         } else if (name === 'warn') {
-          tone(audio, 380, t, 0.12, 'triangle', 0.16);
-          tone(audio, 300, t + 0.12, 0.14, 'triangle', 0.14);
+          tone(audio, 420, t, 0.09, 'triangle', 0.12, 320);
+          tone(audio, 320, t + 0.1, 0.11, 'triangle', 0.1, 260);
         } else if (name === 'reveal') {
-          tone(audio, 440, t, 0.16, 'sine', 0.18);
-          tone(audio, 554.37, t + 0.14, 0.2, 'sine', 0.16);
+          tone(audio, 523.25, t, 0.12, 'sine', 0.14, 659.25);
+          tone(audio, 784, t + 0.1, 0.14, 'triangle', 0.12);
         } else if (name === 'start') {
-          tone(audio, 392, t, 0.12, 'triangle', 0.2);
-          tone(audio, 523.25, t + 0.1, 0.14, 'triangle', 0.2);
-          tone(audio, 659.25, t + 0.2, 0.2, 'sine', 0.22);
+          tone(audio, 392, t, 0.1, 'triangle', 0.16, 440);
+          tone(audio, 523.25, t + 0.09, 0.11, 'triangle', 0.18);
+          tone(audio, 659.25, t + 0.18, 0.16, 'sine', 0.2);
+          noiseBurst(audio, t + 0.18, 0.06, 0.05, 1200, 1);
         } else if (name === 'finish') {
-          tone(audio, 523.25, t, 0.14, 'triangle', 0.2);
-          tone(audio, 659.25, t + 0.12, 0.14, 'triangle', 0.2);
-          tone(audio, 783.99, t + 0.24, 0.16, 'triangle', 0.22);
-          tone(audio, 1046.5, t + 0.4, 0.3, 'sine', 0.24);
+          tone(audio, 523.25, t, 0.11, 'triangle', 0.16);
+          tone(audio, 659.25, t + 0.1, 0.12, 'triangle', 0.18);
+          tone(audio, 783.99, t + 0.2, 0.14, 'triangle', 0.2);
+          tone(audio, 1046.5, t + 0.34, 0.28, 'sine', 0.22);
+          noiseBurst(audio, t + 0.34, 0.12, 0.08, 1600, 1.2);
         } else if (name === 'click') {
-          tone(audio, 520, t, 0.07, 'sine', 0.16);
+          tone(audio, 640, t, 0.04, 'sine', 0.12, 480);
+          noiseBurst(audio, t, 0.025, 0.04, 2000, 1.5);
         } else if (name === 'hint') {
-          tone(audio, 660, t, 0.1, 'triangle', 0.16);
-          tone(audio, 880, t + 0.08, 0.12, 'sine', 0.14);
+          tone(audio, 740, t, 0.08, 'triangle', 0.14, 990);
+          tone(audio, 990, t + 0.07, 0.1, 'sine', 0.12);
         } else if (name === 'loot') {
-          tone(audio, 587.33, t, 0.12, 'triangle', 0.2);
-          tone(audio, 783.99, t + 0.12, 0.14, 'triangle', 0.2);
-          tone(audio, 987.77, t + 0.24, 0.22, 'sine', 0.22);
+          tone(audio, 587.33, t, 0.09, 'triangle', 0.16);
+          tone(audio, 783.99, t + 0.09, 0.11, 'triangle', 0.18);
+          tone(audio, 987.77, t + 0.18, 0.16, 'sine', 0.2);
+          noiseBurst(audio, t + 0.18, 0.08, 0.07, 1400, 1.1);
         } else if (name === 'gameover') {
-          tone(audio, 330, t, 0.2, 'sine', 0.16);
-          tone(audio, 247, t + 0.18, 0.28, 'sine', 0.14);
-          tone(audio, 196, t + 0.4, 0.35, 'triangle', 0.12);
+          tone(audio, 330, t, 0.18, 'sine', 0.14, 280);
+          tone(audio, 247, t + 0.16, 0.24, 'triangle', 0.12, 196);
+          tone(audio, 196, t + 0.36, 0.32, 'sine', 0.1, 147);
         }
       }
 
@@ -1153,15 +1204,19 @@
       const blankSet = new Set(state.blanks.map((b) => b.index));
       els.slots.innerHTML = '';
 
-      let row = document.createElement('div');
+      const row = document.createElement('div');
       row.className = 'slot-row';
       els.slots.appendChild(row);
 
       [...item.word].forEach((ch, i) => {
+        // Spaces are visual separators only — never fillable, never typed.
         if (ch === ' ') {
-          row = document.createElement('div');
-          row.className = 'slot-row';
-          els.slots.appendChild(row);
+          const space = document.createElement('div');
+          space.className = 'slot space';
+          space.setAttribute('aria-hidden', 'true');
+          space.title = 'space';
+          space.textContent = '_';
+          row.appendChild(space);
           return;
         }
 
@@ -1337,6 +1392,11 @@
     }
 
     function pickLoot() {
+      // Every stage/run: first equipment drop is always an ATK-up (Wood Sword).
+      if (!state.hero.equipment.length) {
+        const starter = EQUIPMENT.find((e) => e.id === 'wood_sword') || EQUIPMENT.find((e) => e.kind === 'atk');
+        return { ...starter };
+      }
       const used = new Set(state.hero.equipment.map((e) => e.id));
       const pool = EQUIPMENT.filter((e) => {
         if (e.kind === 'heal' || e.kind === 'double') return true;
@@ -1346,6 +1406,7 @@
       if (isEliteEncounter()) {
         const preferred = currentMonsterDef()?.role === 'boss' ? 'iron_sword' : 'wood_sword';
         const strong = source.find((e) => e.id === preferred)
+          || source.find((e) => e.kind === 'atk')
           || source.find((e) => e.id === 'iron_sword')
           || source[0];
         return { ...strong };
