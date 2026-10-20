@@ -208,6 +208,8 @@
     .pill.sky { background: #e7f6fb; color: #1a6f86; }
     .pill.sun { background: #fff4d6; color: #8a6508; }
     .pill.coral { background: #ffe8e4; color: #a3382a; }
+    /* .pill sets display, which would otherwise ignore the hidden attribute. */
+    #combo-pill[hidden] { display: none !important; }
     .progress {
       height: 0.7rem;
       border-radius: 999px;
@@ -690,6 +692,59 @@
     #letter-hint-btn[hidden] {
       display: none !important;
     }
+    /* Phone: Attack stays in view with the letter keys. Wide layout is unchanged. */
+    @media (max-width: 560px) {
+      /* The screen rise uses transform, which would trap a fixed dock inside the page. */
+      #battle.screen { animation: none; }
+      #battle.screen.active {
+        padding-bottom: 19.5rem;
+      }
+      #battle.screen.active:has(.keyboard[hidden]) {
+        padding-bottom: 5.75rem;
+      }
+      #battle .play-dock {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 30;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        background: var(--panel);
+        border-top: 2px solid rgba(31, 157, 108, 0.22);
+        box-shadow: 0 -8px 18px rgba(15, 42, 36, 0.12);
+        padding: 0.4rem 0.55rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+      }
+      #battle .play-dock .battle-actions {
+        order: -1;
+        flex-wrap: nowrap;
+        gap: 0.4rem;
+        margin: 0;
+      }
+      #battle .play-dock #check-btn {
+        flex: 1 1 auto;
+        min-height: 2.85rem;
+        padding: 0.55rem 0.7rem;
+      }
+      #battle .play-dock #letter-hint-btn,
+      #battle .play-dock #quit-btn {
+        flex: 0 0 auto;
+        min-height: 2.85rem;
+        padding: 0.45rem 0.55rem;
+        font-size: 0.82rem;
+      }
+      #battle .keyboard {
+        margin-bottom: 0;
+        gap: 0.28rem;
+      }
+      #battle .key {
+        min-height: 2.75rem;
+        font-size: 1.05rem;
+        border-radius: 0.65rem;
+        box-shadow: 0 3px 0 #c5e4d5;
+      }
+    }
     @keyframes pop {
       0% { transform: scale(1); }
       50% { transform: scale(1.08); }
@@ -926,7 +981,7 @@
         <span class="pill sky" id="atk-pill">ATK 1</span>
         <span class="pill sky" id="def-pill">DEF 0</span>
         <span class="pill sun" id="buff-pill">No special effects</span>
-        <span class="pill coral" id="combo-pill" hidden>COMBO ×2</span>
+        <span class="pill coral" id="combo-pill" hidden></span>
       </div>
       <div class="progress"><span id="progress-fill"></span></div>
 
@@ -971,11 +1026,13 @@
       <div class="slots" id="slots" aria-live="polite"></div>
       <div class="pick-choices" id="pick-choices" hidden></div>
       <p class="feedback" id="feedback"></p>
-      <div class="keyboard" id="keyboard"></div>
-      <div class="actions center">
-        <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
-        <button type="button" class="btn" id="check-btn">Attack!</button>
-        <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
+      <div class="play-dock" id="play-dock">
+        <div class="keyboard" id="keyboard"></div>
+        <div class="actions battle-actions center">
+          <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
+          <button type="button" class="btn" id="check-btn">Attack!</button>
+          <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
+        </div>
       </div>
     </section>
 
