@@ -904,8 +904,18 @@
         flex: 0 0 auto;
         min-height: 0;
       }
+      /* Puzzle column yields; the dock stays a sibling band under it. */
+      #battle.screen.active > .battle-main {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #battle .battle-main > :not(.arena) {
+        flex: 0 0 auto;
+      }
       /* Arena takes leftover space and shrinks first so the letter grid is not clipped. */
-      #battle.screen.active > .arena {
+      #battle.screen.active .arena {
         flex: 1 1 auto;
         min-height: 64px;
         height: auto;
@@ -1017,14 +1027,14 @@
       #battle .slot.needs-fix {
         box-shadow: 0 0 0 2px rgba(232, 93, 76, 0.22), 0 2px 0 #f0b2a8;
       }
-      #battle.screen.active > .feedback {
+      #battle.screen.active .feedback {
         flex: 0 0 auto;
         min-height: 1.15rem;
         margin: 0.05rem 0 0.15rem;
         font-size: 0.82rem;
         line-height: 1.2;
       }
-      /* Word card only. Letter size and the fixed dock stay on the hotfix rules. */
+      /* Word card only. Letter size and the in-flow dock stay on the #20 rules. */
       #battle .spell-hero {
         margin: 0 0 0.2rem;
         padding: 0.22rem 0.4rem 0.3rem;
