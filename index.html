@@ -315,10 +315,10 @@
     .monster-quip {
       position: absolute;
       z-index: 4;
-      right: 4%;
-      top: 6%;
+      left: 50%;
+      top: 7%;
       margin: 0;
-      max-width: 48%;
+      max-width: 46%;
       padding: 0.28rem 0.5rem;
       border-radius: 0.75rem;
       background: #fff;
@@ -326,9 +326,11 @@
       font-size: 0.78rem;
       font-weight: 800;
       line-height: 1.2;
+      text-align: center;
       box-shadow: 0 3px 0 rgba(163, 56, 42, 0.18);
       opacity: 0;
       pointer-events: none;
+      transform: translateX(-50%);
     }
     .celebrate {
       position: absolute;
@@ -371,16 +373,23 @@
     }
     .monster-quip.show { animation: quip-pop 1.2s ease forwards; }
     @keyframes quip-pop {
-      0% { opacity: 0; transform: translateY(4px) scale(0.92); }
-      12% { opacity: 1; transform: translateY(0) scale(1); }
-      78% { opacity: 1; }
-      100% { opacity: 0; }
+      0% { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.92); }
+      12% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+      78% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-4px) scale(1); }
     }
     @media (max-width: 560px) {
-      .arena { height: 168px; }
-      .fighter { width: 46%; bottom: 5%; }
+      .arena { height: 152px; }
+      .fighter { width: 46%; bottom: 4%; }
       .fighter.hero { left: 1%; }
       .fighter.monster { right: 1%; }
+      .meaning { margin-bottom: 0.4rem; }
+      .slots { min-height: 4.4rem; margin-bottom: 0.45rem; }
+      #mode-hint { font-size: 0.92rem; line-height: 1.3; }
+      .meta-bar { margin-bottom: 0.45rem; gap: 0.35rem; }
+      .pill { padding: 0.28rem 0.55rem; font-size: 0.78rem; }
+      .actions .btn { padding: 0.7rem 0.72rem; font-size: 0.95rem; }
+      .keyboard { margin-bottom: 0.55rem; }
     }
     .stage-pick {
       display: grid;
@@ -513,8 +522,8 @@
     }
     @media (max-width: 560px) {
       .meaning .word-prompt-img {
-        width: min(150px, 42vw);
-        height: min(150px, 42vw);
+        width: 112px;
+        height: 112px;
       }
     }
     #speak-btn {
@@ -523,7 +532,7 @@
       font-size: 1.05rem;
       padding: 0.7rem 1.15rem;
     }
-    /* Wide viewports: speak button sits beside the picture */
+    /* Picture and Hear Word share a row so Attack stays closer on a phone. */
     @media (min-width: 560px) {
       .word-prompt {
         flex-direction: row;
@@ -532,6 +541,18 @@
       }
       #speak-btn {
         min-height: 3.2rem;
+      }
+    }
+    @media (max-width: 559px) {
+      .word-prompt {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.65rem;
+      }
+      #speak-btn {
+        min-width: 7.2rem;
+        min-height: 3rem;
+        padding: 0.65rem 0.8rem;
       }
     }
     .word-clue {
@@ -945,7 +966,7 @@
           <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
         </div>
         <p class="word-clue" id="word-clue"></p>
-        <small id="mode-hint">Fill mode: listen, fill every blank, then Attack!</small>
+        <small id="mode-hint">Fill: listen, fill every blank, then Attack!</small>
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
       <div class="pick-choices" id="pick-choices" hidden></div>
@@ -1294,9 +1315,9 @@
 
     const MODES = ['fill', 'pick', 'fix'];
     const MODE_COPY = {
-      fill: { pill: 'Fill', hint: 'Fill mode: listen, fill every blank, then Attack!' },
-      pick: { pill: 'Pick', hint: 'Pick mode: choose the correct spelling, then Attack!' },
-      fix: { pill: 'Fix', hint: 'Fix mode: change the red letters, then Attack!' }
+      fill: { pill: 'Fill', hint: 'Fill: listen, fill every blank, then Attack!' },
+      pick: { pill: 'Pick', hint: 'Pick: choose the correct spelling, then Attack!' },
+      fix: { pill: 'Fix', hint: 'Fix: change the red letters, then Attack!' }
     };
 
     function getStageById(id) {
@@ -1781,7 +1802,10 @@
       els.slots.hidden = !typing;
       els.keyboard.hidden = !typing;
       els.letterHintBtn.hidden = !typing;
-      if (typing) els.pickChoices.hidden = true;
+      if (typing) {
+        els.pickChoices.hidden = true;
+        els.pickChoices.innerHTML = '';
+      }
     }
 
     function renderPickChoices() {
