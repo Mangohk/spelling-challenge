@@ -2406,6 +2406,7 @@
     }
 
     function pickMode() {
+      // forceMode / forceWord are inert unless a local check sets them.
       if (state.forceMode && MODES.includes(state.forceMode)) return state.forceMode;
       // Second puzzle of a run is forced onto a new mode so one adventure shows at least two.
       if (state.puzzlesServed >= 1 && state.modesSeen.size < 2) {
