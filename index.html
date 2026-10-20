@@ -795,152 +795,57 @@
     }
     .battle-main { min-width: 0; }
 
-    /* Phone: the dock sits under the puzzle (it does not cover it). Attack + keys stay on screen. */
+    /* Phone: Attack stays in view with the letter keys. Wide layout is unchanged. */
     @media (max-width: 560px) {
-      body:has(#battle.screen.active) {
-        height: 100dvh;
-        overflow: hidden;
-        padding: 0.28rem 0.35rem;
-      }
-      body:has(#battle.screen.active) .wrap {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-      }
-      body:has(#battle.screen.active) header {
-        margin-bottom: 0.25rem;
-        gap: 0.4rem;
-      }
-      body:has(#battle.screen.active) .logo {
-        width: 1.85rem;
-        height: 1.85rem;
-        font-size: 0.95rem;
-        border-radius: 0.55rem;
-        box-shadow: 0 3px 0 #147a52;
-        animation: none;
-      }
-      body:has(#battle.screen.active) h1 { font-size: 1.02rem; }
-      body:has(#battle.screen.active) .sub { display: none; }
       /* The screen rise uses transform, which would trap a fixed dock inside the page. */
       #battle.screen { animation: none; }
       #battle.screen.active {
-        flex: 1 1 auto;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-        padding: 0.4rem 0.45rem 0.28rem;
-        overflow: hidden;
+        padding-bottom: 19.5rem;
       }
-      #battle .battle-main {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-      }
-      #battle .meta-bar { margin-bottom: 0.25rem; }
-      #battle .progress { margin-bottom: 0.3rem; }
-      #battle .arena {
-        flex: 0 0 auto;
-        height: 128px;
-        margin-bottom: 0.3rem;
-      }
-      #battle .fighter img { width: 58px; height: 58px; }
-      #battle .fighter h3 { font-size: 0.72rem; }
-      #battle .meaning { margin-bottom: 0.2rem; }
-      #battle .word-prompt { margin-bottom: 0.2rem; gap: 0.4rem; }
-      #battle .meaning .word-prompt-img { width: 84px; height: 84px; }
-      #battle .word-clue {
-        font-size: 0.76rem;
-        line-height: 1.25;
-        margin-bottom: 0.1rem;
-      }
-      #battle #mode-hint { font-size: 0.72rem; }
-      #battle #speak-btn {
-        min-width: 0;
-        min-height: 2.3rem;
-        padding: 0.3rem 0.5rem;
-        font-size: 0.8rem;
-      }
-      #battle .slots {
-        min-height: 0;
-        margin-bottom: 0.2rem;
-        gap: 0.16rem;
-        flex: 0 0 auto;
-      }
-      #battle .slot-row { gap: 0.14rem; }
-      #battle .slot {
-        width: 1.85rem;
-        height: 2.25rem;
-        font-size: 1.15rem;
-        border-width: 2px;
-        border-radius: 0.4rem;
-        box-shadow: 0 2px 0 #d7ebe1;
-      }
-      #battle .slot.space {
-        width: 0.65rem;
-        min-width: 0.65rem;
-        height: 2.25rem;
-        font-size: 0.95rem;
-        line-height: 2.25rem;
-      }
-      #battle .slot.active { box-shadow: 0 0 0 2px rgba(47, 159, 191, 0.18), 0 2px 0 #b7dce8; }
-      #battle .pick-choices { gap: 0.28rem; margin-bottom: 0.25rem; }
-      #battle .pick-choice {
-        min-height: 2.2rem;
-        font-size: 0.92rem;
-        padding: 0.3rem 0.45rem;
-        box-shadow: 0 3px 0 #d7ebe1;
-      }
-      #battle .spell-hero { margin-bottom: 0.2rem; padding: 0.28rem 0.4rem 0.35rem; }
-      #battle .spell-hero-word { font-size: clamp(1.12rem, 5.4vw, 1.55rem); margin-bottom: 0.25rem; }
-      #battle .feedback { min-height: 0; margin: 0; font-size: 0.8rem; }
-      #battle:has(#spell-hero:not([hidden])) .word-clue,
-      #battle:has(#spell-hero:not([hidden])) #mode-hint { display: none; }
-      #battle:has(#spell-hero:not([hidden])) .meaning .word-prompt-img {
-        width: 36px;
-        height: 36px;
+      #battle.screen.active:has(.keyboard[hidden]) {
+        padding-bottom: 5.75rem;
       }
       #battle .play-dock {
-        position: relative;
-        flex: 0 0 auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 30;
         display: flex;
         flex-direction: column;
-        gap: 0.24rem;
+        gap: 0.35rem;
         background: var(--panel);
         border-top: 2px solid rgba(31, 157, 108, 0.22);
-        margin: 0 -0.45rem -0.28rem;
-        padding: 0.24rem 0.45rem calc(0.24rem + env(safe-area-inset-bottom, 0px));
+        box-shadow: 0 -8px 18px rgba(15, 42, 36, 0.12);
+        padding: 0.4rem 0.55rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
       }
       #battle .play-dock .battle-actions {
         order: -1;
         flex-wrap: nowrap;
-        gap: 0.32rem;
+        gap: 0.4rem;
         margin: 0;
       }
       #battle .play-dock #check-btn {
         flex: 1 1 auto;
-        min-height: 2.45rem;
-        padding: 0.35rem 0.55rem;
+        min-height: 2.85rem;
+        padding: 0.55rem 0.7rem;
       }
       #battle .play-dock #letter-hint-btn,
       #battle .play-dock #quit-btn {
         flex: 0 0 auto;
-        min-height: 2.45rem;
-        padding: 0.3rem 0.42rem;
-        font-size: 0.75rem;
+        min-height: 2.85rem;
+        padding: 0.45rem 0.55rem;
+        font-size: 0.82rem;
       }
       #battle .keyboard {
         margin-bottom: 0;
-        gap: 0.16rem;
+        gap: 0.28rem;
       }
       #battle .key {
-        min-height: 2.28rem;
-        font-size: 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 0 #c5e4d5;
+        min-height: 2.75rem;
+        font-size: 1.05rem;
+        border-radius: 0.65rem;
+        box-shadow: 0 3px 0 #c5e4d5;
       }
     }
     /* Narrow phone: the dock is in normal flow under the puzzle.
@@ -1118,6 +1023,34 @@
         margin: 0.05rem 0 0.15rem;
         font-size: 0.82rem;
         line-height: 1.2;
+      }
+      /* Word card only. Letter size and the fixed dock stay on the hotfix rules. */
+      #battle .spell-hero {
+        margin: 0 0 0.2rem;
+        padding: 0.22rem 0.4rem 0.3rem;
+      }
+      #battle .spell-hero-word {
+        font-size: clamp(1.15rem, 5.2vw, 1.5rem);
+        margin: 0.06rem 0 0.2rem;
+      }
+      #battle #spell-hear-btn {
+        min-height: 2.15rem;
+        padding: 0.25rem 0.65rem;
+        font-size: 0.84rem;
+      }
+      #battle:has(#spell-hero:not([hidden])) .word-clue,
+      #battle:has(#spell-hero:not([hidden])) #mode-hint {
+        display: none;
+      }
+      #battle:has(#spell-hero:not([hidden])) .meaning {
+        margin-bottom: 0.1rem;
+      }
+      #battle:has(#spell-hero:not([hidden])) .word-prompt {
+        margin-bottom: 0.1rem;
+      }
+      #battle:has(#spell-hero:not([hidden])) .meaning .word-prompt-img {
+        width: 40px;
+        height: 40px;
       }
     }
     @keyframes pop {
