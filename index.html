@@ -301,19 +301,21 @@
       position: absolute;
       z-index: 5;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.7rem, 5vw, 2.15rem);
+      font-size: clamp(2.15rem, 7vw, 2.8rem);
       font-weight: 700;
       pointer-events: none;
       opacity: 0;
-      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.9);
+      line-height: 1;
+      text-shadow: 0 3px 0 rgba(255, 255, 255, 0.92);
     }
-    .float-dmg.good { left: 58%; top: 28%; color: #0f7a45; }
-    .float-dmg.hurt { left: 14%; top: 28%; color: #d23b2a; }
-    .float-dmg.show { animation: float-up 0.78s ease forwards; }
+    .float-dmg.big { font-size: clamp(2.7rem, 9vw, 3.7rem); }
+    .float-dmg.good { left: 54%; top: 20%; color: #0f7a45; }
+    .float-dmg.hurt { left: 8%; top: 20%; color: #d23b2a; }
+    .float-dmg.show { animation: float-up 0.9s ease forwards; }
     @keyframes float-up {
-      0% { opacity: 0; transform: translateY(8px) scale(0.82); }
-      22% { opacity: 1; transform: translateY(0) scale(1.18); }
-      100% { opacity: 0; transform: translateY(-28px) scale(1); }
+      0% { opacity: 0; transform: translateY(10px) scale(0.7); }
+      18% { opacity: 1; transform: translateY(0) scale(1.24); }
+      100% { opacity: 0; transform: translateY(-38px) scale(1); }
     }
     .monster-quip {
       position: absolute;
@@ -338,8 +340,9 @@
     .celebrate {
       position: absolute;
       left: 50%;
-      top: 40%;
+      top: 42%;
       z-index: 6;
+      width: min(88%, 26rem);
       transform: translate(-50%, -50%);
       text-align: center;
       pointer-events: none;
@@ -354,10 +357,11 @@
     }
     .celebrate-text {
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.55rem, 5vw, 2.05rem);
+      font-size: clamp(1.15rem, 4vw, 1.7rem);
       font-weight: 700;
       color: #0f7a45;
-      line-height: 1;
+      line-height: 1.05;
+      word-break: break-word;
       text-shadow: 0 2px 0 #fff;
     }
     .celebrate-combo {
@@ -373,6 +377,36 @@
       18% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
       70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       100% { opacity: 0; transform: translate(-50%, -60%) scale(0.98); }
+    }
+    .telegraph {
+      position: absolute;
+      z-index: 7;
+      left: 58%;
+      top: 6%;
+      width: 2.7rem;
+      height: 2.7rem;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #fff4d6;
+      color: #8a6508;
+      border: 3px solid #e0a31a;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+      box-shadow: 0 4px 0 rgba(138, 101, 8, 0.25);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .telegraph[hidden] { display: none !important; }
+    .telegraph.show { animation: telegraph-pop 0.52s ease forwards; }
+    @keyframes telegraph-pop {
+      0% { opacity: 0; transform: scale(0.55); }
+      20% { opacity: 1; transform: scale(1.14); }
+      72% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.9); }
     }
     .monster-quip.show { animation: quip-pop 1.2s ease forwards; }
     @keyframes quip-pop {
@@ -497,6 +531,33 @@
     .fighter.boss .hp-bar > i,
     .hp-bar.enemy > i {
       background: linear-gradient(90deg, #ff8a75, var(--coral));
+    }
+    .hp-bar > i.hp-high {
+      background: linear-gradient(90deg, #39c989, #1f9d6c);
+    }
+    .hp-bar > i.hp-mid {
+      background: linear-gradient(90deg, #ffe07a, #e0a31a);
+    }
+    .hp-bar > i.hp-low {
+      background: linear-gradient(90deg, #ff8a75, #d23b2a);
+    }
+    .hp-bar.enemy > i.hp-high,
+    .fighter.boss .hp-bar > i.hp-high {
+      background: linear-gradient(90deg, #ffb199, #ef6d5c);
+    }
+    .hp-bar.enemy > i.hp-mid,
+    .fighter.boss .hp-bar > i.hp-mid {
+      background: linear-gradient(90deg, #ff7a66, #d23b2a);
+    }
+    .hp-bar.enemy > i.hp-low,
+    .fighter.boss .hp-bar > i.hp-low {
+      background: linear-gradient(90deg, #ff4d3a, #8e1d14);
+    }
+    .hp-bar.pulse { animation: hp-pulse 0.45s ease; }
+    @keyframes hp-pulse {
+      0% { transform: scaleY(1); }
+      40% { transform: scaleY(1.55); }
+      100% { transform: scaleY(1); }
     }
 
     .meaning {
@@ -678,6 +739,7 @@
     .pick-choice.correct {
       background: #e5f9ef;
       border-color: var(--leaf);
+      box-shadow: 0 0 0 4px rgba(31, 157, 108, 0.22), 0 4px 0 #b7e6cf;
     }
     .pick-choice.wrong {
       background: #ffe8e4;
@@ -695,6 +757,44 @@
     #letter-hint-btn[hidden] {
       display: none !important;
     }
+    .spell-hero {
+      text-align: center;
+      margin: 0 0 0.55rem;
+      padding: 0.45rem 0.6rem 0.55rem;
+      border-radius: 1rem;
+      border: 3px solid #b7e6cf;
+      background: #f3fff8;
+    }
+    .spell-hero.teach {
+      border-color: #f0c36a;
+      background: #fff9e8;
+    }
+    .spell-hero[hidden] { display: none !important; }
+    .spell-hero-kicker {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--leaf-dark);
+    }
+    .spell-hero.teach .spell-hero-kicker { color: #8a6508; }
+    .spell-hero-word {
+      margin: 0.12rem 0 0.4rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.45rem, 6.2vw, 2.45rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      word-break: break-word;
+    }
+    #spell-hear-btn {
+      min-height: 2.4rem;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.92rem;
+    }
+    .battle-main { min-width: 0; }
+
     /* Phone: Attack stays in view with the letter keys. Wide layout is unchanged. */
     @media (max-width: 560px) {
       /* The screen rise uses transform, which would trap a fixed dock inside the page. */
@@ -804,8 +904,18 @@
         flex: 0 0 auto;
         min-height: 0;
       }
+      /* Puzzle column yields; the dock stays a sibling band under it. */
+      #battle.screen.active > .battle-main {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #battle .battle-main > :not(.arena) {
+        flex: 0 0 auto;
+      }
       /* Arena takes leftover space and shrinks first so the letter grid is not clipped. */
-      #battle.screen.active > .arena {
+      #battle.screen.active .arena {
         flex: 1 1 auto;
         min-height: 64px;
         height: auto;
@@ -917,12 +1027,40 @@
       #battle .slot.needs-fix {
         box-shadow: 0 0 0 2px rgba(232, 93, 76, 0.22), 0 2px 0 #f0b2a8;
       }
-      #battle.screen.active > .feedback {
+      #battle.screen.active .feedback {
         flex: 0 0 auto;
         min-height: 1.15rem;
         margin: 0.05rem 0 0.15rem;
         font-size: 0.82rem;
         line-height: 1.2;
+      }
+      /* Word card only. Letter size and the in-flow dock stay on the #20 rules. */
+      #battle .spell-hero {
+        margin: 0 0 0.2rem;
+        padding: 0.22rem 0.4rem 0.3rem;
+      }
+      #battle .spell-hero-word {
+        font-size: clamp(1.15rem, 5.2vw, 1.5rem);
+        margin: 0.06rem 0 0.2rem;
+      }
+      #battle #spell-hear-btn {
+        min-height: 2.15rem;
+        padding: 0.25rem 0.65rem;
+        font-size: 0.84rem;
+      }
+      #battle:has(#spell-hero:not([hidden])) .word-clue,
+      #battle:has(#spell-hero:not([hidden])) #mode-hint {
+        display: none;
+      }
+      #battle:has(#spell-hero:not([hidden])) .meaning {
+        margin-bottom: 0.1rem;
+      }
+      #battle:has(#spell-hero:not([hidden])) .word-prompt {
+        margin-bottom: 0.1rem;
+      }
+      #battle:has(#spell-hero:not([hidden])) .meaning .word-prompt-img {
+        width: 40px;
+        height: 40px;
       }
     }
     @keyframes pop {
@@ -1055,7 +1193,117 @@
     .loot-effect {
       color: var(--muted);
       font-weight: 700;
-      margin: 0 0 1rem;
+      margin: 0 0 0.85rem;
+    }
+    .chest {
+      width: 7.4rem;
+      height: 6rem;
+      margin: 0.15rem auto 0.45rem;
+      position: relative;
+    }
+    .chest-box { position: relative; width: 100%; height: 100%; }
+    .chest-base {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      bottom: 0;
+      height: 56%;
+      border-radius: 0.35rem 0.35rem 0.7rem 0.7rem;
+      background: linear-gradient(180deg, #f0c85a, #c48c12);
+      border: 3px solid #8a6508;
+    }
+    .chest-base::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0.45rem;
+      width: 0.7rem;
+      height: 0.7rem;
+      margin-left: -0.35rem;
+      border-radius: 999px;
+      background: #fff4d6;
+      box-shadow: 0 0 0 3px #8a6508;
+    }
+    .chest-lid {
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      bottom: 46%;
+      height: 40%;
+      border-radius: 0.7rem 0.7rem 0.25rem 0.25rem;
+      background: linear-gradient(180deg, #ffe08a, #e0a31a);
+      border: 3px solid #8a6508;
+      transform-origin: 50% 100%;
+    }
+    .chest[data-step="windup"] .chest-box { animation: chest-wind 0.42s ease; }
+    @keyframes chest-wind {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      30% { transform: translateX(-5px) rotate(-2deg); }
+      70% { transform: translateX(5px) rotate(2deg); }
+    }
+    .chest[data-step="pop"] .chest-lid,
+    .chest[data-step="float"] .chest-lid,
+    .chest[data-step="choose"] .chest-lid {
+      transform: translateY(-16px) rotate(-18deg);
+    }
+    .chest[data-step="pop"] .chest-lid { animation: lid-pop 0.48s ease; }
+    @keyframes lid-pop {
+      0% { transform: translateY(0) rotate(0); }
+      100% { transform: translateY(-16px) rotate(-18deg); }
+    }
+    .loot-choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin: 0 0 0.75rem;
+    }
+    .loot-choices[hidden] { display: none !important; }
+    .chest[data-step="float"] + .loot-choices,
+    .chest[data-step="choose"] + .loot-choices {
+      animation: loot-rise 0.6s ease;
+    }
+    @keyframes loot-rise {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loot-choice {
+      text-align: left;
+      border: 3px solid #efe0a8;
+      background: #fff9e8;
+      border-radius: 1rem;
+      padding: 0.7rem 0.65rem 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--ink);
+      box-shadow: 0 5px 0 #e6d28a;
+    }
+    .loot-choice strong {
+      display: block;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.05rem;
+    }
+    .loot-choice .loot-effect-line {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--leaf-dark);
+    }
+    .loot-choice .loot-help {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #5c4300;
+      line-height: 1.35;
+    }
+    .loot-choice.chosen {
+      border-color: var(--leaf);
+      background: #e5f9ef;
+    }
+    .loot-choice:disabled { cursor: default; }
+    @media (max-width: 520px) {
+      .loot-choices { grid-template-columns: 1fr; }
     }
     .equip-list {
       display: flex;
@@ -1156,6 +1404,7 @@
     </section>
 
     <section id="battle" class="screen">
+      <div class="battle-main" id="battle-main">
       <div class="meta-bar">
         <span class="pill" id="mode-pill">Fill</span>
         <span class="pill" id="progress-pill">1 / 8</span>
@@ -1170,6 +1419,7 @@
         <div class="arena-sky" aria-hidden="true"></div>
         <div class="arena-ground" aria-hidden="true"></div>
         <div class="float-dmg" id="float-dmg" aria-hidden="true"></div>
+        <div class="telegraph" id="telegraph" hidden aria-hidden="true"><span id="telegraph-glyph">!</span></div>
         <div class="celebrate" id="celebrate" aria-live="polite">
           <div class="celebrate-stars" aria-hidden="true">★ ★ ★</div>
           <div class="celebrate-text" id="celebrate-text">Great!</div>
@@ -1206,7 +1456,13 @@
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
       <div class="pick-choices" id="pick-choices" hidden></div>
+      <div class="spell-hero" id="spell-hero" hidden aria-live="polite">
+        <p class="spell-hero-kicker" id="spell-hero-kicker">Correct</p>
+        <p class="spell-hero-word" id="spell-hero-word"></p>
+        <button type="button" class="btn secondary" id="spell-hear-btn">🔊 Hear Word</button>
+      </div>
       <p class="feedback" id="feedback"></p>
+      </div>
       <div class="play-dock" id="play-dock">
         <div class="keyboard" id="keyboard"></div>
         <div class="actions battle-actions center">
@@ -1221,15 +1477,18 @@
       <div class="loot-card">
         <p class="victory-kicker" aria-hidden="true">★ ★ ★</p>
         <p class="section-title victory-title">Victory!</p>
-        <p class="victory-sub">New gear</p>
-        <div class="loot-art">
-          <img src="assets/equipment.png" alt="Equipment">
+        <p class="victory-sub" id="loot-sub">Choose 1 of 2</p>
+        <div class="chest" id="chest" data-step="windup" aria-hidden="true">
+          <div class="chest-box">
+            <div class="chest-lid"></div>
+            <div class="chest-base"></div>
+          </div>
         </div>
-        <p class="loot-name" id="loot-name">Wood Sword</p>
-        <p class="loot-effect" id="loot-effect">ATK +1</p>
+        <div class="loot-choices" id="loot-choices" hidden></div>
+        <p class="loot-effect" id="loot-effect">Pick one. Each card says how it helps the next fight.</p>
         <div class="equip-list" id="equip-list"></div>
         <div class="actions center">
-          <button type="button" class="btn" id="loot-continue-btn">Keep Going</button>
+          <button type="button" class="btn" id="loot-continue-btn" disabled>Keep Going</button>
         </div>
       </div>
     </section>
@@ -1282,29 +1541,28 @@
       { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
-    // Encounter 1 HP unchanged. Later monsters bumped (+2/+3 normals, +4 mini, +5 boss)
-    // so a guaranteed early ATK-up still yields ~similar spell counts (ATK 1→2+).
-    // Totals: 3+5+6+7+8+8+12+17 = 66 (was 44).
+    // P1 quick-clear: a normal falls on one correct answer (HP 1, and the hit forces a KO).
+    // Mini and Boss stay multi-HP so they still need several correct words.
     const STAGE_ONE_MONSTERS = [
-      { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 6, atk: 1, role: 'normal' },
-      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 7, atk: 1, role: 'normal' },
-      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 8, atk: 1, role: 'normal' },
-      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 8, atk: 1, role: 'normal' },
+      { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 1, atk: 1, role: 'normal' },
       { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 12, atk: 2, role: 'mini' },
       { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 17, atk: 2, role: 'boss' }
     ];
 
     // Distinct roster from unused m01–m20 art (no overlap with Stage One sprites).
-    // Same HP curve as Stage One (encounter 1 unchanged; later bumped for early ATK).
+    // Same quick-clear curve: normals HP 1, mini 12, boss 17.
     const STAGE_TWO_MONSTERS = [
-      { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 3, atk: 1, role: 'normal' },
-      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 5, atk: 1, role: 'normal' },
-      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 6, atk: 1, role: 'normal' },
-      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 7, atk: 1, role: 'normal' },
-      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 8, atk: 1, role: 'normal' },
-      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 8, atk: 1, role: 'normal' },
+      { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 1, atk: 1, role: 'normal' },
       { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 12, atk: 2, role: 'mini' },
       { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 17, atk: 2, role: 'boss' }
     ];
@@ -1332,15 +1590,22 @@
     // Multiplier = min(CAP, 1 + STEP * (combo - 1)). Combo 1 is ×1 (no change).
     const COMBO_STEP = 0.25;
     const COMBO_MULT_CAP = 2;
+    // Correct spelling stays up long enough to read the whole word, or until Continue.
+    const REVIEW_MIN_MS = 1500;
+    const REVIEW_AUTO_MS = 4200;
+    // Short enemy tell. Long enough to see, short enough that the question stays open.
+    const TELEGRAPH_MS = 520;
+    const HIT_FOLLOW_MS = 170;
+    const LIGHT_HIT = 1;
 
     const EQUIPMENT = [
-      { id: 'wood_sword', name: 'Wood Sword', effect: 'ATK +1', kind: 'atk', value: 1 },
-      { id: 'iron_sword', name: 'Iron Sword', effect: 'ATK +2', kind: 'atk', value: 2 },
-      { id: 'cloth_armor', name: 'Cloth Armor', effect: 'DEF +1', kind: 'def', value: 1 },
-      { id: 'wood_shield', name: 'Wood Shield', effect: 'DEF +1', kind: 'def', value: 1 },
-      { id: 'herb', name: 'Healing Herb', effect: 'Restore 3 HP now', kind: 'heal', value: 3 },
-      { id: 'lucky_feather', name: 'Lucky Feather', effect: 'Next hit deals double damage', kind: 'double', value: 1 },
-      { id: 'hint_amulet', name: 'Hint Amulet', effect: 'Letter hints do not cut ATK', kind: 'hintSafe', value: 1 }
+      { id: 'wood_sword', name: 'Wood Sword', effect: 'ATK +1', help: 'Next fight: Attack +1, so a correct spelling drains more HP.', kind: 'atk', value: 1 },
+      { id: 'iron_sword', name: 'Iron Sword', effect: 'ATK +2', help: 'Next fight: Attack +2. Correct answers hit much harder.', kind: 'atk', value: 2 },
+      { id: 'cloth_armor', name: 'Cloth Armor', effect: 'DEF +1', help: 'Next fight: Defense +1. A wrong answer chips 1 less HP.', kind: 'def', value: 1 },
+      { id: 'wood_shield', name: 'Wood Shield', effect: 'DEF +1', help: 'Next fight: Defense +1. A wrong answer chips 1 less HP.', kind: 'def', value: 1 },
+      { id: 'herb', name: 'Healing Herb', effect: 'Restore 3 HP now', help: 'Heal 3 HP before the next fight, so light hits are safer.', kind: 'heal', value: 3 },
+      { id: 'lucky_feather', name: 'Lucky Feather', effect: 'Next hit deals double damage', help: 'Next fight: your next correct spelling deals double damage.', kind: 'double', value: 1 },
+      { id: 'hint_amulet', name: 'Hint Amulet', effect: 'Letter hints do not cut ATK', help: 'Next fight: a letter hint will not halve your Attack.', kind: 'hintSafe', value: 1 }
     ];
 
     const Sfx = (() => {
@@ -1493,6 +1758,8 @@
       heroPanel: document.getElementById('hero-panel'),
       monsterPanel: document.getElementById('monster-panel'),
       floatDmg: document.getElementById('float-dmg'),
+      telegraph: document.getElementById('telegraph'),
+      telegraphGlyph: document.getElementById('telegraph-glyph'),
       monsterQuip: document.getElementById('monster-quip'),
       heroHpFill: document.getElementById('hero-hp-fill'),
       heroHpText: document.getElementById('hero-hp-text'),
@@ -1506,14 +1773,20 @@
       wordPromptImg: document.getElementById('word-prompt-img'),
       wordClue: document.getElementById('word-clue'),
       slots: document.getElementById('slots'),
+      spellHero: document.getElementById('spell-hero'),
+      spellHeroKicker: document.getElementById('spell-hero-kicker'),
+      spellHeroWord: document.getElementById('spell-hero-word'),
+      spellHearBtn: document.getElementById('spell-hear-btn'),
       feedback: document.getElementById('feedback'),
       keyboard: document.getElementById('keyboard'),
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
       checkBtn: document.getElementById('check-btn'),
       quitBtn: document.getElementById('quit-btn'),
-      lootName: document.getElementById('loot-name'),
+      lootSub: document.getElementById('loot-sub'),
       lootEffect: document.getElementById('loot-effect'),
+      chest: document.getElementById('chest'),
+      lootChoices: document.getElementById('loot-choices'),
       equipList: document.getElementById('equip-list'),
       lootContinueBtn: document.getElementById('loot-continue-btn'),
       resultTitle: document.getElementById('result-title'),
@@ -1548,7 +1821,16 @@
       puzzlesServed: 0,
       pickChoice: null,
       pickOptions: [],
-      roundId: 0
+      roundId: 0,
+      review: null,
+      reviewTimer: null,
+      reviewAuto: null,
+      telegraphTimer: null,
+      strikeTimer: null,
+      chestTimer: null,
+      chestStep: 'idle',
+      lootChosen: false,
+      hitSerial: 0
     };
 
     const MODES = ['fill', 'pick', 'fix'];
@@ -1675,6 +1957,13 @@
 
     function pickNextAttackWord() {
       if (!state.words.length) return null;
+      if (state.forceWord) {
+        const forced = state.words.find((entry) => entry.word === state.forceWord);
+        if (forced) {
+          state.attackWord = forced;
+          return forced;
+        }
+      }
       const buckets = { short: [], long: [] };
       state.words.forEach((entry) => {
         buckets[lengthBucket(entry.word)].push(entry);
@@ -1735,6 +2024,8 @@
       els.monsterQuip.classList.remove('show');
       els.monsterQuip.textContent = '';
       els.celebrate.classList.remove('show');
+      els.telegraph.classList.remove('show');
+      els.telegraph.hidden = true;
     }
 
     function comboMultiplier() {
@@ -1744,26 +2035,54 @@
 
     const CHEERS = ['Great!', 'Nice!', 'Yes!', 'Super!'];
 
-    function showCelebrate() {
-      els.celebrateText.textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)];
-      if (state.combo >= 2) {
-        els.celebrateCombo.hidden = false;
-        els.celebrateCombo.textContent = `COMBO ×${state.combo}`;
-      } else {
-        els.celebrateCombo.hidden = true;
-        els.celebrateCombo.textContent = '';
-      }
+    function showCelebrate(word) {
+      els.celebrateText.textContent = String(word || '').toUpperCase();
+      const cheer = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+      els.celebrateCombo.hidden = false;
+      els.celebrateCombo.textContent = state.combo >= 2 ? `COMBO ×${state.combo}` : cheer;
       els.celebrate.classList.remove('show');
       void els.celebrate.offsetWidth;
       els.celebrate.classList.add('show');
     }
 
-    function showDamageFloat(amount, kind) {
+    function showDamageFloat(amount, kind, barFill) {
+      state.hitSerial += 1;
+      const serial = state.hitSerial;
       const el = els.floatDmg;
-      el.textContent = `−${amount}`;
-      el.className = `float-dmg ${kind}`;
+      el.textContent = amount > 0 ? `−${amount}` : '0';
+      el.className = `float-dmg big ${kind}`;
+      void el.offsetWidth;
+      if (serial !== state.hitSerial) return;
+      el.classList.add('show');
+      if (barFill) {
+        const bar = barFill.parentElement;
+        if (bar) {
+          bar.classList.remove('pulse');
+          void bar.offsetWidth;
+          bar.classList.add('pulse');
+        }
+      }
+    }
+
+    function telegraphGlyph() {
+      const chip = Math.max(0, LIGHT_HIT - (state.hero?.def || 0));
+      const wouldLand = chip > 0 && state.hero.hp > 1;
+      return wouldLand ? '1' : '!';
+    }
+
+    function showTelegraph(glyph) {
+      const el = els.telegraph;
+      els.telegraphGlyph.textContent = glyph || '!';
+      el.hidden = false;
+      el.classList.remove('show');
       void el.offsetWidth;
       el.classList.add('show');
+      if (state.telegraphTimer) clearTimeout(state.telegraphTimer);
+      state.telegraphTimer = setTimeout(() => {
+        state.telegraphTimer = null;
+        el.classList.remove('show');
+        el.hidden = true;
+      }, TELEGRAPH_MS);
     }
 
     function showMonsterQuip() {
@@ -1773,6 +2092,12 @@
       void els.monsterQuip.offsetWidth;
       els.monsterQuip.classList.add('show');
       return line;
+    }
+
+    function paintHpBand(fill, hp, maxHp) {
+      const ratio = maxHp > 0 ? hp / maxHp : 0;
+      fill.classList.remove('hp-high', 'hp-mid', 'hp-low');
+      fill.classList.add(ratio <= 0.3 ? 'hp-low' : ratio <= 0.6 ? 'hp-mid' : 'hp-high');
     }
 
     function updateHud() {
@@ -1798,6 +2123,7 @@
 
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
       els.heroHpFill.style.width = `${Math.max(0, (hero.hp / hero.maxHp) * 100)}%`;
+      paintHpBand(els.heroHpFill, hero.hp, hero.maxHp);
       els.heroHpText.textContent = `${Math.max(0, hero.hp)}/${hero.maxHp}`;
       els.heroGearTag.textContent = hero.equipment.length
         ? hero.equipment.map((e) => e.name).slice(-3).join(' · ')
@@ -1805,6 +2131,7 @@
 
       if (monster) {
         els.monsterHpFill.style.width = `${Math.max(0, (monster.hp / monster.maxHp) * 100)}%`;
+        paintHpBand(els.monsterHpFill, monster.hp, monster.maxHp);
         els.monsterHpText.textContent = `${Math.max(0, monster.hp)}/${monster.maxHp}`;
         els.monsterName.textContent = monster.name;
         els.monsterTag.textContent = roleLabel(monster.role);
@@ -2022,6 +2349,8 @@
     }
 
     function pickMode() {
+      // forceMode / forceWord are inert unless a local check sets them.
+      if (state.forceMode && MODES.includes(state.forceMode)) return state.forceMode;
       // Second puzzle of a run is forced onto a new mode so one adventure shows at least two.
       if (state.puzzlesServed >= 1 && state.modesSeen.size < 2) {
         const others = MODES.filter((mode) => !state.modesSeen.has(mode));
@@ -2098,8 +2427,10 @@
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
       els.checkBtn.disabled = false;
+      els.checkBtn.textContent = 'Attack!';
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
+      hideSpellHero();
       const imgSrc = item.img || 'assets/words/art-room.png';
       els.wordPromptImg.src = imgSrc;
       els.wordPromptImg.alt = 'Spell this word';
@@ -2108,6 +2439,8 @@
       if (state.mode === 'pick') renderPickChoices();
       else renderSlots();
       updateHud();
+      // Tell is visible while the question stays open — it does not lock typing.
+      showTelegraph(telegraphGlyph());
     }
 
     function guessWord() {
@@ -2119,18 +2452,79 @@
       return chars.join('');
     }
 
-    function markSlots(ok) {
+    function revealFullWord() {
       const word = currentWord().word;
-      state.blanks.forEach((blank) => {
-        const slot = els.slots.querySelector(`[data-index="${blank.index}"]`);
-        if (!slot) return;
-        const typed = (blank.value || '').toLowerCase();
-        const right = word[blank.index].toLowerCase();
-        const cellOk = ok || typed === right;
-        slot.classList.remove('active', 'filled', 'correct', 'wrong', 'needs-fix');
-        slot.classList.add(cellOk ? 'correct' : 'wrong');
-        slot.textContent = (blank.value || '?').toUpperCase();
+      [...els.slots.querySelectorAll('.slot')].forEach((slot) => {
+        if (slot.classList.contains('space')) return;
+        const index = Number(slot.dataset.index);
+        if (!Number.isFinite(index)) return;
+        slot.classList.remove('active', 'filled', 'wrong', 'needs-fix');
+        slot.classList.add('correct');
+        slot.textContent = word[index].toUpperCase();
       });
+    }
+
+    function hideSpellHero() {
+      els.spellHero.hidden = true;
+      els.spellHero.classList.remove('ok', 'teach');
+      els.spellHeroWord.textContent = '';
+    }
+
+    function showSpellHero(kind) {
+      const word = currentWord().word;
+      els.spellHero.hidden = false;
+      els.spellHero.classList.toggle('ok', kind === 'ok');
+      els.spellHero.classList.toggle('teach', kind !== 'ok');
+      els.spellHeroKicker.textContent = kind === 'ok' ? 'Correct' : 'The word is';
+      els.spellHeroWord.textContent = word.toUpperCase();
+    }
+
+    function cancelReview() {
+      if (state.reviewTimer) clearTimeout(state.reviewTimer);
+      if (state.reviewAuto) clearTimeout(state.reviewAuto);
+      state.reviewTimer = null;
+      state.reviewAuto = null;
+      state.review = null;
+    }
+
+    function beginReview(round, next) {
+      cancelReview();
+      state.review = { round, next, ready: false, started: Date.now() };
+      els.checkBtn.textContent = 'Continue';
+      els.checkBtn.disabled = true;
+      state.reviewTimer = setTimeout(() => {
+        state.reviewTimer = null;
+        if (!state.review || state.review.round !== round) return;
+        state.review.ready = true;
+        els.checkBtn.disabled = false;
+      }, REVIEW_MIN_MS);
+      state.reviewAuto = setTimeout(() => {
+        state.reviewAuto = null;
+        if (!state.review || state.review.round !== round) return;
+        finishReview();
+      }, REVIEW_AUTO_MS);
+    }
+
+    function finishReview() {
+      const review = state.review;
+      if (!review) return;
+      if ((Date.now() - review.started) < REVIEW_MIN_MS) return;
+      cancelReview();
+      hideSpellHero();
+      els.checkBtn.textContent = 'Attack!';
+      review.next();
+    }
+
+    function clearPendingTimers() {
+      cancelReview();
+      if (state.travelTimer) clearTimeout(state.travelTimer);
+      if (state.telegraphTimer) clearTimeout(state.telegraphTimer);
+      if (state.strikeTimer) clearTimeout(state.strikeTimer);
+      if (state.chestTimer) clearTimeout(state.chestTimer);
+      state.travelTimer = null;
+      state.telegraphTimer = null;
+      state.strikeTimer = null;
+      state.chestTimer = null;
     }
 
     function calcAttackDamage() {
@@ -2144,6 +2538,28 @@
       }
       // Round so HP stays a whole number. Low ATK can round back to the same hit.
       return Math.max(1, Math.round(dmg * comboMultiplier()));
+    }
+
+    function applyHeroHit(dmg) {
+      if (state.monster.role === 'normal') {
+        state.monster.hp = 0;
+        return Math.max(1, dmg);
+      }
+      // Spell is already recorded, so the first correct answer counts as 1.
+      const correctSoFar = state.monster.spells.filter((s) => s.ok).length;
+      let nextHp = Math.max(0, state.monster.hp - dmg);
+      if (nextHp <= 0 && correctSoFar < 2) nextHp = 1;
+      const dealt = Math.max(1, state.monster.hp - nextHp);
+      state.monster.hp = nextHp;
+      return dealt;
+    }
+
+    function applyLightPenalty() {
+      state.combo = 0;
+      const chip = Math.max(0, LIGHT_HIT - state.hero.def);
+      const dealt = Math.min(chip, Math.max(0, state.hero.hp - 1));
+      state.hero.hp -= dealt;
+      return dealt;
     }
 
     function pickLoot() {
@@ -2180,26 +2596,115 @@
       if (item.kind === 'hintSafe') state.hero.hintSafe = true;
     }
 
-    function showLoot(item) {
-      state.pendingLoot = item;
-      applyLoot(item);
-      els.lootName.textContent = item.name;
-      els.lootEffect.textContent = item.effect;
+    function lootPool(excludeIds) {
+      const banned = new Set(excludeIds || []);
+      const used = new Set(state.hero.equipment.map((e) => e.id));
+      const pool = EQUIPMENT.filter((item) => {
+        if (banned.has(item.id)) return false;
+        if (item.kind === 'heal' || item.kind === 'double') return true;
+        return !used.has(item.id);
+      });
+      return pool.length ? pool : EQUIPMENT.filter((item) => !banned.has(item.id));
+    }
+
+    function pickLootPair() {
+      const first = pickLoot();
+      const pool = lootPool([first.id]);
+      const second = pool[Math.floor(Math.random() * pool.length)];
+      return [first, { ...second }];
+    }
+
+    function renderEquipList() {
       els.equipList.innerHTML = state.hero.equipment
-        .map((e) => `<span class="equip-chip">${e.name}</span>`)
+        .map((item) => `<span class="equip-chip">${item.name}</span>`)
         .join('');
+    }
+
+    function renderLootChoices(pair) {
+      els.lootChoices.innerHTML = '';
+      pair.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'loot-choice';
+        const name = document.createElement('strong');
+        name.textContent = item.name;
+        const effect = document.createElement('span');
+        effect.className = 'loot-effect-line';
+        effect.textContent = item.effect;
+        const help = document.createElement('span');
+        help.className = 'loot-help';
+        help.textContent = item.help;
+        btn.append(name, effect, help);
+        btn.addEventListener('click', () => chooseLoot(item, btn));
+        els.lootChoices.appendChild(btn);
+      });
+    }
+
+    const CHEST_STEPS = [
+      { step: 'windup', ms: 420 },
+      { step: 'pop', ms: 500 },
+      { step: 'float', ms: 640 },
+      { step: 'choose', ms: 0 }
+    ];
+
+    function playChest() {
+      if (state.chestTimer) clearTimeout(state.chestTimer);
+      let index = 0;
+      const run = () => {
+        const phase = CHEST_STEPS[index];
+        state.chestStep = phase.step;
+        els.chest.dataset.step = phase.step;
+        const showRewards = phase.step === 'float' || phase.step === 'choose';
+        els.lootChoices.hidden = !showRewards;
+        if (!phase.ms) {
+          state.chestTimer = null;
+          return;
+        }
+        state.chestTimer = setTimeout(() => {
+          index += 1;
+          run();
+        }, phase.ms);
+      };
+      run();
+    }
+
+    function chooseLoot(item, btn) {
+      if (state.lootChosen) return;
+      if (state.chestStep !== 'float' && state.chestStep !== 'choose') return;
+      state.lootChosen = true;
+      applyLoot({ ...item });
+      [...els.lootChoices.children].forEach((el) => {
+        el.disabled = true;
+        el.classList.toggle('chosen', el === btn);
+      });
+      els.lootSub.textContent = item.name;
+      els.lootEffect.textContent = item.help;
+      renderEquipList();
+      els.lootContinueBtn.disabled = false;
       Sfx.play('loot');
-      showScreen('loot');
       updateHud();
+    }
+
+    function showLoot(pair) {
+      state.pendingLoot = null;
+      state.lootChosen = false;
+      els.lootSub.textContent = 'Choose 1 of 2';
+      els.lootEffect.textContent = 'Pick one. Each card says how it helps the next fight.';
+      els.lootContinueBtn.disabled = true;
+      renderEquipList();
+      renderLootChoices(pair);
+      els.lootChoices.hidden = true;
+      els.chest.dataset.step = 'windup';
+      state.chestStep = 'windup';
+      showScreen('loot');
+      Sfx.play('reveal');
+      playChest();
     }
 
     function finishAdventure(won) {
       state.roundId += 1;
+      clearPendingTimers();
       if (window.speechSynthesis) window.speechSynthesis.cancel();
-      if (state.travelTimer) {
-        clearTimeout(state.travelTimer);
-        state.travelTimer = null;
-      }
       const total = activeMonsters().length;
       const stageName = state.stage?.label || 'Stage';
       els.progressFill.style.width = won ? '100%' : `${(state.index / Math.max(total, 1)) * 100}%`;
@@ -2237,8 +2742,7 @@
         spells: state.monster.spells.slice()
       });
       state.wins += 1;
-      const loot = pickLoot();
-      showLoot(loot);
+      showLoot(pickLootPair());
     }
 
     function goToNextEncounter() {
@@ -2255,8 +2759,11 @@
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       showScreen('battle');
       preparePuzzle();
-      if (state.monster.role === 'boss' || state.monster.role === 'mini') {
-        els.feedback.textContent = `${state.monster.name} appears! Answer correctly to win!`;
+      if (state.monster.role === 'boss') {
+        els.feedback.textContent = `${state.monster.name} has a deep HP pool. Answer correctly several times to drain it — one word will not win.`;
+        els.feedback.className = 'feedback';
+      } else if (state.monster.role === 'mini') {
+        els.feedback.textContent = `${state.monster.name} is a Mini-Boss. Land several correct answers to drain its HP.`;
         els.feedback.className = 'feedback';
       }
     }
@@ -2283,14 +2790,24 @@
       }, 1900);
     }
 
-    function markPick(ok) {
+    function markPick() {
+      const answer = currentWord().word;
       [...els.pickChoices.querySelectorAll('.pick-choice')].forEach((btn) => {
         btn.disabled = true;
-        if (btn.dataset.word === state.pickChoice) btn.classList.add(ok ? 'correct' : 'wrong');
+        if (btn.dataset.word === answer) {
+          btn.classList.add('correct');
+          btn.setAttribute('aria-label', `Correct spelling: ${answer}`);
+        } else if (btn.dataset.word === state.pickChoice) {
+          btn.classList.add('wrong');
+        }
       });
     }
 
     function checkAnswer() {
+      if (state.review) {
+        if (state.review.ready) finishReview();
+        return;
+      }
       if (state.locked) return;
       const item = currentWord();
       if (!item) return;
@@ -2303,7 +2820,7 @@
           return;
         }
         const ok = state.pickChoice === item.word;
-        markPick(ok);
+        markPick();
         resolveRound(ok, state.pickChoice);
         return;
       }
@@ -2320,7 +2837,7 @@
 
       const guess = guessWord();
       const ok = guess === item.word;
-      markSlots(ok);
+      revealFullWord();
       resolveRound(ok, guess);
     }
 
@@ -2330,55 +2847,66 @@
       state.locked = true;
       els.checkBtn.disabled = true;
       els.letterHintBtn.disabled = true;
+      els.speakBtn.disabled = true;
 
       if (ok) {
         state.combo += 1;
         state.monster.spells.push({ word: item.word, img: item.img, ok: true });
         state.spellLog.push({ word: item.word, img: item.img, ok: true });
         const dmg = calcAttackDamage();
-        state.monster.hp = Math.max(0, state.monster.hp - dmg);
+        const shown = applyHeroHit(dmg);
+        if (state.mode !== 'pick') revealFullWord();
+        showSpellHero('ok');
         flash(els.heroPanel, 'attack');
-        showCelebrate();
+        showCelebrate(item.word);
         setTimeout(() => {
+          if (round !== state.roundId) return;
           flash(els.monsterPanel, 'hit');
-          showDamageFloat(dmg, 'good');
-        }, 170);
-        const comboNote = state.combo >= 2 ? ` COMBO ×${state.combo}!` : '';
-        els.feedback.textContent = `Correct!${comboNote} You deal ${dmg} damage!`;
+          showDamageFloat(shown, 'good', els.monsterHpFill);
+        }, HIT_FOLLOW_MS);
+        const comboNote = state.combo >= 2 ? ` · COMBO ×${state.combo}` : '';
+        els.feedback.textContent = `−${shown} HP${comboNote}`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
         updateHud();
-
-        setTimeout(() => {
+        beginReview(round, () => {
           if (round !== state.roundId) return;
-          if (state.monster.hp <= 0) {
-            advanceAfterVictory();
-          } else {
-            els.feedback.textContent = 'Still standing! Next word!';
-            els.feedback.className = 'feedback';
-            preparePuzzle();
-          }
-        }, 850);
+          if (state.monster.hp <= 0) advanceAfterVictory();
+          else preparePuzzle();
+        });
         return;
       }
 
       state.combo = 0;
       state.monster.spells.push({ word: item.word, img: item.img, ok: false, guess });
       state.spellLog.push({ word: item.word, img: item.img, ok: false, guess });
-      const damage = Math.max(1, state.monster.atk - state.hero.def);
-      state.hero.hp = Math.max(0, state.hero.hp - damage);
-      const quip = showMonsterQuip();
-      flash(els.monsterPanel, 'attack');
-      setTimeout(() => {
-        flash(els.heroPanel, 'hit');
-        showDamageFloat(damage, 'hurt');
-      }, 170);
-      els.feedback.textContent = `${quip} The hero takes ${damage} damage. Try another word!`;
+      if (state.mode !== 'pick') revealFullWord();
+      showSpellHero('teach');
+      showTelegraph(telegraphGlyph());
+      els.feedback.textContent = 'Look at the word.';
       els.feedback.className = 'feedback bad';
       Sfx.play('wrong');
       updateHud();
+      if (state.strikeTimer) clearTimeout(state.strikeTimer);
+      const puzzleToken = state.puzzlesServed;
+      state.strikeTimer = setTimeout(() => {
+        state.strikeTimer = null;
+        if (round !== state.roundId || state.puzzlesServed !== puzzleToken) return;
+        const dealt = applyLightPenalty();
+        const quip = showMonsterQuip();
+        flash(els.monsterPanel, 'attack');
+        setTimeout(() => {
+          if (round !== state.roundId || state.puzzlesServed !== puzzleToken) return;
+          flash(els.heroPanel, 'hit');
+          showDamageFloat(dealt, 'hurt', els.heroHpFill);
+        }, HIT_FOLLOW_MS);
+        els.feedback.textContent = dealt > 0
+          ? `${quip} Light hit −${dealt}. Combo broken.`
+          : `${quip} No HP lost. Combo broken.`;
+        updateHud();
+      }, TELEGRAPH_MS);
 
-      setTimeout(() => {
+      beginReview(round, () => {
         if (round !== state.roundId) return;
         if (state.hero.hp <= 0) {
           state.answers.push({
@@ -2393,7 +2921,7 @@
           return;
         }
         preparePuzzle();
-      }, 900);
+      });
     }
 
     function startAdventure() {
@@ -2419,6 +2947,9 @@
       state.pickChoice = null;
       state.pickOptions = [];
       state.roundId += 1;
+      state.lootChosen = false;
+      state.chestStep = 'idle';
+      clearPendingTimers();
       buildKeyboard();
       Sfx.play('start');
       beginTravel();
@@ -2426,11 +2957,8 @@
 
     function goHome() {
       state.roundId += 1;
+      clearPendingTimers();
       if (window.speechSynthesis) window.speechSynthesis.cancel();
-      if (state.travelTimer) {
-        clearTimeout(state.travelTimer);
-        state.travelTimer = null;
-      }
       Sfx.play('click');
       showScreen('title');
     }
@@ -2451,10 +2979,15 @@
       Sfx.ensure();
       speakCurrentWord();
     });
+    els.spellHearBtn.addEventListener('click', () => {
+      Sfx.ensure();
+      speakCurrentWord();
+    });
     els.letterHintBtn.addEventListener('click', useLetterHint);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.quitBtn.addEventListener('click', () => finishAdventure(false));
     els.lootContinueBtn.addEventListener('click', () => {
+      if (!state.lootChosen) return;
       Sfx.play('click');
       goToNextEncounter();
     });
@@ -2462,7 +2995,15 @@
     els.homeBtn.addEventListener('click', goHome);
 
     document.addEventListener('keydown', (event) => {
-      if (!els.battle.classList.contains('active') || state.locked) return;
+      if (!els.battle.classList.contains('active')) return;
+      if (state.review) {
+        if (event.key === 'Enter' && state.review.ready) {
+          event.preventDefault();
+          finishReview();
+        }
+        return;
+      }
+      if (state.locked) return;
       if (state.mode === 'pick' && /^[1-3]$/.test(event.key)) {
         const opt = state.pickOptions[Number(event.key) - 1];
         if (opt) {
@@ -2485,6 +3026,21 @@
 
     document.addEventListener('pointerdown', () => Sfx.ensure(), { once: true });
     document.addEventListener('keydown', () => Sfx.ensure(), { once: true });
+
+    if (new URLSearchParams(location.search).get('test') === '1') {
+      window.__SPELL = {
+        state,
+        REVIEW_MIN_MS,
+        TELEGRAPH_MS,
+        LIGHT_HIT,
+        currentWord,
+        checkAnswer,
+        preparePuzzle,
+        showLoot,
+        pickLootPair,
+        beginBattle
+      };
+    }
   </script>
 </body>
 </html>
