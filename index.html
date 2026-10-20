@@ -223,32 +223,125 @@
       transition: width 0.35s ease;
     }
 
+    /* One shared stage: hero and monster stand on the same ground line. */
     .arena {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      position: relative;
+      height: clamp(176px, 34vw, 232px);
+      border-radius: 1.2rem;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+      border: 3px solid #d7ebe1;
+      background: #bfe6f6;
+      isolation: isolate;
     }
-    @media (max-width: 560px) {
-      .arena { grid-template-columns: 1fr; }
+    .arena-sky {
+      position: absolute;
+      inset: 0 0 32% 0;
+      background:
+        radial-gradient(circle at 18% 40%, rgba(255, 255, 255, 0.85), transparent 28%),
+        radial-gradient(circle at 78% 22%, rgba(255, 244, 214, 0.9), transparent 22%),
+        linear-gradient(180deg, #d9f4ff 0%, #b7e6f8 100%);
+      z-index: 0;
+    }
+    .arena-ground {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 34%;
+      background: linear-gradient(180deg, #c6efb4 0%, #7dcb73 48%, #5eaf62 100%);
+      border-top: 3px solid rgba(255, 255, 255, 0.5);
+      z-index: 0;
     }
     .fighter {
-      border: 3px solid #d7ebe1;
-      border-radius: 1.1rem;
-      padding: 0.75rem;
-      background: #f7fffb;
+      position: absolute;
+      bottom: 7%;
+      width: clamp(108px, 32%, 168px);
       text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      z-index: 2;
+      transform: translateX(0);
     }
-    .fighter.hit { animation: shake 0.4s ease; }
+    .fighter.hero { left: 6%; }
+    .fighter.monster { right: 6%; }
+    /* Base motion kept; hero/monster overrides aim the lunge and recoil. */
     .fighter.attack { animation: pop 0.35s ease; }
-    .fighter.boss {
-      border-color: #e0c6f5;
-      background: linear-gradient(180deg, #fbf5ff, #fff);
+    .fighter.hit { animation: shake 0.4s ease; }
+    .fighter.hero.attack { animation: hero-lunge 0.5s ease; }
+    .fighter.monster.attack { animation: monster-lunge 0.5s ease; }
+    .fighter.hero.hit { animation: hero-shake 0.45s ease; }
+    .fighter.monster.hit { animation: monster-recoil 0.5s ease; }
+    @keyframes hero-lunge {
+      0% { transform: translateX(0); }
+      42% { transform: translateX(36px); }
+      100% { transform: translateX(0); }
     }
-    .fighter.mini {
-      border-color: #f0c98a;
-      background: linear-gradient(180deg, #fff8ec, #fff);
+    @keyframes monster-lunge {
+      0% { transform: translateX(0); }
+      42% { transform: translateX(-36px); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes monster-recoil {
+      0% { transform: translateX(0); filter: brightness(1); }
+      28% { transform: translateX(16px); filter: brightness(1.9); }
+      100% { transform: translateX(0); filter: brightness(1); }
+    }
+    @keyframes hero-shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(3px); }
+    }
+    .fighter.boss h3 { color: #7a3eaa; }
+    .fighter.mini h3 { color: #9a6410; }
+    .float-dmg {
+      position: absolute;
+      z-index: 5;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.7rem, 5vw, 2.15rem);
+      font-weight: 700;
+      pointer-events: none;
+      opacity: 0;
+      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.9);
+    }
+    .float-dmg.good { left: 58%; top: 28%; color: #0f7a45; }
+    .float-dmg.hurt { left: 14%; top: 28%; color: #d23b2a; }
+    .float-dmg.show { animation: float-up 0.78s ease forwards; }
+    @keyframes float-up {
+      0% { opacity: 0; transform: translateY(8px) scale(0.82); }
+      22% { opacity: 1; transform: translateY(0) scale(1.18); }
+      100% { opacity: 0; transform: translateY(-28px) scale(1); }
+    }
+    .monster-quip {
+      position: absolute;
+      z-index: 4;
+      right: 4%;
+      top: 6%;
+      margin: 0;
+      max-width: 48%;
+      padding: 0.28rem 0.5rem;
+      border-radius: 0.75rem;
+      background: #fff;
+      color: #a3382a;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.2;
+      box-shadow: 0 3px 0 rgba(163, 56, 42, 0.18);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .monster-quip.show { animation: quip-pop 1.2s ease forwards; }
+    @keyframes quip-pop {
+      0% { opacity: 0; transform: translateY(4px) scale(0.92); }
+      12% { opacity: 1; transform: translateY(0) scale(1); }
+      78% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @media (max-width: 560px) {
+      .arena { height: 168px; }
+      .fighter { width: 46%; bottom: 5%; }
+      .fighter.hero { left: 1%; }
+      .fighter.monster { right: 1%; }
     }
     .stage-pick {
       display: grid;
@@ -291,36 +384,57 @@
       color: var(--muted);
     }
     .fighter img {
-      width: clamp(88px, 22vw, 120px);
-      height: clamp(88px, 22vw, 120px);
+      width: clamp(78px, 18vw, 108px);
+      height: clamp(78px, 18vw, 108px);
       object-fit: contain;
-      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.12));
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+    }
+    .fighter.boss img {
+      filter: drop-shadow(0 0 10px rgba(176, 92, 214, 0.8)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+    }
+    .fighter.mini img {
+      filter: drop-shadow(0 0 10px rgba(240, 180, 60, 0.85)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+    }
+    @media (max-width: 560px) {
+      .fighter img { width: 72px; height: 72px; }
     }
     .fighter h3 {
-      margin: 0.25rem 0 0.15rem;
+      margin: 0.05rem 0 0;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.05rem;
+      font-size: 0.92rem;
+      line-height: 1.1;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     }
     .fighter .tag {
-      margin: 0 0 0.45rem;
-      color: var(--muted);
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-    .hp-row {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.82rem;
+      margin: 0;
+      color: var(--ink);
+      font-size: 0.68rem;
       font-weight: 800;
-      color: var(--muted);
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hp-head {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.1rem;
+      margin-bottom: 0.12rem;
+    }
+    .hp-num {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
     }
     .hp-bar {
-      flex: 1;
-      height: 0.75rem;
+      height: 0.55rem;
       border-radius: 999px;
-      background: #e8efe9;
+      background: rgba(255, 255, 255, 0.78);
       overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(15, 42, 36, 0.12);
     }
     .hp-bar > i {
       display: block;
@@ -357,6 +471,12 @@
       background: #f7fffb;
       box-shadow: 0 6px 14px rgba(15, 42, 36, 0.1);
       flex-shrink: 0;
+    }
+    @media (max-width: 560px) {
+      .meaning .word-prompt-img {
+        width: min(150px, 42vw);
+        height: min(150px, 42vw);
+      }
     }
     #speak-btn {
       min-height: 3rem;
@@ -454,6 +574,8 @@
     .slot.wrong {
       background: #ffe8e4;
       border-color: var(--coral);
+      color: #b53b2d;
+      box-shadow: 0 0 0 3px rgba(232, 93, 76, 0.28), 0 4px 0 #f0b2a8;
       animation: shake 0.4s ease;
     }
     @keyframes pop {
@@ -667,26 +789,28 @@
       </div>
       <div class="progress"><span id="progress-fill"></span></div>
 
-      <div class="arena">
-        <div class="fighter" id="hero-panel">
+      <div class="arena" id="arena">
+        <div class="arena-sky" aria-hidden="true"></div>
+        <div class="arena-ground" aria-hidden="true"></div>
+        <div class="float-dmg" id="float-dmg" aria-hidden="true"></div>
+        <p class="monster-quip" id="monster-quip"></p>
+        <div class="fighter hero" id="hero-panel">
+          <div class="hp-head">
+            <div class="hp-bar"><i id="hero-hp-fill"></i></div>
+            <span class="hp-num" id="hero-hp-text">10/10</span>
+          </div>
           <img src="assets/hero.png" alt="Hero">
           <h3>Hero</h3>
           <p class="tag" id="hero-gear-tag">No gear</p>
-          <div class="hp-row">
-            <span>HP</span>
-            <div class="hp-bar"><i id="hero-hp-fill"></i></div>
-            <span id="hero-hp-text">10/10</span>
-          </div>
         </div>
-        <div class="fighter" id="monster-panel">
+        <div class="fighter monster" id="monster-panel">
+          <div class="hp-head">
+            <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
+            <span class="hp-num" id="monster-hp-text">2/2</span>
+          </div>
           <img id="monster-img" src="assets/monster.png" alt="Monster">
           <h3 id="monster-name">Monster</h3>
           <p class="tag" id="monster-tag">Monster</p>
-          <div class="hp-row">
-            <span>HP</span>
-            <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
-            <span id="monster-hp-text">2/2</span>
-          </div>
         </div>
       </div>
 
@@ -969,6 +1093,8 @@
       progressFill: document.getElementById('progress-fill'),
       heroPanel: document.getElementById('hero-panel'),
       monsterPanel: document.getElementById('monster-panel'),
+      floatDmg: document.getElementById('float-dmg'),
+      monsterQuip: document.getElementById('monster-quip'),
       heroHpFill: document.getElementById('hero-hp-fill'),
       heroHpText: document.getElementById('hero-hp-text'),
       heroGearTag: document.getElementById('hero-gear-tag'),
@@ -1158,11 +1284,43 @@
       return def?.name || '';
     }
 
+    const MONSTER_TAUNTS = [
+      'Wrong letters!',
+      'Not this time!',
+      'Spell again!',
+      'Missed me!',
+      'Try once more!'
+    ];
+
     function flash(el, cls) {
       el.classList.remove(cls);
       void el.offsetWidth;
       el.classList.add(cls);
-      setTimeout(() => el.classList.remove(cls), 420);
+      setTimeout(() => el.classList.remove(cls), 560);
+    }
+
+    function clearCombatFx() {
+      els.floatDmg.className = 'float-dmg';
+      els.floatDmg.textContent = '';
+      els.monsterQuip.classList.remove('show');
+      els.monsterQuip.textContent = '';
+    }
+
+    function showDamageFloat(amount, kind) {
+      const el = els.floatDmg;
+      el.textContent = `−${amount}`;
+      el.className = `float-dmg ${kind}`;
+      void el.offsetWidth;
+      el.classList.add('show');
+    }
+
+    function showMonsterQuip() {
+      const line = MONSTER_TAUNTS[Math.floor(Math.random() * MONSTER_TAUNTS.length)];
+      els.monsterQuip.textContent = line;
+      els.monsterQuip.classList.remove('show');
+      void els.monsterQuip.offsetWidth;
+      els.monsterQuip.classList.add('show');
+      return line;
     }
 
     function updateHud() {
@@ -1342,6 +1500,7 @@
       if (!item) return;
       state.locked = false;
       state.usedHint = false;
+      clearCombatFx();
       const blankIndexes = pickBlankIndexes(item.word, blankRatioForEncounter(state.index));
       state.blanks = [...blankIndexes]
         .sort((a, b) => a - b)
@@ -1370,12 +1529,16 @@
     }
 
     function markSlots(ok) {
+      const word = currentWord().word;
       state.blanks.forEach((blank) => {
         const slot = els.slots.querySelector(`[data-index="${blank.index}"]`);
         if (!slot) return;
+        const typed = (blank.value || '').toLowerCase();
+        const right = word[blank.index].toLowerCase();
+        const cellOk = ok || typed === right;
         slot.classList.remove('active', 'filled', 'correct', 'wrong');
-        slot.classList.add(ok ? 'correct' : 'wrong');
-        slot.textContent = (ok ? currentWord().word[blank.index] : blank.value || '?').toUpperCase();
+        slot.classList.add(cellOk ? 'correct' : 'wrong');
+        slot.textContent = (blank.value || '?').toUpperCase();
       });
     }
 
@@ -1551,7 +1714,10 @@
         const dmg = calcAttackDamage();
         state.monster.hp = Math.max(0, state.monster.hp - dmg);
         flash(els.heroPanel, 'attack');
-        flash(els.monsterPanel, 'hit');
+        setTimeout(() => {
+          flash(els.monsterPanel, 'hit');
+          showDamageFloat(dmg, 'good');
+        }, 170);
         els.feedback.textContent = `Correct! You deal ${dmg} damage!`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
@@ -1573,9 +1739,13 @@
       state.spellLog.push({ word: item.word, img: item.img, ok: false, guess });
       const damage = Math.max(1, state.monster.atk - state.hero.def);
       state.hero.hp = Math.max(0, state.hero.hp - damage);
+      const quip = showMonsterQuip();
       flash(els.monsterPanel, 'attack');
-      flash(els.heroPanel, 'hit');
-      els.feedback.textContent = `Oops! The hero takes ${damage} damage. Try another word!`;
+      setTimeout(() => {
+        flash(els.heroPanel, 'hit');
+        showDamageFloat(damage, 'hurt');
+      }, 170);
+      els.feedback.textContent = `${quip} The hero takes ${damage} damage. Try another word!`;
       els.feedback.className = 'feedback bad';
       Sfx.play('wrong');
       updateHud();
