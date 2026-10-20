@@ -1403,14 +1403,31 @@
       return state.attackWord;
     }
 
+    // Length buckets for fair draws (spaces do not count):
+    // short = 1–6 letters, long = 7+. Both stages have words in each bucket.
+    // A draw picks a non-empty bucket with equal probability, then a least-used
+    // word inside that bucket. This keeps short and long words equally frequent
+    // even when one bucket holds more entries.
+    const SHORT_LETTER_MAX = 6;
+
+    function lengthBucket(word) {
+      return letterCount(word) <= SHORT_LETTER_MAX ? 'short' : 'long';
+    }
+
     function pickNextAttackWord() {
       if (!state.words.length) return null;
-      const counts = state.words.map((w) => state.wordDrawCounts[w.word] || 0);
+      const buckets = { short: [], long: [] };
+      state.words.forEach((entry) => {
+        buckets[lengthBucket(entry.word)].push(entry);
+      });
+      const names = ['short', 'long'].filter((name) => buckets[name].length);
+      const bucketName = names[Math.floor(Math.random() * names.length)];
+      let pool = buckets[bucketName];
+      const counts = pool.map((entry) => state.wordDrawCounts[entry.word] || 0);
       const min = Math.min(...counts);
-      let pool = state.words.filter((w) => (state.wordDrawCounts[w.word] || 0) === min);
-      // Soft anti-repeat when other under-covered words exist.
+      pool = pool.filter((entry) => (state.wordDrawCounts[entry.word] || 0) === min);
       if (state.attackWord && pool.length > 1) {
-        const withoutLast = pool.filter((w) => w.word !== state.attackWord.word);
+        const withoutLast = pool.filter((entry) => entry.word !== state.attackWord.word);
         if (withoutLast.length) pool = withoutLast;
       }
       const picked = pool[Math.floor(Math.random() * pool.length)];
