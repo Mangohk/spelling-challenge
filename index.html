@@ -617,6 +617,58 @@
       box-shadow: 0 0 0 3px rgba(232, 93, 76, 0.28), 0 4px 0 #f0b2a8;
       animation: shake 0.4s ease;
     }
+    .slot.needs-fix {
+      background: #ffe8e4;
+      border-color: var(--coral);
+      color: #b53b2d;
+      box-shadow: 0 0 0 3px rgba(232, 93, 76, 0.22), 0 4px 0 #f0b2a8;
+    }
+    .pick-choices {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0 0 0.75rem;
+    }
+    .pick-choice {
+      min-height: 3.3rem;
+      border: 3px solid #cfe8dc;
+      border-radius: 1rem;
+      background: #fff;
+      color: var(--ink);
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.05rem, 3.4vw, 1.35rem);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 0.7rem 0.85rem;
+      width: 100%;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #d7ebe1;
+      line-height: 1.25;
+    }
+    .pick-choice.selected {
+      border-color: var(--sky);
+      background: #f3fbfe;
+      box-shadow: 0 0 0 4px rgba(47, 159, 191, 0.18), 0 4px 0 #b7dce8;
+    }
+    .pick-choice.correct {
+      background: #e5f9ef;
+      border-color: var(--leaf);
+    }
+    .pick-choice.wrong {
+      background: #ffe8e4;
+      border-color: var(--coral);
+      color: #b53b2d;
+      animation: shake 0.4s ease;
+    }
+    #mode-hint {
+      color: var(--ink);
+      font-size: 1rem;
+    }
+    .keyboard[hidden],
+    .slots[hidden],
+    .pick-choices[hidden],
+    #letter-hint-btn[hidden] {
+      display: none !important;
+    }
     @keyframes pop {
       0% { transform: scale(1); }
       50% { transform: scale(1.08); }
@@ -822,7 +874,7 @@
           <p>Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!</p>
         </div>
       </div>
-      <p class="hint">Pick a stage, then start. Each attack draws a different spelling word.</p>
+      <p class="hint">Pick a stage, then start. Each attack is Fill, Pick, or Fix from the same word bank.</p>
       <div class="stage-pick" role="group" aria-label="Choose stage">
         <button type="button" class="stage-btn" id="stage-btn-1" data-stage="stage1" aria-pressed="true">
           <strong>Stage One</strong>
@@ -848,6 +900,7 @@
 
     <section id="battle" class="screen">
       <div class="meta-bar">
+        <span class="pill" id="mode-pill">Fill</span>
         <span class="pill" id="progress-pill">1 / 8</span>
         <span class="pill sky" id="atk-pill">ATK 1</span>
         <span class="pill sky" id="def-pill">DEF 0</span>
@@ -892,9 +945,10 @@
           <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
         </div>
         <p class="word-clue" id="word-clue"></p>
-        <small>Listen, fill every blank, then Attack!</small>
+        <small id="mode-hint">Fill mode: listen, fill every blank, then Attack!</small>
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
+      <div class="pick-choices" id="pick-choices" hidden></div>
       <p class="feedback" id="feedback"></p>
       <div class="keyboard" id="keyboard"></div>
       <div class="actions center">
@@ -1166,6 +1220,9 @@
       stageBtn1: document.getElementById('stage-btn-1'),
       stageBtn2: document.getElementById('stage-btn-2'),
       progressPill: document.getElementById('progress-pill'),
+      modePill: document.getElementById('mode-pill'),
+      modeHint: document.getElementById('mode-hint'),
+      pickChoices: document.getElementById('pick-choices'),
       atkPill: document.getElementById('atk-pill'),
       defPill: document.getElementById('def-pill'),
       buffPill: document.getElementById('buff-pill'),
@@ -1226,7 +1283,20 @@
       wins: 0,
       hero: null,
       monster: null,
-      combo: 0
+      combo: 0,
+      mode: 'fill',
+      modesSeen: new Set(),
+      puzzlesServed: 0,
+      pickChoice: null,
+      pickOptions: [],
+      roundId: 0
+    };
+
+    const MODES = ['fill', 'pick', 'fix'];
+    const MODE_COPY = {
+      fill: { pill: 'Fill', hint: 'Fill mode: listen, fill every blank, then Attack!' },
+      pick: { pill: 'Pick', hint: 'Pick mode: choose the correct spelling, then Attack!' },
+      fix: { pill: 'Fix', hint: 'Fix mode: change the red letters, then Attack!' }
     };
 
     function getStageById(id) {
@@ -1502,11 +1572,21 @@
           slot.classList.add('given');
         } else {
           const blank = state.blanks.find((b) => b.index === i);
+          const correct = ch.toLowerCase();
+          const typed = (blank.value || '').toLowerCase();
           slot.textContent = blank.value ? blank.value.toUpperCase() : '';
-          if (blank.value) slot.classList.add('filled');
+          if (state.mode === 'fix' && typed && typed !== correct) slot.classList.add('needs-fix');
+          else if (blank.value) slot.classList.add('filled');
           if (state.blanks[state.cursor]?.index === i && !state.locked) {
             slot.classList.add('active');
           }
+          slot.addEventListener('click', () => {
+            if (state.locked) return;
+            const idx = state.blanks.findIndex((b) => b.index === i);
+            if (idx === -1) return;
+            state.cursor = idx;
+            renderSlots();
+          });
         }
         row.appendChild(slot);
       });
@@ -1517,13 +1597,29 @@
       return idx === -1 ? Math.max(state.blanks.length - 1, 0) : idx;
     }
 
+    function advanceCursorAfterType() {
+      if (state.mode === 'fix') {
+        const item = currentWord();
+        const stillWrong = (b) => (b.value || '').toLowerCase() !== item.word[b.index].toLowerCase();
+        const next = state.blanks.findIndex((b, i) => i > state.cursor && stillWrong(b));
+        if (next !== -1) {
+          state.cursor = next;
+          return;
+        }
+        const any = state.blanks.findIndex(stillWrong);
+        if (any !== -1) state.cursor = any;
+        return;
+      }
+      const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
+      state.cursor = next === -1 ? firstEmptyCursor() : next;
+    }
+
     function typeLetter(letter) {
-      if (state.locked || !state.blanks.length) return;
+      if (state.locked || state.mode === 'pick' || !state.blanks.length) return;
       const blank = state.blanks[state.cursor];
       if (!blank) return;
       blank.value = letter.toLowerCase();
-      const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
-      state.cursor = next === -1 ? firstEmptyCursor() : next;
+      advanceCursorAfterType();
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
       Sfx.play('tap');
@@ -1564,25 +1660,34 @@
     }
 
     function useLetterHint() {
-      if (state.locked || !state.blanks.length) return;
+      if (state.locked || state.mode === 'pick' || !state.blanks.length) return;
       const item = currentWord();
       if (!item) return;
 
-      let target = state.blanks[state.cursor];
-      if (!target || target.value) {
-        const emptyIdx = state.blanks.findIndex((b) => !b.value);
-        if (emptyIdx !== -1) {
-          state.cursor = emptyIdx;
-          target = state.blanks[emptyIdx];
-        } else if (!target) {
-          return;
+      if (state.mode === 'fix') {
+        const stillWrong = (b) => (b.value || '').toLowerCase() !== item.word[b.index].toLowerCase();
+        const idx = state.blanks[state.cursor] && stillWrong(state.blanks[state.cursor])
+          ? state.cursor
+          : state.blanks.findIndex(stillWrong);
+        if (idx === -1) return;
+        state.cursor = idx;
+        state.blanks[idx].value = item.word[state.blanks[idx].index].toLowerCase();
+      } else {
+        let target = state.blanks[state.cursor];
+        if (!target || target.value) {
+          const emptyIdx = state.blanks.findIndex((b) => !b.value);
+          if (emptyIdx !== -1) {
+            state.cursor = emptyIdx;
+            target = state.blanks[emptyIdx];
+          } else if (!target) {
+            return;
+          }
         }
+        target.value = item.word[target.index].toLowerCase();
       }
 
-      target.value = item.word[target.index].toLowerCase();
       state.usedHint = true;
-      const next = state.blanks.findIndex((b, i) => i > state.cursor && !b.value);
-      state.cursor = next === -1 ? firstEmptyCursor() : next;
+      advanceCursorAfterType();
 
       els.feedback.textContent = state.hero.hintSafe
         ? 'One letter filled (Hint Amulet: ATK unchanged)'
@@ -1607,16 +1712,109 @@
       window.speechSynthesis.speak(utterance);
     }
 
+    function letterCount(word) {
+      return (String(word).match(/[a-z]/gi) || []).length;
+    }
+
+    function randomWrongLetter(correct) {
+      const ban = String(correct || '').toLowerCase();
+      let ch = ban;
+      while (ch === ban) ch = LETTERS[Math.floor(Math.random() * LETTERS.length)];
+      return ch;
+    }
+
+    function pickFixIndexes(word) {
+      const candidates = [];
+      for (let i = 0; i < word.length; i += 1) {
+        if (/[a-z]/i.test(word[i])) candidates.push(i);
+      }
+      if (!candidates.length) return [];
+      const want = candidates.length < 2 || Math.random() < 0.45 ? 1 : 2;
+      return shuffle(candidates).slice(0, Math.min(candidates.length, want));
+    }
+
+    function buildPickOptions(item) {
+      const target = letterCount(item.word);
+      const others = state.words.filter((w) => w.word !== item.word);
+      const ranked = others.slice().sort((a, b) => (
+        Math.abs(letterCount(a.word) - target) - Math.abs(letterCount(b.word) - target)
+      ));
+      const near = ranked.filter((w) => Math.abs(letterCount(w.word) - target) <= 4);
+      const pool = near.length >= 2 ? near : ranked;
+      const distractors = shuffle(pool).slice(0, 2).map((w) => w.word);
+      return shuffle([item.word, ...distractors]);
+    }
+
+    function pickMode() {
+      // Second puzzle of a run is forced onto a new mode so one adventure shows at least two.
+      if (state.puzzlesServed >= 1 && state.modesSeen.size < 2) {
+        const others = MODES.filter((mode) => !state.modesSeen.has(mode));
+        return others[Math.floor(Math.random() * others.length)];
+      }
+      const bag = ['fill', 'fill', 'pick', 'fix'];
+      return bag[Math.floor(Math.random() * bag.length)];
+    }
+
+    function applyModeChrome() {
+      const copy = MODE_COPY[state.mode] || MODE_COPY.fill;
+      els.modePill.textContent = copy.pill;
+      els.modePill.className = state.mode === 'pick' ? 'pill sky' : state.mode === 'fix' ? 'pill sun' : 'pill';
+      els.modeHint.textContent = copy.hint;
+      const typing = state.mode !== 'pick';
+      els.slots.hidden = !typing;
+      els.keyboard.hidden = !typing;
+      els.letterHintBtn.hidden = !typing;
+      if (typing) els.pickChoices.hidden = true;
+    }
+
+    function renderPickChoices() {
+      els.pickChoices.hidden = false;
+      els.pickChoices.innerHTML = '';
+      state.pickOptions.forEach((word) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pick-choice';
+        btn.dataset.word = word;
+        btn.textContent = word.toUpperCase();
+        if (state.pickChoice === word) btn.classList.add('selected');
+        btn.addEventListener('click', () => {
+          if (state.locked) return;
+          state.pickChoice = word;
+          Sfx.play('tap');
+          els.feedback.textContent = '';
+          els.feedback.className = 'feedback';
+          renderPickChoices();
+        });
+        els.pickChoices.appendChild(btn);
+      });
+    }
+
     function preparePuzzle() {
       const item = pickNextAttackWord();
       if (!item) return;
       state.locked = false;
       state.usedHint = false;
+      state.pickChoice = null;
       clearCombatFx();
-      const blankIndexes = pickBlankIndexes(item.word, blankRatioForEncounter(state.index));
-      state.blanks = [...blankIndexes]
-        .sort((a, b) => a - b)
-        .map((index) => ({ index, value: '' }));
+      state.mode = pickMode();
+      state.modesSeen.add(state.mode);
+      state.puzzlesServed += 1;
+
+      if (state.mode === 'fix') {
+        state.blanks = pickFixIndexes(item.word)
+          .sort((a, b) => a - b)
+          .map((index) => ({ index, value: randomWrongLetter(item.word[index]) }));
+        state.pickOptions = [];
+      } else if (state.mode === 'pick') {
+        state.blanks = [];
+        state.pickOptions = buildPickOptions(item);
+      } else {
+        const blankIndexes = pickBlankIndexes(item.word, blankRatioForEncounter(state.index));
+        state.blanks = [...blankIndexes]
+          .sort((a, b) => a - b)
+          .map((index) => ({ index, value: '' }));
+        state.pickOptions = [];
+      }
       state.cursor = 0;
       els.feedback.textContent = '';
       els.feedback.className = 'feedback';
@@ -1627,7 +1825,9 @@
       els.wordPromptImg.src = imgSrc;
       els.wordPromptImg.alt = 'Spell this word';
       els.wordClue.textContent = item.clue || 'Listen carefully, then spell the word.';
-      renderSlots();
+      applyModeChrome();
+      if (state.mode === 'pick') renderPickChoices();
+      else renderSlots();
       updateHud();
     }
 
@@ -1648,7 +1848,7 @@
         const typed = (blank.value || '').toLowerCase();
         const right = word[blank.index].toLowerCase();
         const cellOk = ok || typed === right;
-        slot.classList.remove('active', 'filled', 'correct', 'wrong');
+        slot.classList.remove('active', 'filled', 'correct', 'wrong', 'needs-fix');
         slot.classList.add(cellOk ? 'correct' : 'wrong');
         slot.textContent = (blank.value || '?').toUpperCase();
       });
@@ -1715,6 +1915,7 @@
     }
 
     function finishAdventure(won) {
+      state.roundId += 1;
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       if (state.travelTimer) {
         clearTimeout(state.travelTimer);
@@ -1776,7 +1977,7 @@
       showScreen('battle');
       preparePuzzle();
       if (state.monster.role === 'boss' || state.monster.role === 'mini') {
-        els.feedback.textContent = `${state.monster.name} appears! Spell correctly to win!`;
+        els.feedback.textContent = `${state.monster.name} appears! Answer correctly to win!`;
         els.feedback.className = 'feedback';
       }
     }
@@ -1803,12 +2004,36 @@
       }, 1900);
     }
 
+    function markPick(ok) {
+      [...els.pickChoices.querySelectorAll('.pick-choice')].forEach((btn) => {
+        btn.disabled = true;
+        if (btn.dataset.word === state.pickChoice) btn.classList.add(ok ? 'correct' : 'wrong');
+      });
+    }
+
     function checkAnswer() {
       if (state.locked) return;
       const item = currentWord();
+      if (!item) return;
+
+      if (state.mode === 'pick') {
+        if (!state.pickChoice) {
+          els.feedback.textContent = 'Pick a spelling, then Attack!';
+          els.feedback.className = 'feedback bad';
+          Sfx.play('warn');
+          return;
+        }
+        const ok = state.pickChoice === item.word;
+        markPick(ok);
+        resolveRound(ok, state.pickChoice);
+        return;
+      }
+
       const incomplete = state.blanks.some((b) => !b.value);
       if (incomplete) {
-        els.feedback.textContent = 'Fill every blank before you attack.';
+        els.feedback.textContent = state.mode === 'fix'
+          ? 'Fix every red letter before you attack.'
+          : 'Fill every blank before you attack.';
         els.feedback.className = 'feedback bad';
         Sfx.play('warn');
         return;
@@ -1816,10 +2041,16 @@
 
       const guess = guessWord();
       const ok = guess === item.word;
+      markSlots(ok);
+      resolveRound(ok, guess);
+    }
+
+    function resolveRound(ok, guess) {
+      const item = currentWord();
+      const round = state.roundId;
       state.locked = true;
       els.checkBtn.disabled = true;
       els.letterHintBtn.disabled = true;
-      markSlots(ok);
 
       if (ok) {
         state.combo += 1;
@@ -1840,10 +2071,11 @@
         updateHud();
 
         setTimeout(() => {
+          if (round !== state.roundId) return;
           if (state.monster.hp <= 0) {
             advanceAfterVictory();
           } else {
-            els.feedback.textContent = 'Still standing! Spell another word to attack!';
+            els.feedback.textContent = 'Still standing! Next word!';
             els.feedback.className = 'feedback';
             preparePuzzle();
           }
@@ -1868,6 +2100,7 @@
       updateHud();
 
       setTimeout(() => {
+        if (round !== state.roundId) return;
         if (state.hero.hp <= 0) {
           state.answers.push({
             monster: state.monster.name,
@@ -1901,12 +2134,19 @@
       state.hero = createHero();
       state.monster = null;
       state.combo = 0;
+      state.mode = 'fill';
+      state.modesSeen = new Set();
+      state.puzzlesServed = 0;
+      state.pickChoice = null;
+      state.pickOptions = [];
+      state.roundId += 1;
       buildKeyboard();
       Sfx.play('start');
       beginTravel();
     }
 
     function goHome() {
+      state.roundId += 1;
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       if (state.travelTimer) {
         clearTimeout(state.travelTimer);
@@ -1944,7 +2184,15 @@
 
     document.addEventListener('keydown', (event) => {
       if (!els.battle.classList.contains('active') || state.locked) return;
-      if (/^[a-zA-Z]$/.test(event.key)) {
+      if (state.mode === 'pick' && /^[1-3]$/.test(event.key)) {
+        const opt = state.pickOptions[Number(event.key) - 1];
+        if (opt) {
+          event.preventDefault();
+          state.pickChoice = opt;
+          Sfx.play('tap');
+          renderPickChoices();
+        }
+      } else if (state.mode !== 'pick' && /^[a-zA-Z]$/.test(event.key)) {
         event.preventDefault();
         typeLetter(event.key);
       } else if (event.key === 'Backspace') {
