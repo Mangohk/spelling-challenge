@@ -330,6 +330,45 @@
       opacity: 0;
       pointer-events: none;
     }
+    .celebrate {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      z-index: 6;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .celebrate.show { animation: celebrate-pop 0.95s ease forwards; }
+    .celebrate-stars {
+      color: #e0a31a;
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
+      text-shadow: 0 2px 0 #fff;
+    }
+    .celebrate-text {
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.55rem, 5vw, 2.05rem);
+      font-weight: 700;
+      color: #0f7a45;
+      line-height: 1;
+      text-shadow: 0 2px 0 #fff;
+    }
+    .celebrate-combo {
+      margin-top: 0.12rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #c47b08;
+      text-shadow: 0 2px 0 #fff;
+    }
+    @keyframes celebrate-pop {
+      0% { opacity: 0; transform: translate(-50%, -42%) scale(0.66); }
+      18% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -60%) scale(0.98); }
+    }
     .monster-quip.show { animation: quip-pop 1.2s ease forwards; }
     @keyframes quip-pop {
       0% { opacity: 0; transform: translateY(4px) scale(0.92); }
@@ -653,19 +692,46 @@
       margin: 0 0 0.4rem;
     }
 
+    #loot.screen {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(240, 180, 41, 0.42), transparent 42%),
+        radial-gradient(circle at 12% 80%, rgba(57, 201, 137, 0.18), transparent 28%),
+        radial-gradient(circle at 88% 70%, rgba(47, 159, 191, 0.16), transparent 26%),
+        var(--panel);
+    }
     .loot-card {
       text-align: center;
-      padding: 0.5rem 0 0.25rem;
+      padding: 0.35rem 0 0.4rem;
+    }
+    .victory-kicker {
+      margin: 0;
+      color: #e0a31a;
+      letter-spacing: 0.28em;
+      font-size: 1.25rem;
+      animation: bob 1.3s ease-in-out infinite;
+    }
+    .victory-title {
+      text-align: center;
+      font-size: clamp(2.3rem, 8vw, 3.2rem);
+      margin: 0.05rem 0 0;
+      color: var(--leaf-dark);
+    }
+    .victory-sub {
+      margin: 0 0 0.45rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #8a6508;
     }
     .loot-art {
-      width: min(220px, 70vw);
+      width: min(260px, 78vw);
       margin: 0 auto 0.75rem;
-      border-radius: 1.1rem;
-      border: 3px solid #efe0a8;
+      border-radius: 1.2rem;
+      border: 4px solid #efe0a8;
       background: #fff9e8;
-      padding: 0.6rem;
-      box-shadow: 0 8px 0 #e6d28a;
-      animation: pop 0.45s ease;
+      padding: 0.7rem;
+      box-shadow: 0 10px 0 #e6d28a;
+      animation: pop 0.55s ease;
     }
     .loot-art img {
       width: 100%;
@@ -674,7 +740,7 @@
     }
     .loot-name {
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.5rem;
+      font-size: clamp(1.7rem, 5vw, 2.15rem);
       margin: 0 0 0.35rem;
     }
     .loot-effect {
@@ -786,6 +852,7 @@
         <span class="pill sky" id="atk-pill">ATK 1</span>
         <span class="pill sky" id="def-pill">DEF 0</span>
         <span class="pill sun" id="buff-pill">No special effects</span>
+        <span class="pill coral" id="combo-pill" hidden>COMBO ×2</span>
       </div>
       <div class="progress"><span id="progress-fill"></span></div>
 
@@ -793,6 +860,11 @@
         <div class="arena-sky" aria-hidden="true"></div>
         <div class="arena-ground" aria-hidden="true"></div>
         <div class="float-dmg" id="float-dmg" aria-hidden="true"></div>
+        <div class="celebrate" id="celebrate" aria-live="polite">
+          <div class="celebrate-stars" aria-hidden="true">★ ★ ★</div>
+          <div class="celebrate-text" id="celebrate-text">Great!</div>
+          <div class="celebrate-combo" id="celebrate-combo" hidden></div>
+        </div>
         <p class="monster-quip" id="monster-quip"></p>
         <div class="fighter hero" id="hero-panel">
           <div class="hp-head">
@@ -834,7 +906,9 @@
 
     <section id="loot" class="screen">
       <div class="loot-card">
-        <p class="section-title">Victory! New gear</p>
+        <p class="victory-kicker" aria-hidden="true">★ ★ ★</p>
+        <p class="section-title victory-title">Victory!</p>
+        <p class="victory-sub">New gear</p>
         <div class="loot-art">
           <img src="assets/equipment.png" alt="Equipment">
         </div>
@@ -940,6 +1014,11 @@
     ];
 
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+    // Thin combo bonus on top of the existing ATK / hint / double-hit formula.
+    // Multiplier = min(CAP, 1 + STEP * (combo - 1)). Combo 1 is ×1 (no change).
+    const COMBO_STEP = 0.25;
+    const COMBO_MULT_CAP = 2;
 
     const EQUIPMENT = [
       { id: 'wood_sword', name: 'Wood Sword', effect: 'ATK +1', kind: 'atk', value: 1 },
@@ -1090,6 +1169,10 @@
       atkPill: document.getElementById('atk-pill'),
       defPill: document.getElementById('def-pill'),
       buffPill: document.getElementById('buff-pill'),
+      comboPill: document.getElementById('combo-pill'),
+      celebrate: document.getElementById('celebrate'),
+      celebrateText: document.getElementById('celebrate-text'),
+      celebrateCombo: document.getElementById('celebrate-combo'),
       progressFill: document.getElementById('progress-fill'),
       heroPanel: document.getElementById('hero-panel'),
       monsterPanel: document.getElementById('monster-panel'),
@@ -1142,7 +1225,8 @@
       spellLog: [],
       wins: 0,
       hero: null,
-      monster: null
+      monster: null,
+      combo: 0
     };
 
     function getStageById(id) {
@@ -1304,6 +1388,28 @@
       els.floatDmg.textContent = '';
       els.monsterQuip.classList.remove('show');
       els.monsterQuip.textContent = '';
+      els.celebrate.classList.remove('show');
+    }
+
+    function comboMultiplier() {
+      const streak = Math.max(state.combo, 1);
+      return Math.min(COMBO_MULT_CAP, 1 + COMBO_STEP * (streak - 1));
+    }
+
+    const CHEERS = ['Great!', 'Nice!', 'Yes!', 'Super!'];
+
+    function showCelebrate() {
+      els.celebrateText.textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+      if (state.combo >= 2) {
+        els.celebrateCombo.hidden = false;
+        els.celebrateCombo.textContent = `COMBO ×${state.combo}`;
+      } else {
+        els.celebrateCombo.hidden = true;
+        els.celebrateCombo.textContent = '';
+      }
+      els.celebrate.classList.remove('show');
+      void els.celebrate.offsetWidth;
+      els.celebrate.classList.add('show');
     }
 
     function showDamageFloat(amount, kind) {
@@ -1337,6 +1443,12 @@
       if (hero.doubleNext) buffs.push('Next hit ×2');
       if (hero.hintSafe) buffs.push('Hint Amulet');
       els.buffPill.textContent = buffs.length ? buffs.join(' · ') : 'No special effects';
+      if (state.combo >= 2) {
+        els.comboPill.hidden = false;
+        els.comboPill.textContent = `COMBO ×${state.combo}`;
+      } else {
+        els.comboPill.hidden = true;
+      }
 
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
       els.heroHpFill.style.width = `${Math.max(0, (hero.hp / hero.maxHp) * 100)}%`;
@@ -1551,7 +1663,8 @@
         dmg *= 2;
         state.hero.doubleNext = false;
       }
-      return dmg;
+      // Round so HP stays a whole number. Low ATK can round back to the same hit.
+      return Math.max(1, Math.round(dmg * comboMultiplier()));
     }
 
     function pickLoot() {
@@ -1709,16 +1822,19 @@
       markSlots(ok);
 
       if (ok) {
+        state.combo += 1;
         state.monster.spells.push({ word: item.word, img: item.img, ok: true });
         state.spellLog.push({ word: item.word, img: item.img, ok: true });
         const dmg = calcAttackDamage();
         state.monster.hp = Math.max(0, state.monster.hp - dmg);
         flash(els.heroPanel, 'attack');
+        showCelebrate();
         setTimeout(() => {
           flash(els.monsterPanel, 'hit');
           showDamageFloat(dmg, 'good');
         }, 170);
-        els.feedback.textContent = `Correct! You deal ${dmg} damage!`;
+        const comboNote = state.combo >= 2 ? ` COMBO ×${state.combo}!` : '';
+        els.feedback.textContent = `Correct!${comboNote} You deal ${dmg} damage!`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
         updateHud();
@@ -1735,6 +1851,7 @@
         return;
       }
 
+      state.combo = 0;
       state.monster.spells.push({ word: item.word, img: item.img, ok: false, guess });
       state.spellLog.push({ word: item.word, img: item.img, ok: false, guess });
       const damage = Math.max(1, state.monster.atk - state.hero.def);
@@ -1783,6 +1900,7 @@
       state.pendingLoot = null;
       state.hero = createHero();
       state.monster = null;
+      state.combo = 0;
       buildKeyboard();
       Sfx.play('start');
       beginTravel();
