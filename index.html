@@ -745,6 +745,143 @@
         box-shadow: 0 3px 0 #c5e4d5;
       }
     }
+    /* Hotfix: under 500px the fixed dock covered Fill/Fix letters.
+       The battle column is the viewport minus the dock, and letter cells
+       shrink so the longest phrase and the Correct line stay above it.
+       Width ≥500 keeps the previous layout. */
+    @media (max-width: 499px) {
+      body:has(#battle.screen.active) {
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow: hidden;
+        padding: 0.3rem 0.4rem 0;
+        display: flex;
+        flex-direction: column;
+      }
+      body:has(#battle.screen.active) .wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      body:has(#battle.screen.active) header {
+        flex: 0 0 auto;
+        margin-bottom: 0.28rem;
+      }
+      body:has(#battle.screen.active) .logo {
+        width: 2.15rem;
+        height: 2.15rem;
+        font-size: 1.1rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 0 #147a52;
+      }
+      body:has(#battle.screen.active) h1 {
+        font-size: 1.15rem;
+      }
+      body:has(#battle.screen.active) .sub {
+        margin-top: 0;
+        font-size: 0.72rem;
+      }
+      #battle.screen.active {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 0.4rem 0.45rem calc(16rem + env(safe-area-inset-bottom, 0px));
+        scroll-padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
+      }
+      #battle.screen.active:has(.keyboard[hidden]) {
+        padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+        scroll-padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+      }
+      #battle.screen.active > * {
+        flex: 0 0 auto;
+      }
+      #battle .meta-bar {
+        margin-bottom: 0.22rem;
+        gap: 0.22rem;
+      }
+      #battle .pill {
+        padding: 0.14rem 0.4rem;
+        font-size: 0.7rem;
+      }
+      #battle .progress {
+        height: 0.45rem;
+        margin-bottom: 0.28rem;
+      }
+      #battle .arena {
+        height: 120px;
+        margin-bottom: 0.28rem;
+      }
+      #battle .fighter img {
+        width: 56px;
+        height: 56px;
+      }
+      #battle .fighter h3 {
+        font-size: 0.82rem;
+      }
+      #battle .meaning {
+        margin-bottom: 0.2rem;
+      }
+      #battle .word-prompt {
+        gap: 0.4rem;
+        margin-bottom: 0.2rem;
+      }
+      #battle .meaning .word-prompt-img {
+        width: 84px;
+        height: 84px;
+      }
+      #battle #speak-btn {
+        min-height: 2.35rem;
+        min-width: 6.4rem;
+        padding: 0.4rem 0.65rem;
+        font-size: 0.92rem;
+      }
+      #battle .word-clue {
+        font-size: 0.8rem;
+        line-height: 1.25;
+        margin-bottom: 0.12rem;
+      }
+      #battle #mode-hint {
+        font-size: 0.76rem;
+        line-height: 1.2;
+      }
+      #battle .slots {
+        min-height: 0;
+        gap: 0.18rem;
+        margin-bottom: 0.15rem;
+      }
+      #battle .slot-row {
+        gap: 0.16rem;
+      }
+      #battle .slot {
+        width: 2.5rem;
+        height: 3.05rem;
+        border-width: 2px;
+        border-radius: 0.6rem;
+        font-size: 1.35rem;
+        box-shadow: 0 2px 0 #d7ebe1;
+      }
+      #battle .slot.space {
+        width: 0.85rem;
+        min-width: 0.85rem;
+        height: 3.05rem;
+        font-size: 1.1rem;
+        line-height: 3.05rem;
+      }
+      #battle .slot.wrong,
+      #battle .slot.needs-fix {
+        box-shadow: 0 0 0 2px rgba(232, 93, 76, 0.22), 0 2px 0 #f0b2a8;
+      }
+      #battle .feedback {
+        min-height: 1.05rem;
+        margin: 0;
+        font-size: 0.84rem;
+        line-height: 1.25;
+      }
+    }
     @keyframes pop {
       0% { transform: scale(1); }
       50% { transform: scale(1.08); }
