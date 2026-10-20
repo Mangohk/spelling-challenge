@@ -153,6 +153,7 @@
       background: linear-gradient(145deg, #39c989, var(--leaf));
       box-shadow: 0 5px 0 var(--leaf-dark);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
+      touch-action: manipulation;
     }
     .btn:hover { transform: translateY(-1px); }
     .btn:active {
@@ -601,6 +602,7 @@
       font-weight: 700;
       color: var(--ink);
       box-shadow: 0 4px 0 #d7ebe1;
+      touch-action: manipulation;
     }
     .slot.given {
       background: #eef9f3;
@@ -666,6 +668,7 @@
       cursor: pointer;
       box-shadow: 0 4px 0 #d7ebe1;
       line-height: 1.25;
+      touch-action: manipulation;
     }
     .pick-choice.selected {
       border-color: var(--sky);
@@ -746,8 +749,8 @@
       }
     }
     /* Hotfix: under 500px the fixed dock covered Fill/Fix letters.
-       The battle column is the viewport minus the dock, and letter cells
-       shrink so the longest phrase and the Correct line stay above it.
+       The battle column reserves the dock, and letter cells stay large
+       enough to tap (≥44px) while the full word stays above the dock.
        Width ≥500 keeps the previous layout. */
     @media (max-width: 499px) {
       body:has(#battle.screen.active) {
@@ -789,8 +792,8 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        padding: 0.4rem 0.45rem calc(16rem + env(safe-area-inset-bottom, 0px));
-        scroll-padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
+        padding: 0.35rem 0.4rem calc(18rem + env(safe-area-inset-bottom, 0px));
+        scroll-padding-bottom: calc(18rem + env(safe-area-inset-bottom, 0px));
       }
       #battle.screen.active:has(.keyboard[hidden]) {
         padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
@@ -812,12 +815,12 @@
         margin-bottom: 0.28rem;
       }
       #battle .arena {
-        height: 120px;
-        margin-bottom: 0.28rem;
+        height: 100px;
+        margin-bottom: 0.2rem;
       }
       #battle .fighter img {
-        width: 56px;
-        height: 56px;
+        width: 48px;
+        height: 48px;
       }
       #battle .fighter h3 {
         font-size: 0.82rem;
@@ -830,8 +833,8 @@
         margin-bottom: 0.2rem;
       }
       #battle .meaning .word-prompt-img {
-        width: 84px;
-        height: 84px;
+        width: 64px;
+        height: 64px;
       }
       #battle #speak-btn {
         min-height: 2.35rem;
@@ -857,19 +860,29 @@
         gap: 0.16rem;
       }
       #battle .slot {
-        width: 2.5rem;
-        height: 3.05rem;
+        width: 3.15rem;
+        height: 3.25rem;
+        min-width: 44px;
+        min-height: 44px;
         border-width: 2px;
-        border-radius: 0.6rem;
-        font-size: 1.35rem;
+        border-radius: 0.65rem;
+        font-size: 1.55rem;
         box-shadow: 0 2px 0 #d7ebe1;
       }
       #battle .slot.space {
-        width: 0.85rem;
-        min-width: 0.85rem;
-        height: 3.05rem;
-        font-size: 1.1rem;
-        line-height: 3.05rem;
+        width: 0.9rem;
+        min-width: 0.9rem;
+        height: 3.25rem;
+        font-size: 1.15rem;
+        line-height: 3.25rem;
+      }
+      #battle .keyboard {
+        gap: 0.2rem;
+      }
+      #battle .key {
+        min-width: 44px;
+        min-height: 3.25rem;
+        font-size: 1.35rem;
       }
       #battle .slot.wrong,
       #battle .slot.needs-fix {
@@ -923,6 +936,7 @@
       font-weight: 700;
       box-shadow: 0 4px 0 #c5e4d5;
       text-transform: uppercase;
+      touch-action: manipulation;
     }
     .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #c5e4d5; }
     .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
