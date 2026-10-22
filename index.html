@@ -1454,29 +1454,109 @@
       border-radius: 1.2rem;
       overflow: hidden;
       min-height: 240px;
-      background: #c8e9f5 center/cover no-repeat;
+      background: #c8e9f5;
       margin-bottom: 1rem;
+    }
+    .travel-bg {
+      position: absolute;
+      z-index: 0;
+      top: -5%;
+      bottom: -5%;
+      left: -22%;
+      width: 152%;
+      background: #c8e9f5 url('assets/scene.png') center center / cover no-repeat;
+      animation: sceneDrift 1.9s linear forwards;
+      pointer-events: none;
+    }
+    @keyframes sceneDrift {
+      from { transform: translateX(0); }
+      to { transform: translateX(-16%); }
     }
     .walker {
       position: absolute;
+      z-index: 2;
       bottom: 18%;
       left: 8%;
       width: clamp(90px, 24vw, 130px);
+      transform-origin: 50% 100%;
+      animation: walkAcross 1.9s linear forwards;
+      pointer-events: none;
+    }
+    .walker img {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: relative;
+      z-index: 1;
       filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.2));
-      animation: walkAcross 1.8s ease-in-out forwards;
+    }
+    .travel-dust {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .travel-dust span,
+    .foot-dust {
+      position: absolute;
+      width: 13px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 248, 226, 0.96);
+      box-shadow:
+        0 0 0 3px rgba(214, 176, 112, 0.45),
+        11px 2px 0 2px rgba(255, 236, 190, 0.95),
+        -9px 3px 0 1px rgba(176, 136, 74, 0.9);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .foot-dust {
+      z-index: 2;
+      bottom: 3%;
+      animation: dustPuff 0.55s ease-out infinite;
+    }
+    .foot-dust:nth-child(2) { left: 6%; animation-delay: 0s; }
+    .foot-dust:nth-child(3) { left: 42%; bottom: 0; animation-delay: 0.18s; }
+    .foot-dust:nth-child(4) { left: 68%; animation-delay: 0.34s; }
+    .travel-dust span {
+      bottom: 16%;
+      animation: dustPuff 0.6s ease-out forwards;
+    }
+    .travel-dust span:nth-child(1) { left: 16%; animation-delay: 0.28s; }
+    .travel-dust span:nth-child(2) { left: 32%; animation-delay: 0.7s; }
+    .travel-dust span:nth-child(3) { left: 48%; animation-delay: 1.08s; }
+    .travel-dust span:nth-child(4) { left: 62%; animation-delay: 1.42s; }
+    @keyframes dustPuff {
+      0% { opacity: 0; transform: translate(0, 4px) scale(0.55); }
+      14% { opacity: 1; transform: translate(-4px, 0) scale(1); }
+      68% { opacity: 0.9; transform: translate(-14px, -6px) scale(1.2); }
+      100% { opacity: 0; transform: translate(-24px, -14px) scale(1.45); }
     }
     @keyframes walkAcross {
-      0% { left: 6%; transform: translateY(0); }
-      25% { transform: translateY(-8px); }
-      50% { left: 40%; transform: translateY(0); }
-      75% { transform: translateY(-8px); }
-      100% { left: 72%; transform: translateY(0); }
+      0% { left: 6%; transform: translateY(0) scale(0.84); }
+      8% { left: 11.3%; transform: translateY(-10px) scale(0.87); }
+      16% { left: 16.6%; transform: translateY(0) scale(0.89); }
+      26% { left: 23.2%; transform: translateY(-10px) scale(0.92); }
+      36% { left: 29.8%; transform: translateY(0) scale(0.95); }
+      46% { left: 36.4%; transform: translateY(-9px) scale(0.98); }
+      56% { left: 43%; transform: translateY(0) scale(1.01); }
+      66% { left: 49.6%; transform: translateY(-9px) scale(1.03); }
+      76% { left: 56.2%; transform: translateY(0) scale(1.05); }
+      86% { left: 62.8%; transform: translateY(-8px) scale(1.07); }
+      94% { left: 68%; transform: translateY(0) scale(1.08); }
+      100% { left: 72%; transform: translateY(0) scale(1.1); }
     }
     .travel-caption {
+      position: relative;
+      z-index: 2;
       text-align: center;
       font-family: 'Fredoka', cursive, sans-serif;
       font-size: 1.35rem;
       margin: 0 0 0.4rem;
+    }
+    #travel-hint {
+      position: relative;
+      z-index: 2;
     }
 
     #loot.screen {
@@ -1640,6 +1720,7 @@
     .loot-choice.chosen {
       border-color: var(--leaf);
       background: #e5f9ef;
+      box-shadow: 0 5px 0 #14915f, 0 0 0 3px rgba(31, 157, 108, 0.45);
     }
     .loot-choice:disabled { cursor: default; }
     @media (max-width: 520px) {
@@ -1738,7 +1819,16 @@
     <section id="travel" class="screen">
       <p class="travel-caption" id="travel-caption">The hero walks on…</p>
       <div class="travel-scene" id="travel-scene">
-        <img class="walker" id="walker" src="assets/hero.png" alt="Hero walking">
+        <div class="travel-bg" id="travel-bg" aria-hidden="true"></div>
+        <div class="travel-dust" id="travel-dust" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="walker" id="walker">
+          <img src="assets/hero.png" alt="Hero walking">
+          <span class="foot-dust" aria-hidden="true"></span>
+          <span class="foot-dust" aria-hidden="true"></span>
+          <span class="foot-dust" aria-hidden="true"></span>
+        </div>
       </div>
       <p class="hint" id="travel-hint" style="text-align:center;margin-bottom:0;">Something waits ahead…</p>
     </section>
@@ -2101,6 +2191,8 @@
       result: document.getElementById('result'),
       titleScene: document.getElementById('title-scene'),
       travelScene: document.getElementById('travel-scene'),
+      travelBg: document.getElementById('travel-bg'),
+      travelDust: document.getElementById('travel-dust'),
       travelCaption: document.getElementById('travel-caption'),
       travelHint: document.getElementById('travel-hint'),
       walker: document.getElementById('walker'),
@@ -3177,6 +3269,7 @@
         help.className = 'loot-help';
         help.textContent = item.help;
         btn.append(name, effect, help);
+        btn.setAttribute('aria-pressed', 'false');
         btn.addEventListener('click', () => chooseLoot(item, btn));
         els.lootChoices.appendChild(btn);
       });
@@ -3210,28 +3303,43 @@
       run();
     }
 
+    const LOOT_RESELECT_HINT = 'Tap the other card to change · Keep Going to confirm';
+
     function chooseLoot(item, btn) {
       if (state.lootChosen) return;
       if (state.chestStep !== 'float' && state.chestStep !== 'choose') return;
-      state.lootChosen = true;
-      applyLoot({ ...item });
+      state.pendingLoot = { ...item };
       [...els.lootChoices.children].forEach((el) => {
-        el.disabled = true;
-        el.classList.toggle('chosen', el === btn);
+        const on = el === btn;
+        el.classList.toggle('chosen', on);
+        el.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
-      els.lootSub.textContent = item.name;
-      els.lootEffect.textContent = item.help;
-      renderEquipList();
+      els.lootSub.textContent = 'Choose 1 of 2';
+      els.lootEffect.textContent = LOOT_RESELECT_HINT;
       els.lootContinueBtn.disabled = false;
+      Sfx.play('tap');
+    }
+
+    function confirmLoot() {
+      if (state.lootChosen) return;
+      const highlighted = els.lootChoices.querySelector('.loot-choice.chosen');
+      if (!highlighted || !state.pendingLoot) return;
+      state.lootChosen = true;
+      els.lootContinueBtn.disabled = true;
+      applyLoot({ ...state.pendingLoot });
+      state.pendingLoot = null;
+      [...els.lootChoices.children].forEach((el) => { el.disabled = true; });
+      renderEquipList();
+      if (state.hero) updateHud();
       Sfx.play('loot');
-      updateHud();
+      goToNextEncounter();
     }
 
     function showLoot(pair) {
       state.pendingLoot = null;
       state.lootChosen = false;
       els.lootSub.textContent = 'Choose 1 of 2';
-      els.lootEffect.textContent = 'Pick one. Each card says how it helps the next fight.';
+      els.lootEffect.textContent = LOOT_RESELECT_HINT;
       els.lootContinueBtn.disabled = true;
       renderEquipList();
       renderLootChoices(pair);
@@ -3313,6 +3421,13 @@
       }
     }
 
+    function replayCss(el) {
+      if (!el) return;
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    }
+
     function beginTravel() {
       const next = currentMonsterDef();
       const shown = encounterDisplayName(next);
@@ -3324,10 +3439,11 @@
       } else {
         els.travelHint.textContent = `"${shown}" appears ahead…`;
       }
-      els.walker.style.animation = 'none';
-      void els.walker.offsetWidth;
-      els.walker.style.animation = '';
       showScreen('travel');
+      replayCss(els.travelBg);
+      replayCss(els.walker);
+      els.walker.querySelectorAll('.foot-dust').forEach(replayCss);
+      if (els.travelDust) els.travelDust.querySelectorAll('span').forEach(replayCss);
       if (state.travelTimer) clearTimeout(state.travelTimer);
       state.travelTimer = setTimeout(() => {
         state.travelTimer = null;
@@ -3507,7 +3623,7 @@
     }
 
     els.titleScene.style.backgroundImage = "url('assets/scene.png')";
-    els.travelScene.style.backgroundImage = "url('assets/scene.png')";
+    els.travelBg.style.backgroundImage = "url('assets/scene.png')";
 
     setStageSelection(state.stageId);
     [els.stageBtn1, els.stageBtn2].forEach((btn) => {
@@ -3534,9 +3650,7 @@
     els.checkBtn.addEventListener('click', checkAnswer);
     els.quitBtn.addEventListener('click', () => finishAdventure(false));
     els.lootContinueBtn.addEventListener('click', () => {
-      if (!state.lootChosen) return;
-      Sfx.play('click');
-      goToNextEncounter();
+      confirmLoot();
     });
     els.againBtn.addEventListener('click', startAdventure);
     els.homeBtn.addEventListener('click', goHome);
@@ -3596,8 +3710,12 @@
         toggleMute,
         showLoot,
         pickLootPair,
+        chooseLoot,
+        confirmLoot,
         beginBattle,
+        beginTravel,
         applyLoot,
+        TRAVEL_MS,
         useLetterHint,
         calcAttackDamage,
         performHintFill
