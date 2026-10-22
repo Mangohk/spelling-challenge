@@ -87,9 +87,11 @@
 
     .hero-scene {
       position: relative;
+      display: flex;
+      flex-direction: column;
       border-radius: 1.2rem;
       overflow: hidden;
-      min-height: clamp(200px, 42vw, 280px);
+      min-height: clamp(228px, 50vw, 300px);
       background: #c8e9f5 center/cover no-repeat;
       margin-bottom: 1rem;
     }
@@ -97,27 +99,45 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(15, 42, 36, 0.05), rgba(15, 42, 36, 0.35));
+      z-index: 0;
+      /* Soft bottom shade only. The hero's face stays in the brighter upper scene. */
+      background: linear-gradient(
+        180deg,
+        rgba(15, 42, 36, 0) 40%,
+        rgba(15, 42, 36, 0.14) 68%,
+        rgba(15, 42, 36, 0.4) 100%
+      );
       pointer-events: none;
     }
     .scene-copy {
-      position: absolute;
-      left: 1rem;
-      right: 1rem;
-      bottom: 1rem;
+      position: relative;
       z-index: 2;
+      margin-top: auto;
+      /* Clear the hero sprite (left 8% + its width) so the panel does not cover the face. */
+      margin-left: calc(8% + clamp(96px, 22vw, 140px) + 0.45rem);
+      margin-right: 0.65rem;
+      margin-bottom: 0.6rem;
+      padding: 0.48rem 0.7rem 0.52rem;
+      border-radius: 0.85rem;
+      background: rgba(15, 42, 36, 0.78);
       color: #fff;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      text-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.55),
+        0 2px 6px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 6px 16px rgba(15, 42, 36, 0.22);
     }
     .scene-copy h2 {
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.22rem;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: clamp(1.5rem, 5vw, 2.1rem);
+      font-size: clamp(1.32rem, 3.4vw, 2rem);
+      line-height: 1.05;
+      letter-spacing: 0.01em;
     }
     .scene-copy p {
       margin: 0;
-      font-weight: 700;
-      font-size: 0.98rem;
+      font-weight: 800;
+      font-size: 0.94rem;
+      line-height: 1.35;
       max-width: 28rem;
     }
     .title-hero {
@@ -175,6 +195,27 @@
       background: linear-gradient(145deg, #ffd45a, var(--sun));
       box-shadow: 0 5px 0 #c48c12;
       color: #5c4300;
+    }
+    /* Attack is the solid primary. Hint is solid sun. End stays the ghost button. */
+    #check-btn {
+      background: var(--leaf);
+      color: #fff;
+      font-weight: 800;
+      text-shadow: 0 1px 0 rgba(15, 42, 36, 0.35);
+      box-shadow: 0 5px 0 var(--leaf-dark);
+    }
+    #check-btn:active {
+      box-shadow: 0 2px 0 var(--leaf-dark);
+    }
+    #letter-hint-btn {
+      background: var(--sun);
+      color: var(--ink);
+      font-weight: 800;
+      text-shadow: none;
+      box-shadow: 0 5px 0 #c48c12;
+    }
+    #letter-hint-btn:active {
+      box-shadow: 0 2px 0 #c48c12;
     }
     .btn:disabled {
       opacity: 0.55;
@@ -484,18 +525,32 @@
       .fighter img { width: 72px; height: 72px; }
     }
     .fighter h3 {
-      margin: 0.05rem 0 0;
+      margin: 0.12rem auto 0;
       font-family: 'Fredoka', cursive, sans-serif;
       font-size: 0.92rem;
-      line-height: 1.1;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--ink);
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.02rem 0.38rem 0.04rem;
+      border-radius: 999px;
+      background: rgba(255, 253, 247, 0.94);
+      text-shadow: none;
     }
     .fighter .tag {
-      margin: 0;
+      margin: 0.08rem auto 0;
       color: var(--ink);
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       font-weight: 800;
       line-height: 1.15;
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.01rem 0.34rem 0.03rem;
+      border-radius: 999px;
+      background: rgba(255, 253, 247, 0.9);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -508,11 +563,15 @@
       margin-bottom: 0.12rem;
     }
     .hp-num {
-      font-size: 0.68rem;
+      align-self: center;
+      font-size: 0.72rem;
       font-weight: 800;
       color: var(--ink);
       line-height: 1;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+      padding: 0.05rem 0.32rem;
+      border-radius: 999px;
+      background: rgba(255, 253, 247, 0.94);
+      text-shadow: none;
     }
     .hp-bar {
       height: 0.55rem;
@@ -750,6 +809,7 @@
     #mode-hint {
       color: var(--ink);
       font-size: 1rem;
+      font-weight: 800;
     }
     .keyboard[hidden],
     .slots[hidden],
@@ -829,8 +889,16 @@
         flex: 1 1 auto;
         min-height: 2.85rem;
         padding: 0.55rem 0.7rem;
+        font-size: 1.02rem;
+        font-weight: 800;
       }
-      #battle .play-dock #letter-hint-btn,
+      #battle .play-dock #letter-hint-btn {
+        flex: 0 0 auto;
+        min-height: 2.85rem;
+        padding: 0.45rem 0.6rem;
+        font-size: 0.92rem;
+        font-weight: 800;
+      }
       #battle .play-dock #quit-btn {
         flex: 0 0 auto;
         min-height: 2.85rem;
@@ -845,7 +913,7 @@
         min-height: 2.75rem;
         font-size: 1.05rem;
         border-radius: 0.65rem;
-        box-shadow: 0 3px 0 #c5e4d5;
+        box-shadow: 0 3px 0 #b9dfcd;
       }
     }
     /* Narrow phone: the dock is in normal flow under the puzzle.
@@ -1093,20 +1161,24 @@
       .keyboard { grid-template-columns: repeat(9, minmax(0, 1fr)); }
     }
     .key {
-      border: none;
+      border: 2px solid #b9dfcd;
       cursor: pointer;
       min-height: 3.1rem;
       border-radius: 0.8rem;
-      background: #eef9f3;
+      background: var(--mist);
       color: var(--ink);
       font-family: 'Fredoka', cursive, sans-serif;
       font-size: 1.15rem;
       font-weight: 700;
-      box-shadow: 0 4px 0 #c5e4d5;
+      box-shadow: 0 4px 0 #b9dfcd;
       text-transform: uppercase;
       touch-action: manipulation;
     }
-    .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #c5e4d5; }
+    .key:active {
+      transform: translateY(2px);
+      background: #c6efb4;
+      box-shadow: 0 2px 0 #b9dfcd;
+    }
     .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
 
     .travel-scene {
