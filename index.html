@@ -749,19 +749,14 @@
     .slot.hint-flash {
       z-index: 2;
       color: var(--ink);
-      animation: hint-cell-flash 500ms ease-out;
+      animation: hint-cell-flash 500ms linear;
     }
     @keyframes hint-cell-flash {
-      0% {
+      0%, 55% {
         background: var(--sun);
         border-color: #c98a12;
         color: var(--ink);
-        box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.4);
-      }
-      40% {
-        background: #ffe08a;
-        border-color: var(--sun);
-        color: var(--ink);
+        box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.45);
       }
       100% {
         background: #fff9e8;
