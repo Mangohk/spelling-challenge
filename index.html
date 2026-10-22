@@ -252,6 +252,26 @@
     .pill.coral { background: #ffe8e4; color: #a3382a; }
     /* .pill sets display, which would otherwise ignore the hidden attribute. */
     #combo-pill[hidden] { display: none !important; }
+    /* Last 5s of the 25s hint turn. Digit only; lives in the meta row, not over letters. */
+    #hint-countdown {
+      position: absolute;
+      z-index: 8;
+      left: 50%;
+      top: 0.35rem;
+      transform: translateX(-50%);
+      pointer-events: none;
+      background: var(--sun);
+      color: var(--ink);
+      border: 2px solid #c98a12;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.15rem;
+      line-height: 1;
+      min-width: 2.15rem;
+      justify-content: center;
+      padding: 0.28rem 0.55rem;
+      box-shadow: 0 2px 0 rgba(138, 101, 8, 0.25);
+    }
+    #hint-countdown[hidden] { display: none !important; }
     .progress {
       height: 0.7rem;
       border-radius: 999px;
@@ -710,6 +730,7 @@
       gap: 0.4rem;
     }
     .slot {
+      position: relative;
       width: 3.6rem;
       height: 4.4rem;
       border-radius: 0.9rem;
@@ -723,6 +744,62 @@
       color: var(--ink);
       box-shadow: 0 4px 0 #d7ebe1;
       touch-action: manipulation;
+    }
+    /* F1: warm flash, letter stays ink-on-sun so it is not washed out. 500ms. */
+    .slot.hint-flash {
+      z-index: 2;
+      color: var(--ink);
+      animation: hint-cell-flash 500ms linear;
+    }
+    @keyframes hint-cell-flash {
+      0%, 55% {
+        background: var(--sun);
+        border-color: #c98a12;
+        color: var(--ink);
+        box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.45);
+      }
+      100% {
+        background: #fff9e8;
+        border-color: #efd27a;
+        color: var(--ink);
+        box-shadow: 0 4px 0 #d7ebe1;
+      }
+    }
+    /* F3: corner sparkle, same 500ms, does not take clicks or cover the glyph. */
+    .hint-spark {
+      position: absolute;
+      top: 0.06rem;
+      right: 0.1rem;
+      font-size: 0.62rem;
+      line-height: 1;
+      color: #8a5a08;
+      pointer-events: none;
+      animation: hint-sparkle 500ms ease-out forwards;
+    }
+    @keyframes hint-sparkle {
+      0% { opacity: 0; transform: scale(0.5); }
+      35% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: translateY(-4px) scale(0.85); }
+    }
+    /* F2: −2 rises above the filled cell for 700ms. Path stays over that cell, not the next. */
+    .hint-float-m2 {
+      position: absolute;
+      left: 50%;
+      top: -0.2rem;
+      z-index: 3;
+      pointer-events: none;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #b53b2d;
+      text-shadow: 0 2px 0 #fff, 0 0 2px #fff;
+      animation: hint-float-rise 700ms ease-out forwards;
+    }
+    @keyframes hint-float-rise {
+      0% { opacity: 0; transform: translate(-50%, 2px); }
+      18% { opacity: 1; transform: translate(-50%, -2px); }
+      100% { opacity: 0; transform: translate(-50%, -1.15rem); }
     }
     .slot.given {
       background: #eef9f3;
@@ -997,6 +1074,11 @@
         padding: 0.1rem 0.38rem;
         font-size: 0.68rem;
       }
+      #battle #hint-countdown {
+        font-size: 1rem;
+        min-width: 1.7rem;
+        padding: 0.08rem 0.4rem;
+      }
       #battle .progress {
         height: 0.38rem;
         margin-bottom: 0.16rem;
@@ -1150,6 +1232,42 @@
     }
     .feedback.ok { color: var(--leaf-dark); }
     .feedback.bad { color: #b53b2d; }
+
+    /* Cost preview. Fixed to the top of the viewport so it does not cover letters, keys, or HP. */
+    .hint-toast {
+      position: fixed;
+      z-index: 40;
+      left: 50%;
+      top: max(0.4rem, env(safe-area-inset-top, 0px));
+      transform: translateX(-50%);
+      margin: 0;
+      max-width: min(18rem, calc(100vw - 1.2rem));
+      padding: 0.28rem 0.7rem 0.34rem;
+      border-radius: 0.8rem;
+      border: 2px solid var(--sun);
+      background: rgba(255, 249, 232, 0.98);
+      color: var(--ink);
+      text-align: center;
+      pointer-events: none;
+      box-shadow: 0 3px 0 rgba(138, 101, 8, 0.2);
+    }
+    .hint-toast[hidden] { display: none !important; }
+    #battle:not(.active) .hint-toast { display: none !important; }
+    .hint-toast strong,
+    .hint-toast span {
+      display: block;
+      line-height: 1.15;
+    }
+    .hint-toast strong {
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .hint-toast span {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
 
     .keyboard {
       display: grid;
@@ -1491,6 +1609,7 @@
         <div class="arena-sky" aria-hidden="true"></div>
         <div class="arena-ground" aria-hidden="true"></div>
         <div class="float-dmg" id="float-dmg" aria-hidden="true"></div>
+        <div class="pill" id="hint-countdown" hidden></div>
         <div class="telegraph" id="telegraph" hidden aria-hidden="true"><span id="telegraph-glyph">!</span></div>
         <div class="celebrate" id="celebrate" aria-live="polite">
           <div class="celebrate-stars" aria-hidden="true">★ ★ ★</div>
@@ -1534,6 +1653,10 @@
         <button type="button" class="btn secondary" id="spell-hear-btn">🔊 Hear Word</button>
       </div>
       <p class="feedback" id="feedback"></p>
+      <div class="hint-toast" id="hint-toast" role="status" aria-live="polite" hidden>
+        <strong>Hint: −2 HP</strong>
+        <span>Fills 1 letter</span>
+      </div>
       </div>
       <div class="play-dock" id="play-dock">
         <div class="keyboard" id="keyboard"></div>
@@ -1658,10 +1781,22 @@
 
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-    // Thin combo bonus on top of the existing ATK / hint / double-hit formula.
+    // Thin combo bonus on top of ATK and the double-hit.
     // Multiplier = min(CAP, 1 + STEP * (combo - 1)). Combo 1 is ×1 (no change).
     const COMBO_STEP = 0.25;
     const COMBO_MULT_CAP = 2;
+    // One Letter and the 25s timeout each cost 2 hero HP (never below 1).
+    // Amulet opening fill is free: no toast and no −2 float.
+    const HINT_HP_COST = 2;
+    const HINT_TIMEOUT_MS = 25000;
+    const HINT_COUNTDOWN_LEAD_MS = 5000;
+    const HINT_TOAST_MS = 1200;
+    // More empty letters → more opening fills, clamped to 1–3.
+    const AMULET_FILL_DIVISOR = 2;
+    const PAGE_PARAMS = new URLSearchParams(location.search);
+    const PAGE_TEST = PAGE_PARAMS.get('test') === '1';
+    const HINT_TIMEOUT_OVERRIDE = PAGE_TEST ? (Number(PAGE_PARAMS.get('hintMs')) || 0) : 0;
+    const TRAVEL_MS = PAGE_TEST && PAGE_PARAMS.get('skipTravel') === '1' ? 0 : 1900;
     // Correct spelling stays up long enough to read the whole word, or until Continue.
     const REVIEW_MIN_MS = 1500;
     const REVIEW_AUTO_MS = 4200;
@@ -1677,7 +1812,7 @@
       { id: 'wood_shield', name: 'Wood Shield', effect: 'DEF +1', help: 'Next fight: Defense +1. A wrong answer chips 1 less HP.', kind: 'def', value: 1 },
       { id: 'herb', name: 'Healing Herb', effect: 'Restore 3 HP now', help: 'Heal 3 HP before the next fight, so light hits are safer.', kind: 'heal', value: 3 },
       { id: 'lucky_feather', name: 'Lucky Feather', effect: 'Next hit deals double damage', help: 'Next fight: your next correct spelling deals double damage.', kind: 'double', value: 1 },
-      { id: 'hint_amulet', name: 'Hint Amulet', effect: 'Letter hints do not cut ATK', help: 'Next fight: a letter hint will not halve your Attack.', kind: 'hintSafe', value: 1 }
+      { id: 'hint_amulet', name: 'Hint Amulet', effect: 'Next fight opens with 1–3 letters', help: 'Next fight: 1–3 letters start filled. No HP cost.', kind: 'amuletOpen', value: 1 }
     ];
 
     const Sfx = (() => {
@@ -1850,6 +1985,8 @@
       spellHeroWord: document.getElementById('spell-hero-word'),
       spellHearBtn: document.getElementById('spell-hear-btn'),
       feedback: document.getElementById('feedback'),
+      hintToast: document.getElementById('hint-toast'),
+      hintCountdown: document.getElementById('hint-countdown'),
       keyboard: document.getElementById('keyboard'),
       speakBtn: document.getElementById('speak-btn'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
@@ -1879,7 +2016,6 @@
       blanks: [],
       cursor: 0,
       locked: false,
-      usedHint: false,
       pendingLoot: null,
       travelTimer: null,
       answers: [],
@@ -1902,8 +2038,14 @@
       chestTimer: null,
       chestStep: 'idle',
       lootChosen: false,
-      hitSerial: 0
+      hitSerial: 0,
+      amuletArmed: false,
+      hintFlash: null,
+      hintFloat: null,
+      hintToastTimer: null
     };
+
+    let hintClock = null;
 
     const MODES = ['fill', 'pick', 'fix'];
     const MODE_COPY = {
@@ -1999,7 +2141,7 @@
         def: 0,
         equipment: [],
         doubleNext: false,
-        hintSafe: false
+        amuletReady: false
       };
     }
 
@@ -2184,7 +2326,7 @@
 
       const buffs = [];
       if (hero.doubleNext) buffs.push('Next hit ×2');
-      if (hero.hintSafe) buffs.push('Hint Amulet');
+      if (hero.amuletReady) buffs.push('Hint Amulet');
       els.buffPill.textContent = buffs.length ? buffs.join(' · ') : 'No special effects';
       if (state.combo >= 2) {
         els.comboPill.hidden = false;
@@ -2255,6 +2397,7 @@
           if (state.blanks[state.cursor]?.index === i && !state.locked) {
             slot.classList.add('active');
           }
+          decorateHintFx(slot, i);
           slot.addEventListener('click', () => {
             if (state.locked) return;
             const idx = state.blanks.findIndex((b) => b.index === i);
@@ -2334,42 +2477,172 @@
       els.keyboard.appendChild(del);
     }
 
-    function useLetterHint() {
-      if (state.locked || state.mode === 'pick' || !state.blanks.length) return;
+    function hintLimitMs() {
+      return HINT_TIMEOUT_OVERRIDE > 0 ? HINT_TIMEOUT_OVERRIDE : HINT_TIMEOUT_MS;
+    }
+
+    function amuletFillCount(empties) {
+      const n = Math.max(0, empties | 0);
+      if (!n) return 0;
+      return Math.min(3, n, Math.max(1, Math.floor(n / AMULET_FILL_DIVISOR)));
+    }
+
+    function hintTargets(kind) {
+      const item = currentWord();
+      if (!item || state.mode === 'pick') return [];
+      return state.blanks.filter((blank) => {
+        const correct = item.word[blank.index].toLowerCase();
+        const typed = (blank.value || '').toLowerCase();
+        if (typed === correct) return false;
+        if (state.mode === 'fix') return true;
+        if (kind === 'empty') return typed.length === 0;
+        return true;
+      });
+    }
+
+    function chooseHintTarget(kind) {
+      const options = hintTargets(kind);
+      if (!options.length) return null;
+      const cursorBlank = state.blanks[state.cursor];
+      if (cursorBlank && options.indexOf(cursorBlank) !== -1) return cursorBlank;
+      return options[0];
+    }
+
+    function decorateHintFx(slot, index) {
+      const now = Date.now();
+      if (state.hintFlash && now < state.hintFlash.until && state.hintFlash.indexes.includes(index)) {
+        slot.classList.add('hint-flash');
+        const spark = document.createElement('span');
+        spark.className = 'hint-spark';
+        spark.setAttribute('aria-hidden', 'true');
+        spark.textContent = '✦';
+        slot.appendChild(spark);
+      }
+      if (state.hintFloat && now < state.hintFloat.until && state.hintFloat.index === index) {
+        const flo = document.createElement('span');
+        flo.className = 'hint-float-m2';
+        flo.setAttribute('aria-hidden', 'true');
+        flo.textContent = '\u22122';
+        slot.appendChild(flo);
+      }
+    }
+
+    function hideHintToast() {
+      if (state.hintToastTimer) clearTimeout(state.hintToastTimer);
+      state.hintToastTimer = null;
+      els.hintToast.hidden = true;
+    }
+
+    function showHintToast() {
+      els.hintToast.hidden = false;
+      if (state.hintToastTimer) clearTimeout(state.hintToastTimer);
+      state.hintToastTimer = setTimeout(() => {
+        state.hintToastTimer = null;
+        els.hintToast.hidden = true;
+      }, HINT_TOAST_MS);
+    }
+
+    function clearHintClock() {
+      if (hintClock) {
+        clearInterval(hintClock);
+        hintClock = null;
+      }
+      els.hintCountdown.hidden = true;
+      els.hintCountdown.textContent = '';
+    }
+
+    function focusNextHintCursor() {
       const item = currentWord();
       if (!item) return;
-
       if (state.mode === 'fix') {
-        const stillWrong = (b) => (b.value || '').toLowerCase() !== item.word[b.index].toLowerCase();
-        const idx = state.blanks[state.cursor] && stillWrong(state.blanks[state.cursor])
-          ? state.cursor
-          : state.blanks.findIndex(stillWrong);
-        if (idx === -1) return;
-        state.cursor = idx;
-        state.blanks[idx].value = item.word[state.blanks[idx].index].toLowerCase();
-      } else {
-        let target = state.blanks[state.cursor];
-        if (!target || target.value) {
-          const emptyIdx = state.blanks.findIndex((b) => !b.value);
-          if (emptyIdx !== -1) {
-            state.cursor = emptyIdx;
-            target = state.blanks[emptyIdx];
-          } else if (!target) {
-            return;
-          }
-        }
-        target.value = item.word[target.index].toLowerCase();
+        const idx = state.blanks.findIndex((blank) => (
+          (blank.value || '').toLowerCase() !== item.word[blank.index].toLowerCase()
+        ));
+        if (idx !== -1) state.cursor = idx;
+        return;
       }
+      state.cursor = firstEmptyCursor();
+    }
 
-      state.usedHint = true;
+    // Paid fill: toast first, then one correct letter and −2 HP (floor 1).
+    function performHintFill(kind) {
+      if (state.locked || state.mode === 'pick' || !currentWord()) return false;
+      const target = chooseHintTarget(kind);
+      if (!target) return false;
+      const item = currentWord();
+      showHintToast();
+      target.value = item.word[target.index].toLowerCase();
+      const at = state.blanks.indexOf(target);
+      if (at !== -1) state.cursor = at;
       advanceCursorAfterType();
-
-      els.feedback.textContent = state.hero.hintSafe
-        ? 'One letter filled (Hint Amulet: ATK unchanged)'
-        : 'One letter filled (this attack deals half ATK)';
-      els.feedback.className = 'feedback';
+      state.hero.hp = Math.max(1, state.hero.hp - HINT_HP_COST);
+      state.hintFloat = { index: target.index, until: Date.now() + 760 };
+      state.hintFlash = { indexes: [target.index], until: Date.now() + 560 };
       Sfx.play('hint');
       updateHud();
+      renderSlots();
+      return true;
+    }
+
+    function useLetterHint() {
+      performHintFill('button');
+    }
+
+    function handleHintTimeout() {
+      performHintFill('empty');
+      if (!state.locked && state.mode !== 'pick' && els.battle.classList.contains('active')) {
+        startHintClock();
+      }
+    }
+
+    function startHintClock() {
+      clearHintClock();
+      if (state.locked || state.mode === 'pick' || !els.battle.classList.contains('active')) return;
+      const puzzle = state.puzzlesServed;
+      const round = state.roundId;
+      const started = Date.now();
+      const limit = hintLimitMs();
+      hintClock = setInterval(() => {
+        if (round !== state.roundId || puzzle !== state.puzzlesServed || state.locked || state.mode === 'pick') {
+          clearHintClock();
+          return;
+        }
+        const remain = limit - (Date.now() - started);
+        if (remain <= 0) {
+          clearHintClock();
+          handleHintTimeout();
+          return;
+        }
+        if (remain <= HINT_COUNTDOWN_LEAD_MS) {
+          const sec = Math.min(5, Math.max(1, Math.ceil(remain / 1000)));
+          const label = String(sec);
+          if (els.hintCountdown.textContent !== label) els.hintCountdown.textContent = label;
+          els.hintCountdown.hidden = false;
+        } else if (!els.hintCountdown.hidden) {
+          els.hintCountdown.hidden = true;
+          els.hintCountdown.textContent = '';
+        }
+      }, 200);
+    }
+
+    function applyAmuletOpening() {
+      if (!state.amuletArmed || state.mode === 'pick') return;
+      const options = hintTargets(state.mode === 'fix' ? 'button' : 'empty');
+      const count = amuletFillCount(options.length);
+      if (!count) return;
+      const picked = shuffle(options).slice(0, count);
+      const item = currentWord();
+      const indexes = [];
+      picked.forEach((blank) => {
+        blank.value = item.word[blank.index].toLowerCase();
+        indexes.push(blank.index);
+      });
+      state.amuletArmed = false;
+      state.hintFloat = null;
+      state.hintFlash = { indexes, until: Date.now() + 560 };
+      focusNextHintCursor();
+      hideHintToast();
+      Sfx.play('hint');
       renderSlots();
     }
 
@@ -2423,6 +2696,8 @@
     function pickMode() {
       // forceMode / forceWord are inert unless a local check sets them.
       if (state.forceMode && MODES.includes(state.forceMode)) return state.forceMode;
+      // Amulet fills letters, so the fight it is spent on opens on Fill or Fix.
+      if (state.amuletArmed) return Math.random() < 0.5 ? 'fill' : 'fix';
       // Second puzzle of a run is forced onto a new mode so one adventure shows at least two.
       if (state.puzzlesServed >= 1 && state.modesSeen.size < 2) {
         const others = MODES.filter((mode) => !state.modesSeen.has(mode));
@@ -2473,8 +2748,11 @@
       const item = pickNextAttackWord();
       if (!item) return;
       state.locked = false;
-      state.usedHint = false;
       state.pickChoice = null;
+      state.hintFlash = null;
+      state.hintFloat = null;
+      clearHintClock();
+      hideHintToast();
       clearCombatFx();
       state.mode = pickMode();
       state.modesSeen.add(state.mode);
@@ -2510,9 +2788,11 @@
       applyModeChrome();
       if (state.mode === 'pick') renderPickChoices();
       else renderSlots();
+      applyAmuletOpening();
       updateHud();
       // Tell is visible while the question stays open — it does not lock typing.
       showTelegraph(telegraphGlyph());
+      startHintClock();
     }
 
     function guessWord() {
@@ -2589,6 +2869,8 @@
 
     function clearPendingTimers() {
       cancelReview();
+      clearHintClock();
+      hideHintToast();
       if (state.travelTimer) clearTimeout(state.travelTimer);
       if (state.telegraphTimer) clearTimeout(state.telegraphTimer);
       if (state.strikeTimer) clearTimeout(state.strikeTimer);
@@ -2601,9 +2883,6 @@
 
     function calcAttackDamage() {
       let dmg = state.hero.atk;
-      if (state.usedHint && !state.hero.hintSafe) {
-        dmg = Math.max(1, Math.floor(dmg / 2));
-      }
       if (state.hero.doubleNext) {
         dmg *= 2;
         state.hero.doubleNext = false;
@@ -2665,7 +2944,7 @@
         state.hero.hp = Math.min(state.hero.maxHp, state.hero.hp + item.value);
       }
       if (item.kind === 'double') state.hero.doubleNext = true;
-      if (item.kind === 'hintSafe') state.hero.hintSafe = true;
+      if (item.kind === 'amuletOpen') state.hero.amuletReady = true;
     }
 
     function lootPool(excludeIds) {
@@ -2775,6 +3054,7 @@
 
     function finishAdventure(won) {
       state.roundId += 1;
+      state.amuletArmed = false;
       clearPendingTimers();
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       const total = activeMonsters().length;
@@ -2828,6 +3108,8 @@
 
     function beginBattle() {
       state.monster = createMonster();
+      state.amuletArmed = !!(state.hero && state.hero.amuletReady);
+      if (state.hero && state.amuletArmed) state.hero.amuletReady = false;
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       showScreen('battle');
       preparePuzzle();
@@ -2859,7 +3141,7 @@
       state.travelTimer = setTimeout(() => {
         state.travelTimer = null;
         beginBattle();
-      }, 1900);
+      }, TRAVEL_MS);
     }
 
     function markPick() {
@@ -2916,6 +3198,7 @@
     function resolveRound(ok, guess) {
       const item = currentWord();
       const round = state.roundId;
+      clearHintClock();
       state.locked = true;
       els.checkBtn.disabled = true;
       els.letterHintBtn.disabled = true;
@@ -3008,7 +3291,7 @@
       state.blanks = [];
       state.cursor = 0;
       state.locked = false;
-      state.usedHint = false;
+      state.amuletArmed = false;
       state.pendingLoot = null;
       state.hero = createHero();
       state.monster = null;
@@ -3099,18 +3382,31 @@
     document.addEventListener('pointerdown', () => Sfx.ensure(), { once: true });
     document.addEventListener('keydown', () => Sfx.ensure(), { once: true });
 
-    if (new URLSearchParams(location.search).get('test') === '1') {
+    if (PAGE_TEST) {
+      if (PAGE_PARAMS.get('forceMode')) state.forceMode = PAGE_PARAMS.get('forceMode');
+      if (PAGE_PARAMS.get('forceWord')) state.forceWord = PAGE_PARAMS.get('forceWord');
       window.__SPELL = {
         state,
         REVIEW_MIN_MS,
         TELEGRAPH_MS,
         LIGHT_HIT,
+        HINT_TIMEOUT_MS,
+        HINT_COUNTDOWN_LEAD_MS,
+        HINT_HP_COST,
+        AMULET_FILL_DIVISOR,
+        hintLimitMs,
+        amuletFillCount,
+        hintTargets,
         currentWord,
         checkAnswer,
         preparePuzzle,
         showLoot,
         pickLootPair,
-        beginBattle
+        beginBattle,
+        applyLoot,
+        useLetterHint,
+        calcAttackDamage,
+        performHintFill
       };
     }
   </script>
