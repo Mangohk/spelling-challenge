@@ -233,8 +233,8 @@
     .meta-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-bottom: 0.85rem;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
     }
     .pill {
       display: inline-flex;
@@ -273,11 +273,11 @@
     }
     #hint-countdown[hidden] { display: none !important; }
     .progress {
-      height: 0.7rem;
+      height: 0.55rem;
       border-radius: 999px;
       background: #e7f2ec;
       overflow: hidden;
-      margin-bottom: 1rem;
+      margin-bottom: 0.45rem;
     }
     .progress > span {
       display: block;
@@ -290,10 +290,10 @@
     /* One shared stage: hero and monster stand on the same ground line. */
     .arena {
       position: relative;
-      height: clamp(176px, 34vw, 232px);
+      height: clamp(276px, 34vw, 300px);
       border-radius: 1.2rem;
       overflow: hidden;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.4rem;
       border: 3px solid #d7ebe1;
       background: #bfe6f6;
       isolation: isolate;
@@ -319,14 +319,17 @@
     }
     .fighter {
       position: absolute;
-      bottom: 7%;
-      width: clamp(108px, 32%, 168px);
+      bottom: 1.5%;
+      width: clamp(180px, 42%, 240px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
       z-index: 2;
       transform: translateX(0);
     }
-    .fighter.hero { left: 6%; }
-    .fighter.monster { right: 6%; }
+    .fighter.hero { left: 2%; }
+    .fighter.monster { right: 2%; }
     /* Base motion kept; hero/monster overrides aim the lunge and recoil. */
     .fighter.attack { animation: pop 0.35s ease; }
     .fighter.hit { animation: shake 0.4s ease; }
@@ -382,18 +385,18 @@
       position: absolute;
       z-index: 4;
       left: 50%;
-      top: 7%;
+      top: 1.5%;
       margin: 0;
-      max-width: 46%;
-      padding: 0.28rem 0.5rem;
-      border-radius: 0.75rem;
+      max-width: 30%;
+      padding: 0.14rem 0.38rem;
+      border-radius: 0.65rem;
       background: #fff;
       color: #a3382a;
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.15;
       text-align: center;
-      box-shadow: 0 3px 0 rgba(163, 56, 42, 0.18);
+      box-shadow: 0 2px 0 rgba(163, 56, 42, 0.18);
       opacity: 0;
       pointer-events: none;
       transform: translateX(-50%);
@@ -477,8 +480,8 @@
       100% { opacity: 0; transform: translateX(-50%) translateY(-4px) scale(1); }
     }
     @media (max-width: 560px) {
-      .arena { height: 152px; }
-      .fighter { width: 46%; bottom: 4%; }
+      .arena { height: 268px; }
+      .fighter { width: 46%; bottom: 1%; }
       .fighter.hero { left: 1%; }
       .fighter.monster { right: 1%; }
       .meaning { margin-bottom: 0.4rem; }
@@ -530,9 +533,10 @@
       color: var(--muted);
     }
     .fighter img {
-      width: clamp(78px, 18vw, 108px);
-      height: clamp(78px, 18vw, 108px);
+      width: clamp(168px, 24vw, 204px);
+      height: clamp(168px, 24vw, 204px);
       object-fit: contain;
+      flex: 0 0 auto;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
     }
     .fighter.boss img {
@@ -541,11 +545,8 @@
     .fighter.mini img {
       filter: drop-shadow(0 0 10px rgba(240, 180, 60, 0.85)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
     }
-    @media (max-width: 560px) {
-      .fighter img { width: 72px; height: 72px; }
-    }
     .fighter h3 {
-      margin: 0.12rem auto 0;
+      margin: 0 auto 0.02rem;
       font-family: 'Fredoka', cursive, sans-serif;
       font-size: 0.92rem;
       font-weight: 700;
@@ -560,7 +561,7 @@
       text-shadow: none;
     }
     .fighter .tag {
-      margin: 0.08rem auto 0;
+      margin: 0 auto 0.1rem;
       color: var(--ink);
       font-size: 0.72rem;
       font-weight: 800;
@@ -579,8 +580,11 @@
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      align-self: stretch;
       gap: 0.1rem;
-      margin-bottom: 0.12rem;
+      width: 100%;
+      margin-top: 0.2rem;
+      margin-bottom: 0;
     }
     .hp-num {
       align-self: center;
@@ -641,7 +645,7 @@
 
     .meaning {
       text-align: center;
-      margin: 0 0 0.75rem;
+      margin: 0 0 0.45rem;
     }
     .word-prompt {
       display: flex;
@@ -839,12 +843,6 @@
       box-shadow: 0 0 0 3px rgba(232, 93, 76, 0.28), 0 4px 0 #f0b2a8;
       animation: shake 0.4s ease;
     }
-    .slot.needs-fix {
-      background: #ffe8e4;
-      border-color: var(--coral);
-      color: #b53b2d;
-      box-shadow: 0 0 0 3px rgba(232, 93, 76, 0.22), 0 4px 0 #f0b2a8;
-    }
     .pick-choices {
       display: grid;
       gap: 0.55rem;
@@ -931,6 +929,29 @@
       font-size: 0.92rem;
     }
     .battle-main { min-width: 0; }
+
+    /* Battle only: drop the subtitle and tighten the header so larger fighters fit. */
+    @media (min-width: 500px) {
+      body:has(#battle.screen.active) header {
+        margin-bottom: 0.3rem;
+      }
+      body:has(#battle.screen.active) .logo {
+        width: 2.35rem;
+        height: 2.35rem;
+        font-size: 1.15rem;
+        border-radius: 0.7rem;
+      }
+      body:has(#battle.screen.active) h1 {
+        font-size: 1.28rem;
+      }
+      body:has(#battle.screen.active) .sub {
+        display: none;
+      }
+      #battle.screen.active {
+        padding-top: 0.55rem;
+        padding-bottom: 0.6rem;
+      }
+    }
 
     /* Phone: Attack stays in view with the letter keys. Wide layout is unchanged. */
     @media (max-width: 560px) {
@@ -1083,9 +1104,17 @@
         height: 0.38rem;
         margin-bottom: 0.16rem;
       }
+      #battle .fighter {
+        top: 2px;
+        bottom: 1px;
+        justify-content: flex-end;
+      }
       #battle .fighter img {
-        width: 40px;
-        height: 40px;
+        width: auto;
+        height: auto;
+        aspect-ratio: 1;
+        max-width: 72px;
+        max-height: min(72px, 52%);
       }
       #battle .fighter h3 {
         font-size: 0.72rem;
@@ -1173,8 +1202,7 @@
       #battle .play-dock #quit-btn {
         min-height: 44px;
       }
-      #battle .slot.wrong,
-      #battle .slot.needs-fix {
+      #battle .slot.wrong {
         box-shadow: 0 0 0 2px rgba(232, 93, 76, 0.22), 0 2px 0 #f0b2a8;
       }
       #battle.screen.active .feedback {
@@ -1618,22 +1646,22 @@
         </div>
         <p class="monster-quip" id="monster-quip"></p>
         <div class="fighter hero" id="hero-panel">
+          <h3>Hero</h3>
+          <p class="tag" id="hero-gear-tag">No gear</p>
+          <img src="assets/hero.png" alt="Hero">
           <div class="hp-head">
             <div class="hp-bar"><i id="hero-hp-fill"></i></div>
             <span class="hp-num" id="hero-hp-text">10/10</span>
           </div>
-          <img src="assets/hero.png" alt="Hero">
-          <h3>Hero</h3>
-          <p class="tag" id="hero-gear-tag">No gear</p>
         </div>
         <div class="fighter monster" id="monster-panel">
-          <div class="hp-head">
-            <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
-            <span class="hp-num" id="monster-hp-text">2/2</span>
-          </div>
-          <img id="monster-img" src="assets/monster.png" alt="Monster">
           <h3 id="monster-name">Monster</h3>
           <p class="tag" id="monster-tag">Monster</p>
+          <img id="monster-img" src="assets/monster.png" alt="Monster">
+          <div class="hp-head">
+            <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
+            <span class="hp-num" id="monster-hp-text">6/6</span>
+          </div>
         </div>
       </div>
 
@@ -1736,31 +1764,30 @@
       { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
-    // First normal of the stage: HP 1, and one correct answer forces a KO.
-    // Later normals: HP 2, and they stay up until at least two correct answers.
-    // Mini HP 4, boss HP 8.
+    // Both stages: first normal HP 1, other normals HP 6, mini 14, boss 28.
+    // A correct Attack subtracts ATK. HP at 0 is a knockout.
     const STAGE_ONE_MONSTERS = [
       { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 4, atk: 2, role: 'mini' },
-      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 8, atk: 2, role: 'boss' }
+      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 14, atk: 2, role: 'mini' },
+      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 28, atk: 2, role: 'boss' }
     ];
 
     // Distinct roster from unused m01–m20 art (no overlap with Stage One sprites).
-    // Same curve: first normal HP 1, other normals HP 2, mini 4, boss 8.
+    // Same curve: first normal HP 1, other normals HP 6, mini 14, boss 28.
     const STAGE_TWO_MONSTERS = [
       { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 2, atk: 1, role: 'normal' },
-      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 4, atk: 2, role: 'mini' },
-      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 8, atk: 2, role: 'boss' }
+      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 14, atk: 2, role: 'mini' },
+      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 28, atk: 2, role: 'boss' }
     ];
 
     const STAGES = [
@@ -2053,7 +2080,7 @@
     const MODE_COPY = {
       fill: { pill: 'Fill', hint: 'Fill: listen, fill every blank, then Attack!' },
       pick: { pill: 'Pick', hint: 'Pick: choose the correct spelling, then Attack!' },
-      fix: { pill: 'Fix', hint: 'Fix: change the red letters, then Attack!' }
+      fix: { pill: 'Fix', hint: 'Fix: fill the empty letters, then Attack!' }
     };
 
     function getStageById(id) {
@@ -2382,11 +2409,8 @@
           slot.classList.add('given');
         } else {
           const blank = state.blanks.find((b) => b.index === i);
-          const correct = ch.toLowerCase();
-          const typed = (blank.value || '').toLowerCase();
           slot.textContent = blank.value ? blank.value.toUpperCase() : '';
-          if (state.mode === 'fix' && typed && typed !== correct) slot.classList.add('needs-fix');
-          else if (blank.value) slot.classList.add('filled');
+          if (blank.value) slot.classList.add('filled');
           if (state.blanks[state.cursor]?.index === i && !state.locked) {
             slot.classList.add('active');
           }
@@ -2657,13 +2681,6 @@
       return (String(word).match(/[a-z]/gi) || []).length;
     }
 
-    function randomWrongLetter(correct) {
-      const ban = String(correct || '').toLowerCase();
-      let ch = ban;
-      while (ch === ban) ch = LETTERS[Math.floor(Math.random() * LETTERS.length)];
-      return ch;
-    }
-
     function pickFixIndexes(word) {
       const candidates = [];
       for (let i = 0; i < word.length; i += 1) {
@@ -2754,7 +2771,7 @@
       if (state.mode === 'fix') {
         state.blanks = pickFixIndexes(item.word)
           .sort((a, b) => a - b)
-          .map((index) => ({ index, value: randomWrongLetter(item.word[index]) }));
+          .map((index) => ({ index, value: '' }));
         state.pickOptions = [];
       } else if (state.mode === 'pick') {
         state.blanks = [];
@@ -2884,25 +2901,10 @@
       return Math.max(1, Math.round(dmg * comboMultiplier()));
     }
 
-    function isFirstNormal(monster) {
-      if (!monster || monster.role !== 'normal') return false;
-      const first = activeMonsters().find((entry) => entry.role === 'normal');
-      return !!first && monster.id === first.id;
-    }
-
     function applyHeroHit(dmg) {
-      // Only the first normal of the stage falls on a single correct answer.
-      if (isFirstNormal(state.monster)) {
-        state.monster.hp = 0;
-        return Math.max(1, dmg);
-      }
-      // Spell is already recorded, so the first correct answer counts as 1.
-      // Later normals, mini, and boss all stay up until a second correct answer.
-      const correctSoFar = state.monster.spells.filter((s) => s.ok).length;
-      let nextHp = Math.max(0, state.monster.hp - dmg);
-      if (nextHp <= 0 && correctSoFar < 2) nextHp = 1;
-      const dealt = Math.max(1, state.monster.hp - nextHp);
-      state.monster.hp = nextHp;
+      const before = Math.max(0, state.monster.hp);
+      const dealt = Math.min(before, Math.max(0, dmg));
+      state.monster.hp = before - dealt;
       return dealt;
     }
 
@@ -3115,7 +3117,7 @@
       showScreen('battle');
       preparePuzzle();
       if (state.monster.role === 'boss') {
-        els.feedback.textContent = `${state.monster.name} has a deep HP pool. Answer correctly several times to drain it — one word will not win.`;
+        els.feedback.textContent = `${state.monster.name} has a deep HP pool. Correct answers drain its HP.`;
         els.feedback.className = 'feedback';
       } else if (state.monster.role === 'mini') {
         els.feedback.textContent = `${state.monster.name} is a Mini-Boss. Land several correct answers to drain its HP.`;
@@ -3182,9 +3184,7 @@
 
       const incomplete = state.blanks.some((b) => !b.value);
       if (incomplete) {
-        els.feedback.textContent = state.mode === 'fix'
-          ? 'Fix every red letter before you attack.'
-          : 'Fill every blank before you attack.';
+        els.feedback.textContent = 'Fill every blank before you attack.';
         els.feedback.className = 'feedback bad';
         Sfx.play('warn');
         return;
