@@ -1736,30 +1736,31 @@
       { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
-    // P1 quick-clear: a normal falls on one correct answer (HP 1, and the hit forces a KO).
-    // Mini and Boss stay multi-HP so they still need several correct words.
+    // First normal of the stage: HP 1, and one correct answer forces a KO.
+    // Later normals: HP 2, and they stay up until at least two correct answers.
+    // Mini HP 4, boss HP 8.
     const STAGE_ONE_MONSTERS = [
       { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 8, atk: 2, role: 'mini' },
-      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 20, atk: 2, role: 'boss' }
+      { id: 's1-m02', name: 'Fire Bat', img: 'assets/monsters/m02-firebat.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's1-m04', name: 'Spike Hog', img: 'assets/monsters/m04-spikehog.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's1-m05', name: 'Shadow Cat', img: 'assets/monsters/m05-shadowcat.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's1-m06', name: 'Thunder Frog', img: 'assets/monsters/m06-thunderfrog.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's1-m09', name: 'Ice Fox', img: 'assets/monsters/m09-icefox.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's1-mini', name: 'Book Dragon', img: 'assets/monsters/m10-bookdragon.png', hp: 4, atk: 2, role: 'mini' },
+      { id: 's1-boss', name: 'Miss Lam', img: 'assets/monsters/miss-lam.png', hp: 8, atk: 2, role: 'boss' }
     ];
 
     // Distinct roster from unused m01–m20 art (no overlap with Stage One sprites).
-    // Same quick-clear curve: normals HP 1, mini 8, boss 20.
+    // Same curve: first normal HP 1, other normals HP 2, mini 4, boss 8.
     const STAGE_TWO_MONSTERS = [
       { id: 's2-m03', name: 'Rock Shroom', img: 'assets/monsters/m03-rockshroom.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 1, atk: 1, role: 'normal' },
-      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 8, atk: 2, role: 'mini' },
-      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 20, atk: 2, role: 'boss' }
+      { id: 's2-m07', name: 'Cotton Ghost', img: 'assets/monsters/m07-cottonghost.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's2-m08', name: 'Steel Beetle', img: 'assets/monsters/m08-steelbeetle.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's2-m11', name: 'Sand Scorpion', img: 'assets/monsters/m11-sandscorpion.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's2-m12', name: 'Rainbow Jelly', img: 'assets/monsters/m12-rainbowjelly.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's2-m13', name: 'Mummy Duck', img: 'assets/monsters/m13-mummyduck.png', hp: 2, atk: 1, role: 'normal' },
+      { id: 's2-mini', name: 'Briar Wolf', img: 'assets/monsters/m16-briarwolf.png', hp: 4, atk: 2, role: 'mini' },
+      { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 8, atk: 2, role: 'boss' }
     ];
 
     const STAGES = [
@@ -1781,10 +1782,11 @@
 
     const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-    // Thin combo bonus on top of ATK and the double-hit.
-    // Multiplier = min(CAP, 1 + STEP * (combo - 1)). Combo 1 is ×1 (no change).
-    const COMBO_STEP = 0.25;
-    const COMBO_MULT_CAP = 2;
+    // Combo is off: damage is never multiplied by a streak.
+    function comboMultiplier() {
+      return 1;
+    }
+
     // One Letter and the 25s timeout each cost 2 hero HP (never below 1).
     // Amulet opening fill is free: no toast and no −2 float.
     const HINT_HP_COST = 2;
@@ -2242,18 +2244,13 @@
       els.telegraph.hidden = true;
     }
 
-    function comboMultiplier() {
-      const streak = Math.max(state.combo, 1);
-      return Math.min(COMBO_MULT_CAP, 1 + COMBO_STEP * (streak - 1));
-    }
-
     const CHEERS = ['Great!', 'Nice!', 'Yes!', 'Super!'];
 
     function showCelebrate(word) {
       els.celebrateText.textContent = String(word || '').toUpperCase();
       const cheer = CHEERS[Math.floor(Math.random() * CHEERS.length)];
       els.celebrateCombo.hidden = false;
-      els.celebrateCombo.textContent = state.combo >= 2 ? `COMBO ×${state.combo}` : cheer;
+      els.celebrateCombo.textContent = cheer;
       els.celebrate.classList.remove('show');
       void els.celebrate.offsetWidth;
       els.celebrate.classList.add('show');
@@ -2328,12 +2325,8 @@
       if (hero.doubleNext) buffs.push('Next hit ×2');
       if (hero.amuletReady) buffs.push('Hint Amulet');
       els.buffPill.textContent = buffs.length ? buffs.join(' · ') : 'No special effects';
-      if (state.combo >= 2) {
-        els.comboPill.hidden = false;
-        els.comboPill.textContent = `COMBO ×${state.combo}`;
-      } else {
-        els.comboPill.hidden = true;
-      }
+      els.comboPill.hidden = true;
+      els.comboPill.textContent = '';
 
       els.progressFill.style.width = `${(state.index / Math.max(total, 1)) * 100}%`;
       els.heroHpFill.style.width = `${Math.max(0, (hero.hp / hero.maxHp) * 100)}%`;
@@ -2891,12 +2884,20 @@
       return Math.max(1, Math.round(dmg * comboMultiplier()));
     }
 
+    function isFirstNormal(monster) {
+      if (!monster || monster.role !== 'normal') return false;
+      const first = activeMonsters().find((entry) => entry.role === 'normal');
+      return !!first && monster.id === first.id;
+    }
+
     function applyHeroHit(dmg) {
-      if (state.monster.role === 'normal') {
+      // Only the first normal of the stage falls on a single correct answer.
+      if (isFirstNormal(state.monster)) {
         state.monster.hp = 0;
         return Math.max(1, dmg);
       }
       // Spell is already recorded, so the first correct answer counts as 1.
+      // Later normals, mini, and boss all stay up until a second correct answer.
       const correctSoFar = state.monster.spells.filter((s) => s.ok).length;
       let nextHp = Math.max(0, state.monster.hp - dmg);
       if (nextHp <= 0 && correctSoFar < 2) nextHp = 1;
@@ -3205,7 +3206,6 @@
       els.speakBtn.disabled = true;
 
       if (ok) {
-        state.combo += 1;
         state.monster.spells.push({ word: item.word, img: item.img, ok: true });
         state.spellLog.push({ word: item.word, img: item.img, ok: true });
         const dmg = calcAttackDamage();
@@ -3219,8 +3219,7 @@
           flash(els.monsterPanel, 'hit');
           showDamageFloat(shown, 'good', els.monsterHpFill);
         }, HIT_FOLLOW_MS);
-        const comboNote = state.combo >= 2 ? ` · COMBO ×${state.combo}` : '';
-        els.feedback.textContent = `−${shown} HP${comboNote}`;
+        els.feedback.textContent = `−${shown} HP`;
         els.feedback.className = 'feedback ok';
         Sfx.play('correct');
         updateHud();
@@ -3256,8 +3255,8 @@
           showDamageFloat(dealt, 'hurt', els.heroHpFill);
         }, HIT_FOLLOW_MS);
         els.feedback.textContent = dealt > 0
-          ? `${quip} Light hit −${dealt}. Combo broken.`
-          : `${quip} No HP lost. Combo broken.`;
+          ? `${quip} Light hit −${dealt}.`
+          : `${quip} No HP lost.`;
         updateHud();
       }, TELEGRAPH_MS);
 
