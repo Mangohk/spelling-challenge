@@ -3255,8 +3255,8 @@
           showDamageFloat(dealt, 'hurt', els.heroHpFill);
         }, HIT_FOLLOW_MS);
         els.feedback.textContent = dealt > 0
-          ? `${quip} Light hit −${dealt}. Combo broken.`
-          : `${quip} No HP lost. Combo broken.`;
+          ? `${quip} Light hit −${dealt}.`
+          : `${quip} No HP lost.`;
         updateHud();
       }, TELEGRAPH_MS);
 
