@@ -252,6 +252,26 @@
     .pill.coral { background: #ffe8e4; color: #a3382a; }
     /* .pill sets display, which would otherwise ignore the hidden attribute. */
     #combo-pill[hidden] { display: none !important; }
+    /* Minimal mute. Default is sound on. Same flag gates auto-read and Hear Word. */
+    .mute-btn {
+      appearance: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.86rem;
+      line-height: 1.1;
+      border-radius: 999px;
+      border: 2px solid #1a6f86;
+      background: #e7f6fb;
+      color: #0d3f4e;
+      padding: 0.28rem 0.7rem;
+      touch-action: manipulation;
+    }
+    .mute-btn[aria-pressed="true"] {
+      border-color: #8e2e24;
+      background: #ffe8e4;
+      color: #6e2218;
+    }
     /* Last 5s of the 25s hint turn. Digit only; lives in the meta row, not over letters. */
     #hint-countdown {
       position: absolute;
@@ -287,7 +307,8 @@
       transition: width 0.35s ease;
     }
 
-    /* One shared stage: hero and monster stand on the same ground line. */
+    /* One shared stage: hero and monster stand on the same ground line.
+       inline-size only (not size containment) so a flex arena can still grow. */
     .arena {
       position: relative;
       height: clamp(276px, 34vw, 300px);
@@ -297,6 +318,8 @@
       border: 3px solid #d7ebe1;
       background: #bfe6f6;
       isolation: isolate;
+      container-type: inline-size;
+      container-name: arena;
     }
     .arena-sky {
       position: absolute;
@@ -317,19 +340,34 @@
       border-top: 3px solid rgba(255, 255, 255, 0.5);
       z-index: 0;
     }
+    /* Stance fills the arena height and sits on the ground line.
+       The picture box is 60% of that height (S1: 55–65% of .arena). */
     .fighter {
       position: absolute;
-      bottom: 1.5%;
-      width: clamp(180px, 42%, 240px);
+      top: 0;
+      bottom: 0;
+      width: clamp(210px, 46%, 300px);
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-end;
       text-align: center;
       z-index: 2;
       transform: translateX(0);
+      padding-bottom: 2px;
     }
-    .fighter.hero { left: 2%; }
-    .fighter.monster { right: 2%; }
+    .fighter.hero { left: 1%; }
+    .fighter.monster { right: 1%; }
+    .fighter-art {
+      position: relative;
+      flex: 0 0 auto;
+      height: 60%;
+      width: auto;
+      aspect-ratio: 1 / 1;
+      min-width: 0;
+      min-height: 0;
+      background: transparent;
+    }
     /* Base motion kept; hero/monster overrides aim the lunge and recoil. */
     .fighter.attack { animation: pop 0.35s ease; }
     .fighter.hit { animation: shake 0.4s ease; }
@@ -346,6 +384,46 @@
       0% { transform: translateX(0); }
       42% { transform: translateX(-36px); }
       100% { transform: translateX(0); }
+    }
+    /* Blade light on a correct Attack. Spec: slash-fx-art-tips.md (X1–X3).
+       White core, --sun halo (not --leaf), ~42° wedge, arc 228ms + afterglow 152ms.
+       pointer-events: none. CSS only — no sprite sheet. */
+    .slash-fx {
+      position: absolute;
+      z-index: 3;
+      right: 2%;
+      top: 32%;
+      width: 28%;
+      height: 8%;
+      pointer-events: none;
+      opacity: 0;
+      border-radius: 40% 80% 36% 42%;
+      transform-origin: 6% 72%;
+      filter: blur(1.5px);
+      background: var(--sun);
+      background: linear-gradient(
+        100deg,
+        color-mix(in srgb, var(--sun) 24%, transparent) 0%,
+        color-mix(in srgb, var(--sun) 62%, transparent) 26%,
+        rgba(255, 255, 255, 0.95) 64%,
+        rgba(255, 255, 255, 0.9) 100%
+      );
+      box-shadow: 0 0 6px 1px color-mix(in srgb, var(--sun) 78%, transparent);
+    }
+    .slash-fx.show { animation: slash-swing 380ms ease-out forwards; }
+    @keyframes slash-swing {
+      0% {
+        opacity: 0.93;
+        transform: rotate(22deg) skewX(-18deg) scaleX(0.4);
+      }
+      60% {
+        opacity: 0.9;
+        transform: rotate(46deg) skewX(-14deg) scaleX(1);
+      }
+      100% {
+        opacity: 0.22;
+        transform: rotate(50deg) skewX(-12deg) scaleX(1.02);
+      }
     }
     @keyframes monster-recoil {
       0% { transform: translateX(0); filter: brightness(1); }
@@ -385,14 +463,14 @@
       position: absolute;
       z-index: 4;
       left: 50%;
-      top: 1.5%;
+      top: 0.15rem;
       margin: 0;
-      max-width: 30%;
-      padding: 0.14rem 0.38rem;
+      max-width: 26%;
+      padding: 0.08rem 0.32rem;
       border-radius: 0.65rem;
       background: #fff;
       color: #a3382a;
-      font-size: 0.68rem;
+      font-size: 0.64rem;
       font-weight: 800;
       line-height: 1.15;
       text-align: center;
@@ -481,9 +559,9 @@
     }
     @media (max-width: 560px) {
       .arena { height: 268px; }
-      .fighter { width: 46%; bottom: 1%; }
-      .fighter.hero { left: 1%; }
-      .fighter.monster { right: 1%; }
+      .fighter { width: 48%; }
+      .fighter.hero { left: 0; }
+      .fighter.monster { right: 0; }
       .meaning { margin-bottom: 0.4rem; }
       .slots { min-height: 4.4rem; margin-bottom: 0.45rem; }
       #mode-hint { font-size: 0.92rem; line-height: 1.3; }
@@ -533,10 +611,13 @@
       color: var(--muted);
     }
     .fighter img {
-      width: clamp(168px, 24vw, 204px);
-      height: clamp(168px, 24vw, 204px);
+      display: block;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      flex: 0 0 auto;
+      min-width: 0;
+      min-height: 0;
+      background: transparent;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
     }
     .fighter.boss img {
@@ -928,7 +1009,11 @@
       padding: 0.35rem 0.85rem;
       font-size: 0.92rem;
     }
-    .battle-main { min-width: 0; }
+    .battle-main {
+      min-width: 0;
+      container-type: inline-size;
+      container-name: battle;
+    }
 
     /* Battle only: drop the subtitle and tighten the header so larger fighters fit. */
     @media (min-width: 500px) {
@@ -948,8 +1033,13 @@
         display: none;
       }
       #battle.screen.active {
-        padding-top: 0.55rem;
-        padding-bottom: 0.6rem;
+        padding-top: 0.4rem;
+        padding-bottom: 0.5rem;
+      }
+      #battle .meta-bar { margin-bottom: 0.2rem; }
+      #battle .progress {
+        height: 0.4rem;
+        margin-bottom: 0.2rem;
       }
     }
 
@@ -1088,7 +1178,7 @@
         margin-bottom: 0.12rem;
       }
       #battle .meta-bar {
-        margin-bottom: 0.12rem;
+        margin-bottom: 0.08rem;
         gap: 0.16rem;
       }
       #battle .pill {
@@ -1101,20 +1191,52 @@
         padding: 0.08rem 0.4rem;
       }
       #battle .progress {
-        height: 0.38rem;
-        margin-bottom: 0.16rem;
+        height: 0.32rem;
+        margin-bottom: 0.08rem;
+      }
+      /* Phone arena can grow, but not past the width that keeps a 60% square
+         inside each fighter column (no clipped bodies, HP bars stay apart). */
+      #battle.screen.active .arena {
+        max-height: 86cqi;
       }
       #battle .fighter {
-        top: 2px;
-        bottom: 1px;
+        top: 0;
+        bottom: 0;
+        width: 58%;
         justify-content: flex-end;
       }
-      #battle .fighter img {
-        width: auto;
-        height: auto;
-        aspect-ratio: 1;
-        max-width: 72px;
-        max-height: min(72px, 52%);
+      #battle .fighter.hero {
+        left: 0;
+        align-items: flex-start;
+        text-align: left;
+      }
+      #battle .fighter.monster {
+        right: 0;
+        align-items: flex-end;
+        text-align: right;
+      }
+      #battle .fighter.hero h3,
+      #battle .fighter.hero .tag,
+      #battle .fighter.hero .hp-head {
+        margin-left: 0.15rem;
+        margin-right: auto;
+      }
+      #battle .fighter.monster h3,
+      #battle .fighter.monster .tag,
+      #battle .fighter.monster .hp-head {
+        margin-left: auto;
+        margin-right: 0.15rem;
+      }
+      #battle .fighter .hp-head {
+        width: 78%;
+      }
+      #battle .fighter-art {
+        height: 60%;
+      }
+      #battle .mute-btn {
+        padding: 0.12rem 0.48rem;
+        font-size: 0.72rem;
+        min-height: 1.7rem;
       }
       #battle .fighter h3 {
         font-size: 0.72rem;
@@ -1630,6 +1752,7 @@
         <span class="pill sky" id="def-pill">DEF 0</span>
         <span class="pill sun" id="buff-pill">No special effects</span>
         <span class="pill coral" id="combo-pill" hidden></span>
+        <button type="button" class="mute-btn" id="mute-btn" aria-pressed="false" aria-label="Mute word reading">Mute</button>
       </div>
       <div class="progress"><span id="progress-fill"></span></div>
 
@@ -1648,7 +1771,10 @@
         <div class="fighter hero" id="hero-panel">
           <h3>Hero</h3>
           <p class="tag" id="hero-gear-tag">No gear</p>
-          <img src="assets/hero.png" alt="Hero">
+          <div class="fighter-art">
+            <img src="assets/hero.png" alt="Hero">
+            <div class="slash-fx" id="slash-fx" aria-hidden="true"></div>
+          </div>
           <div class="hp-head">
             <div class="hp-bar"><i id="hero-hp-fill"></i></div>
             <span class="hp-num" id="hero-hp-text">10/10</span>
@@ -1657,7 +1783,9 @@
         <div class="fighter monster" id="monster-panel">
           <h3 id="monster-name">Monster</h3>
           <p class="tag" id="monster-tag">Monster</p>
-          <img id="monster-img" src="assets/monster.png" alt="Monster">
+          <div class="fighter-art">
+            <img id="monster-img" src="assets/monster.png" alt="Monster">
+          </div>
           <div class="hp-head">
             <div class="hp-bar enemy"><i id="monster-hp-fill"></i></div>
             <span class="hp-num" id="monster-hp-text">6/6</span>
@@ -2018,6 +2146,8 @@
       hintCountdown: document.getElementById('hint-countdown'),
       keyboard: document.getElementById('keyboard'),
       speakBtn: document.getElementById('speak-btn'),
+      muteBtn: document.getElementById('mute-btn'),
+      slashFx: document.getElementById('slash-fx'),
       letterHintBtn: document.getElementById('letter-hint-btn'),
       checkBtn: document.getElementById('check-btn'),
       quitBtn: document.getElementById('quit-btn'),
@@ -2071,7 +2201,9 @@
       amuletArmed: false,
       hintFlash: null,
       hintFloat: null,
-      hintToastTimer: null
+      hintToastTimer: null,
+      muted: false,
+      slashTimer: null
     };
 
     let hintClock = null;
@@ -2111,6 +2243,10 @@
       [els.title, els.travel, els.battle, els.loot, els.result].forEach((screen) => {
         screen.classList.toggle('active', screen.id === name);
       });
+      if (name !== 'battle') {
+        cancelSpeech();
+        if (els.slashFx) els.slashFx.classList.remove('show');
+      }
     }
 
     function isValidPhrase(phrase) {
@@ -2269,6 +2405,22 @@
       els.celebrate.classList.remove('show');
       els.telegraph.classList.remove('show');
       els.telegraph.hidden = true;
+      if (state.slashTimer) clearTimeout(state.slashTimer);
+      state.slashTimer = null;
+      if (els.slashFx) els.slashFx.classList.remove('show');
+    }
+
+    function showSlashFx() {
+      const el = els.slashFx;
+      if (!el) return;
+      el.classList.remove('show');
+      void el.offsetWidth;
+      el.classList.add('show');
+      if (state.slashTimer) clearTimeout(state.slashTimer);
+      state.slashTimer = setTimeout(() => {
+        state.slashTimer = null;
+        el.classList.remove('show');
+      }, 390);
     }
 
     const CHEERS = ['Great!', 'Nice!', 'Yes!', 'Super!'];
@@ -2663,18 +2815,48 @@
       renderSlots();
     }
 
-    function speakCurrentWord() {
+    function cancelSpeech() {
+      if (!window.speechSynthesis) return;
+      try { window.speechSynthesis.cancel(); } catch (err) { /* no engine */ }
+    }
+
+    function renderMuteBtn() {
+      const muted = !!state.muted;
+      els.muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+      els.muteBtn.textContent = muted ? 'Unmute' : 'Mute';
+      els.muteBtn.setAttribute('aria-label', muted ? 'Unmute word reading' : 'Mute word reading');
+    }
+
+    function toggleMute() {
+      state.muted = !state.muted;
+      if (state.muted) cancelSpeech();
+      renderMuteBtn();
+    }
+
+    // Hear Word and auto-read share lang, rate, and the mute flag (R2/R4).
+    function speakCurrentWord(opts) {
+      const auto = !!(opts && opts.auto);
+      if (state.muted) return;
       const item = currentWord();
-      if (!item || !window.speechSynthesis) {
-        els.feedback.textContent = 'This browser cannot speak the word.';
-        els.feedback.className = 'feedback bad';
+      if (!item || !window.speechSynthesis || typeof SpeechSynthesisUtterance !== 'function') {
+        if (!auto) {
+          els.feedback.textContent = 'This browser cannot speak the word.';
+          els.feedback.className = 'feedback bad';
+        }
         return;
       }
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(item.word);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.315;
-      window.speechSynthesis.speak(utterance);
+      try {
+        cancelSpeech();
+        const utterance = new SpeechSynthesisUtterance(item.word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.315;
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        if (!auto) {
+          els.feedback.textContent = 'This browser cannot speak the word.';
+          els.feedback.className = 'feedback bad';
+        }
+      }
     }
 
     function letterCount(word) {
@@ -2755,6 +2937,7 @@
     }
 
     function preparePuzzle() {
+      const previousWord = state.attackWord ? state.attackWord.word : '';
       const item = pickNextAttackWord();
       if (!item) return;
       state.locked = false;
@@ -2803,6 +2986,11 @@
       // Tell is visible while the question stays open — it does not lock typing.
       showTelegraph(telegraphGlyph());
       startHintClock();
+      // New puzzle only (R1/R3). Same word after a failed Attack is not read again (R5).
+      if (item.word !== previousWord) {
+        cancelSpeech();
+        speakCurrentWord({ auto: true });
+      }
     }
 
     function guessWord() {
@@ -3213,6 +3401,7 @@
         if (state.mode !== 'pick') revealFullWord();
         showSpellHero('ok');
         flash(els.heroPanel, 'attack');
+        showSlashFx();
         showCelebrate(item.word);
         setTimeout(() => {
           if (round !== state.roundId) return;
@@ -3333,6 +3522,10 @@
       Sfx.ensure();
       speakCurrentWord();
     });
+    els.muteBtn.addEventListener('click', () => {
+      Sfx.ensure();
+      toggleMute();
+    });
     els.spellHearBtn.addEventListener('click', () => {
       Sfx.ensure();
       speakCurrentWord();
@@ -3399,6 +3592,8 @@
         currentWord,
         checkAnswer,
         preparePuzzle,
+        speakCurrentWord,
+        toggleMute,
         showLoot,
         pickLootPair,
         beginBattle,
