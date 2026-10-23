@@ -4,6 +4,16 @@
 
 Open `index.html` to play (or visit the GitHub Pages site).
 
+## Letter Hero (P1 ABC)
+
+For Primary 1 EFL / SpLD letter recognition (A–Z and a–z), open **`letters.html`** or tap **Letter Hero (ABC)** on the title screen.
+
+- **Find It** — see a letter, tap the match
+- **Match Friends** — match uppercase ↔ lowercase
+- **Hear & Tap** — listen to the letter name, then tap it
+
+Calm play: large buttons, slow speech, no timer, gentle “try again” (no HP loss). Ten rounds with stars.
+
 ## How to play
 
 1. On the title screen, pick **Stage One** or **Stage Two**, then tap **Start Adventure**.
