@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Letter Hero - P1 EFL Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Fredoka', 'Quicksand', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-3d {
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .btn-3d:active { transform: translateY(4px); }
+    .btn-yellow {
+      background: linear-gradient(180deg, #FDE047 0%, #EAB308 100%);
+      border-bottom: 5px solid #CA8A04;
+    }
+    .btn-yellow:active { border-bottom-width: 1px; }
+    .btn-green {
+      background: linear-gradient(180deg, #4ADE80 0%, #16A34A 100%);
+      border-bottom: 5px solid #15803D;
+    }
+    .btn-green:active { border-bottom-width: 1px; }
+    .btn-blue {
+      background: linear-gradient(180deg, #60A5FA 0%, #2563EB 100%);
+      border-bottom: 5px solid #1D4ED8;
+    }
+    .btn-blue:active { border-bottom-width: 1px; }
+    .btn-sky {
+      background: linear-gradient(180deg, #7DD3FC 0%, #0EA5E9 100%);
+      border-bottom: 5px solid #0369A1;
+    }
+    .btn-sky:active { border-bottom-width: 1px; }
+    .btn-coral {
+      background: linear-gradient(180deg, #FB7185 0%, #E11D48 100%);
+      border-bottom: 5px solid #BE123C;
+    }
+    .btn-coral:active { border-bottom-width: 1px; }
+    .btn-white {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+      border-bottom: 5px solid #CBD5E1;
+    }
+    .btn-white:active { border-bottom-width: 1px; }
+
+    @keyframes wiggle {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-wiggle { animation: wiggle 0.4s ease-in-out; }
+
+    @keyframes starBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+    .star-pop { animation: starBounce 0.45s ease-in-out; }
+
+    @keyframes letterPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .letter-pulse { animation: letterPulse 0.4s ease; }
+
+    .bg-clouds {
+      background-color: #E0F2FE;
+      background-image:
+        radial-gradient(#BAE6FD 1.5px, transparent 1.5px),
+        radial-gradient(#BAE6FD 1.5px, #E0F2FE 1.5px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+    }
+
+    .opt-on {
+      background: #0EA5E9;
+      color: #fff;
+      box-shadow: 0 2px 0 #0369A1;
+    }
+    .opt-off {
+      color: #0369A1;
+    }
+    .opt-off:hover { background: #E0F2FE; }
+
+    .choice-tile {
+      min-height: 5.5rem;
+      font-size: clamp(2.4rem, 11vw, 3.4rem);
+    }
+  </style>
+</head>
+<body class="bg-clouds min-h-screen flex flex-col items-center p-2 sm:p-4 text-slate-800 antialiased">
+
+  <!-- Title / setup -->
+  <section id="screen-title" class="w-full max-w-4xl flex flex-col gap-3">
+    <header class="w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-lg p-3 sm:p-4 border-4 border-sky-300 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <a href="../index.html" class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-400 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold text-white shadow-inner border-2 border-emerald-500 no-underline hover:brightness-110" title="Back to Teaching Games" aria-label="Back to Teaching Games">Aa</a>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold text-sky-700 leading-tight">Letter Hero</h1>
+          <p class="text-xs sm:text-sm text-sky-500 font-semibold">Primary 1 · Recognise A–Z &amp; a–z</p>
+        </div>
+      </div>
+      <a href="../index.html" class="btn-3d btn-white text-slate-700 font-bold text-sm px-3 py-2 rounded-xl no-underline">← Games</a>
+    </header>
+
+    <div class="w-full bg-white rounded-3xl shadow-2xl p-4 sm:p-6 border-8 border-sky-400">
+      <div class="rounded-2xl bg-gradient-to-br from-sky-100 via-emerald-50 to-amber-50 border-4 border-dashed border-sky-300 p-4 sm:p-5 mb-4">
+        <p class="text-sky-800 font-bold text-lg sm:text-xl mb-1">Find letters. Match friends. Listen carefully.</p>
+        <p class="text-sky-600 font-semibold text-sm sm:text-base">Calm play for P1 EFL / SpLD — big buttons, slow speech, no timer. Wrong answers just mean try again.</p>
+      </div>
+
+      <div class="mb-4">
+        <p class="text-sm font-bold text-slate-600 mb-2">Which letters?</p>
+        <div class="flex bg-sky-100 p-1 rounded-2xl border-2 border-sky-300 gap-1" role="group" aria-label="Letter case">
+          <button type="button" data-case="upper" class="case-btn flex-1 px-2 py-2 sm:px-3 text-sm sm:text-base font-bold rounded-xl transition-colors opt-on">ABC</button>
+          <button type="button" data-case="lower" class="case-btn flex-1 px-2 py-2 sm:px-3 text-sm sm:text-base font-bold rounded-xl transition-colors opt-off">abc</button>
+          <button type="button" data-case="mix" class="case-btn flex-1 px-2 py-2 sm:px-3 text-sm sm:text-base font-bold rounded-xl transition-colors opt-off">Aa Bb</button>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <p class="text-sm font-bold text-slate-600 mb-2">How to play?</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" role="group" aria-label="Game mode">
+          <button type="button" data-mode="find" class="mode-btn btn-3d rounded-2xl border-4 border-sky-500 bg-sky-100 px-2 py-3 text-center">
+            <strong class="block text-sky-800 text-sm sm:text-base">Find It</strong>
+            <span class="text-xs text-sky-600 font-semibold">See &amp; tap</span>
+          </button>
+          <button type="button" data-mode="match" class="mode-btn btn-3d rounded-2xl border-4 border-slate-200 bg-white px-2 py-3 text-center">
+            <strong class="block text-slate-700 text-sm sm:text-base">Match Friends</strong>
+            <span class="text-xs text-slate-500 font-semibold">A → a</span>
+          </button>
+          <button type="button" data-mode="hear" class="mode-btn btn-3d rounded-2xl border-4 border-slate-200 bg-white px-2 py-3 text-center">
+            <strong class="block text-slate-700 text-sm sm:text-base">Hear &amp; Tap</strong>
+            <span class="text-xs text-slate-500 font-semibold">Listen</span>
+          </button>
+          <button type="button" data-mode="mix" class="mode-btn btn-3d rounded-2xl border-4 border-slate-200 bg-white px-2 py-3 text-center">
+            <strong class="block text-slate-700 text-sm sm:text-base">Surprise Mix</strong>
+            <span class="text-xs text-slate-500 font-semibold">All games</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <button type="button" id="start-btn" class="btn-3d btn-green text-white font-extrabold text-xl py-3 px-10 rounded-2xl shadow-xl">
+          Start ★
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Play -->
+  <section id="screen-play" class="w-full max-w-4xl flex-col gap-3 hidden">
+    <header class="w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-lg p-3 sm:p-4 border-4 border-sky-300 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <a href="../index.html" class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-400 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold text-white shadow-inner border-2 border-emerald-500 no-underline hover:brightness-110" title="Back to Teaching Games" aria-label="Back to Teaching Games">Aa</a>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold text-sky-700 leading-tight">Letter Hero</h1>
+          <p class="text-xs sm:text-sm text-sky-500 font-semibold">Primary 1 letter detective</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span id="round-pill" class="bg-sky-100 border-2 border-sky-300 text-sky-800 font-bold px-3 py-1.5 rounded-2xl text-sm">1 / 10</span>
+        <div class="bg-amber-100 border-2 border-amber-400 text-amber-800 font-bold px-3 py-1.5 rounded-2xl flex items-center space-x-1.5 text-sm">
+          <span id="star-icon">⭐</span>
+          <span id="score-text">0</span>
+        </div>
+        <button type="button" id="sound-btn" title="Toggle sound" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border-2 border-slate-300 flex items-center justify-center text-lg hover:bg-slate-50">🔊</button>
+      </div>
+    </header>
+
+    <div class="w-full bg-white rounded-3xl shadow-2xl p-4 sm:p-6 border-8 border-sky-400 flex flex-col items-center">
+      <div class="w-full flex items-center justify-between mb-3 px-1">
+        <span id="mode-tag" class="text-xs sm:text-sm font-bold bg-sky-100 text-sky-700 px-3 py-1 rounded-full border border-sky-300">Find It</span>
+        <div id="star-track" class="flex gap-1 flex-wrap justify-end" aria-hidden="true"></div>
+      </div>
+
+      <div class="relative w-full max-w-md bg-gradient-to-b from-amber-50 to-orange-50 rounded-3xl border-4 border-dashed border-amber-300 shadow-inner flex flex-col items-center justify-center py-6 px-4 mb-4 overflow-hidden">
+        <p id="target-letter" class="font-bold text-slate-800 leading-none letter-pulse" style="font-size: clamp(4.5rem, 22vw, 7rem); text-shadow: 4px 6px 0 #FCD34D;">A</p>
+        <p id="prompt-help" class="mt-2 text-amber-900 font-bold text-base sm:text-lg">Tap the same letter</p>
+        <div id="celebrate" class="absolute inset-0 bg-emerald-500/90 flex items-center justify-center opacity-0 pointer-events-none transition-opacity">
+          <span id="celebrate-text" class="bg-white text-emerald-700 font-black text-2xl px-5 py-2 rounded-full shadow-lg border-4 border-emerald-300">Great!</span>
+        </div>
+      </div>
+
+      <div id="choices" class="w-full max-w-xl grid grid-cols-2 gap-3 sm:gap-4 mb-3" role="group" aria-label="Letter choices"></div>
+      <p id="feedback" class="min-h-[1.5rem] text-center font-bold text-lg text-emerald-700 mb-3" aria-live="polite"></p>
+
+      <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button type="button" id="hear-btn" class="btn-3d btn-yellow text-amber-950 font-bold text-base sm:text-lg py-3 px-6 rounded-2xl shadow-md w-full sm:w-auto">🗣️ Hear again</button>
+        <button type="button" id="home-btn" class="btn-3d btn-white text-slate-700 font-bold text-base sm:text-lg py-3 px-6 rounded-2xl w-full sm:w-auto">Home</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Result -->
+  <section id="screen-result" class="w-full max-w-4xl flex-col gap-3 hidden">
+    <header class="w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-lg p-3 sm:p-4 border-4 border-sky-300 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <a href="../index.html" class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-400 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold text-white shadow-inner border-2 border-emerald-500 no-underline hover:brightness-110" title="Back to Teaching Games" aria-label="Back to Teaching Games">Aa</a>
+        <div>
+          <h1 id="result-title" class="text-xl sm:text-2xl font-bold text-sky-700 leading-tight">Well done!</h1>
+          <p id="result-msg" class="text-xs sm:text-sm text-sky-500 font-semibold">You found lots of letters.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8 border-8 border-amber-300 text-center">
+      <p id="final-score" class="text-4xl sm:text-5xl font-bold text-amber-600 mb-2">⭐ 10 / 10</p>
+      <p class="text-slate-500 font-bold mb-4">Stars for letters found on the first try</p>
+      <div id="result-stars" class="flex justify-center gap-1.5 flex-wrap mb-6"></div>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button type="button" id="again-btn" class="btn-3d btn-green text-white font-extrabold text-lg py-3 px-8 rounded-2xl w-full sm:w-auto">Play again</button>
+        <button type="button" id="change-btn" class="btn-3d btn-sky text-white font-bold text-lg py-3 px-6 rounded-2xl w-full sm:w-auto">Change game</button>
+        <a href="../index.html" class="btn-3d btn-white text-slate-700 font-bold text-lg py-3 px-6 rounded-2xl no-underline w-full sm:w-auto text-center">Teaching Games</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const TOTAL = 10;
+      const CHEERS = ['Great!', 'Yes!', 'Super!', 'Nice!', 'Wow!', 'Yay!'];
+      const MODE_META = {
+        find: { tag: 'Find It', help: 'Tap the same letter' },
+        match: { tag: 'Match Friends', help: 'Tap the matching big or small letter' },
+        hear: { tag: 'Hear & Tap', help: 'Listen, then tap the letter' }
+      };
+
+      const els = {
+        title: document.getElementById('screen-title'),
+        play: document.getElementById('screen-play'),
+        result: document.getElementById('screen-result'),
+        startBtn: document.getElementById('start-btn'),
+        hearBtn: document.getElementById('hear-btn'),
+        homeBtn: document.getElementById('home-btn'),
+        againBtn: document.getElementById('again-btn'),
+        changeBtn: document.getElementById('change-btn'),
+        soundBtn: document.getElementById('sound-btn'),
+        roundPill: document.getElementById('round-pill'),
+        scoreText: document.getElementById('score-text'),
+        starIcon: document.getElementById('star-icon'),
+        starTrack: document.getElementById('star-track'),
+        modeTag: document.getElementById('mode-tag'),
+        targetLetter: document.getElementById('target-letter'),
+        promptHelp: document.getElementById('prompt-help'),
+        choices: document.getElementById('choices'),
+        feedback: document.getElementById('feedback'),
+        celebrate: document.getElementById('celebrate'),
+        celebrateText: document.getElementById('celebrate-text'),
+        finalScore: document.getElementById('final-score'),
+        resultStars: document.getElementById('result-stars'),
+        resultTitle: document.getElementById('result-title'),
+        resultMsg: document.getElementById('result-msg'),
+        caseBtns: [...document.querySelectorAll('.case-btn')],
+        modeBtns: [...document.querySelectorAll('.mode-btn')]
+      };
+
+      const state = {
+        caseMode: 'upper',
+        playMode: 'find',
+        round: 0,
+        score: 0,
+        firstTry: true,
+        answer: '',
+        speakText: '',
+        locked: false,
+        soundOn: true,
+        audioCtx: null
+      };
+
+      function show(screen) {
+        [els.title, els.play, els.result].forEach((s) => {
+          const on = s === screen;
+          s.classList.toggle('hidden', !on);
+          s.classList.toggle('flex', on);
+        });
+      }
+
+      function setCaseUI() {
+        els.caseBtns.forEach((b) => {
+          const on = b.getAttribute('data-case') === state.caseMode;
+          b.classList.toggle('opt-on', on);
+          b.classList.toggle('opt-off', !on);
+        });
+      }
+
+      function setModeUI() {
+        els.modeBtns.forEach((b) => {
+          const on = b.getAttribute('data-mode') === state.playMode;
+          b.classList.toggle('border-sky-500', on);
+          b.classList.toggle('bg-sky-100', on);
+          b.classList.toggle('border-slate-200', !on);
+          b.classList.toggle('bg-white', !on);
+          const strong = b.querySelector('strong');
+          const span = b.querySelector('span');
+          if (strong) strong.className = 'block text-sm sm:text-base ' + (on ? 'text-sky-800' : 'text-slate-700');
+          if (span) span.className = 'text-xs font-semibold ' + (on ? 'text-sky-600' : 'text-slate-500');
+        });
+      }
+
+      els.caseBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.caseMode = btn.getAttribute('data-case');
+          setCaseUI();
+        });
+      });
+      els.modeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.playMode = btn.getAttribute('data-mode');
+          setModeUI();
+        });
+      });
+
+      function ensureAudio() {
+        if (!state.audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (Ctx) state.audioCtx = new Ctx();
+        }
+        if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
+        return state.audioCtx;
+      }
+
+      function tone(freq, dur, type, gain) {
+        if (!state.soundOn) return;
+        const ctx = ensureAudio();
+        if (!ctx) return;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.value = gain || 0.08;
+        o.connect(g);
+        g.connect(ctx.destination);
+        const now = ctx.currentTime;
+        g.gain.setValueAtTime(g.gain.value, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        o.start(now);
+        o.stop(now + dur + 0.02);
+      }
+
+      function sfxCorrect() {
+        tone(523.25, 0.12, 'triangle', 0.09);
+        setTimeout(() => tone(659.25, 0.12, 'triangle', 0.09), 90);
+        setTimeout(() => tone(783.99, 0.18, 'triangle', 0.08), 180);
+      }
+      function sfxWrong() {
+        tone(220, 0.16, 'sine', 0.06);
+        setTimeout(() => tone(180, 0.2, 'sine', 0.05), 100);
+      }
+
+      function speakLetter(ch) {
+        if (!state.soundOn || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(String(ch).toUpperCase());
+        u.rate = 0.7;
+        u.pitch = 1.05;
+        u.lang = 'en-US';
+        window.speechSynthesis.speak(u);
+      }
+
+      function alphabetForCase(caseMode) {
+        const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const lower = 'abcdefghijklmnopqrstuvwxyz'.split('');
+        if (caseMode === 'upper') return upper;
+        if (caseMode === 'lower') return lower;
+        return upper.concat(lower);
+      }
+
+      function randomOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function otherCase(ch) {
+        return ch === ch.toUpperCase() ? ch.toLowerCase() : ch.toUpperCase();
+      }
+
+      function sameLetterFamily(ch) { return ch.toLowerCase(); }
+
+      function distractors(answer, pool, count) {
+        const out = [];
+        const used = new Set([answer]);
+        const familyUsed = new Set([sameLetterFamily(answer)]);
+        for (const ch of shuffle(pool)) {
+          if (used.has(ch) || familyUsed.has(sameLetterFamily(ch))) continue;
+          out.push(ch);
+          used.add(ch);
+          familyUsed.add(sameLetterFamily(ch));
+          if (out.length >= count) break;
+        }
+        while (out.length < count) {
+          const ch = randomOf(pool);
+          if (!used.has(ch)) { out.push(ch); used.add(ch); }
+        }
+        return out;
+      }
+
+      function resolveMode() {
+        if (state.playMode !== 'mix') return state.playMode;
+        return randomOf(['find', 'match', 'hear']);
+      }
+
+      function buildRound() {
+        const mode = resolveMode();
+        const pool = alphabetForCase(state.caseMode);
+        let promptGlyph = '';
+        let answer = '';
+        let speak = '';
+        let choicePool = pool;
+
+        if (mode === 'find') {
+          answer = randomOf(pool);
+          promptGlyph = answer;
+          speak = answer;
+        } else if (mode === 'match') {
+          const base = randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+          const showUpper = Math.random() < 0.5;
+          promptGlyph = showUpper ? base : base.toLowerCase();
+          answer = otherCase(promptGlyph);
+          speak = promptGlyph;
+          choicePool = showUpper
+            ? 'abcdefghijklmnopqrstuvwxyz'.split('')
+            : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        } else {
+          answer = randomOf(pool);
+          promptGlyph = '♪ ?';
+          speak = answer;
+        }
+
+        return {
+          mode,
+          promptGlyph,
+          answer,
+          speak,
+          opts: shuffle([answer, ...distractors(answer, choicePool, 3)])
+        };
+      }
+
+      function renderStars() {
+        els.starTrack.innerHTML = '';
+        for (let i = 0; i < TOTAL; i++) {
+          const s = document.createElement('span');
+          s.className = 'w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ' + (i < state.score ? 'bg-amber-400 star-pop' : 'bg-slate-200');
+          els.starTrack.appendChild(s);
+        }
+        els.scoreText.textContent = String(state.score);
+      }
+
+      function setFeedback(text, kind) {
+        els.feedback.textContent = text || '';
+        els.feedback.className = 'min-h-[1.5rem] text-center font-bold text-lg mb-3 ' +
+          (kind === 'bad' ? 'text-rose-600' : 'text-emerald-700');
+      }
+
+      function startSession() {
+        state.round = 0;
+        state.score = 0;
+        state.locked = false;
+        ensureAudio();
+        show(els.play);
+        renderStars();
+        nextRound();
+      }
+
+      function nextRound() {
+        if (state.round >= TOTAL) {
+          finishSession();
+          return;
+        }
+        state.round += 1;
+        state.firstTry = true;
+        state.locked = false;
+        setFeedback('');
+        els.celebrate.classList.add('opacity-0');
+        els.roundPill.textContent = state.round + ' / ' + TOTAL;
+
+        const round = buildRound();
+        state.answer = round.answer;
+        state.speakText = round.speak;
+
+        const meta = MODE_META[round.mode];
+        els.modeTag.textContent = meta.tag;
+        els.promptHelp.textContent = meta.help;
+        els.targetLetter.textContent = round.promptGlyph;
+        els.targetLetter.style.fontSize = round.mode === 'hear'
+          ? 'clamp(2.4rem, 10vw, 3.2rem)'
+          : 'clamp(4.5rem, 22vw, 7rem)';
+        els.targetLetter.style.color = round.mode === 'hear' ? '#0284c7' : '#1e293b';
+        els.targetLetter.classList.remove('letter-pulse');
+        void els.targetLetter.offsetWidth;
+        els.targetLetter.classList.add('letter-pulse');
+
+        els.choices.innerHTML = '';
+        round.opts.forEach((ch) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'choice-tile btn-3d btn-white rounded-2xl border-4 border-sky-200 font-bold text-slate-800 shadow-md';
+          b.textContent = ch;
+          b.setAttribute('aria-label', 'Letter ' + ch);
+          b.addEventListener('click', () => onChoice(b, ch));
+          els.choices.appendChild(b);
+        });
+
+        setTimeout(() => speakLetter(state.speakText), 180);
+      }
+
+      function onChoice(btn, ch) {
+        if (state.locked) return;
+        if (ch === state.answer) {
+          state.locked = true;
+          btn.classList.remove('btn-white', 'border-sky-200');
+          btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+          [...els.choices.children].forEach((c) => { c.disabled = true; });
+          if (state.firstTry) state.score += 1;
+          renderStars();
+          els.starIcon.classList.remove('star-pop');
+          void els.starIcon.offsetWidth;
+          els.starIcon.classList.add('star-pop');
+          sfxCorrect();
+          const cheer = randomOf(CHEERS);
+          setFeedback(cheer, 'good');
+          els.celebrateText.textContent = cheer;
+          els.celebrate.classList.remove('opacity-0');
+          setTimeout(() => {
+            els.celebrate.classList.add('opacity-0');
+            nextRound();
+          }, 900);
+        } else {
+          state.firstTry = false;
+          btn.classList.add('animate-wiggle', 'bg-rose-100', 'border-rose-400');
+          sfxWrong();
+          setFeedback('Try again', 'bad');
+          speakLetter(state.speakText);
+          setTimeout(() => {
+            btn.classList.remove('animate-wiggle', 'bg-rose-100', 'border-rose-400');
+            btn.disabled = false;
+          }, 420);
+          btn.disabled = true;
+          setTimeout(() => { if (!state.locked) btn.disabled = false; }, 450);
+        }
+      }
+
+      function finishSession() {
+        show(els.result);
+        els.finalScore.textContent = '⭐ ' + state.score + ' / ' + TOTAL;
+        els.resultStars.innerHTML = '';
+        for (let i = 0; i < TOTAL; i++) {
+          const s = document.createElement('span');
+          s.className = 'w-4 h-4 rounded-full ' + (i < state.score ? 'bg-amber-400' : 'bg-slate-200');
+          els.resultStars.appendChild(s);
+        }
+        if (state.score >= 9) {
+          els.resultTitle.textContent = 'Letter Champion!';
+          els.resultMsg.textContent = 'Amazing listening and looking.';
+        } else if (state.score >= 6) {
+          els.resultTitle.textContent = 'Well done!';
+          els.resultMsg.textContent = 'You found lots of letters.';
+        } else {
+          els.resultTitle.textContent = 'Nice try!';
+          els.resultMsg.textContent = 'Practice makes letters easier. Play again!';
+        }
+        sfxCorrect();
+      }
+
+      els.startBtn.addEventListener('click', startSession);
+      els.againBtn.addEventListener('click', startSession);
+      els.changeBtn.addEventListener('click', () => show(els.title));
+      els.homeBtn.addEventListener('click', () => {
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        show(els.title);
+      });
+      els.hearBtn.addEventListener('click', () => {
+        ensureAudio();
+        speakLetter(state.speakText);
+        els.targetLetter.classList.remove('letter-pulse');
+        void els.targetLetter.offsetWidth;
+        els.targetLetter.classList.add('letter-pulse');
+      });
+      els.soundBtn.addEventListener('click', () => {
+        state.soundOn = !state.soundOn;
+        els.soundBtn.textContent = state.soundOn ? '🔊' : '🔇';
+        if (!state.soundOn && window.speechSynthesis) window.speechSynthesis.cancel();
+      });
+
+      setCaseUI();
+      setModeUI();
+      show(els.title);
+    })();
+  </script>
+</body>
+</html>
