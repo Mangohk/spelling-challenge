@@ -1,35 +1,15 @@
-# P1 Letter Recognition Implementation Plan
+# Letter Hero → teaching-games Implementation Plan
 
-> **For agentic workers:** Implement task-by-task. Steps use checkbox syntax.
+**Goal:** Ship Letter Hero as a Primary 1 alphabet game in `Mangohk/teaching-games` format.
 
-**Goal:** Ship a standalone Letter Hero HTML game for A–Z / a–z recognition, linked from Spelling Hero.
+**Architecture:** Standalone folder `letter_hero/` (`index.html` + `index.jpg`) matching other hub games; Tailwind + Fredoka/Quicksand; hub card under Primary 1.
 
-**Architecture:** One self-contained `letters.html` with inline CSS/JS; title-screen link in `index.html`; short README note.
+**Status:** Game reformatted in this branch as a portable package. **Do not merge into spelling-challenge.** Push to `teaching-games` when repo write access is available.
 
-**Tech Stack:** Vanilla HTML/CSS/JS, Web Speech API, Web Audio API, existing `assets/hero.png` + scene colours.
+## Tasks
 
-## Global Constraints
-
-- SpLD-friendly: large targets, no timer, soft retry, slow TTS
-- Match Spelling Hero visual language (Fredoka, Nunito, leaf/sky/sun)
-- No combat HP; 10-round star sessions
-- English UI short and clear
-
----
-
-### Task 1: Build `letters.html`
-
-- [ ] Title options (case + mode) + play + result screens
-- [ ] Round engine for Find It / Match Friends / Hear & Tap
-- [ ] TTS + soft SFX + celebration motion
-- [ ] Mobile-friendly layout
-
-### Task 2: Wire Spelling Hero entry
-
-- [ ] Add “Letter Hero (ABC)” link/button on title screen
-- [ ] Update README
-
-### Task 3: Verify & ship
-
-- [ ] Open in browser / smoke-check flows
-- [ ] Commit, push, open PR
+- [x] Reformat game to teaching-games style (`letter_hero/`)
+- [x] Add `index.jpg` thumbnail + hub card snippet
+- [x] Remove Spelling Hero title integration
+- [ ] Copy `letter_hero/` into `teaching-games` + register hub card + bump stamp
+- [ ] Open PR on `teaching-games` (needs write access)
