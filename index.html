@@ -610,7 +610,15 @@
       font-weight: 700;
       color: var(--muted);
     }
-    .stage-btn.stage-wide { grid-column: 1 / -1; }
+    .practice-link {
+      margin: 0.85rem 0 0;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+    .practice-link a {
+      color: var(--leaf-dark);
+      font-weight: 800;
+    }
     .fighter img {
       display: block;
       width: 100%;
@@ -1811,14 +1819,11 @@
           <strong>Stage Two</strong>
           <span>School rules &amp; assembly dictation</span>
         </button>
-        <button type="button" class="stage-btn stage-wide" id="stage-btn-revision-p5-dictation2" data-stage="revision-p5-dictation2" aria-pressed="false">
-          <strong>溫習・P5 Dictation 2</strong>
-          <span>18 words, each once · Fill</span>
-        </button>
       </div>
       <div class="actions center">
         <button type="button" class="btn" id="start-btn">Start Adventure</button>
       </div>
+      <p class="practice-link"><a href="dictation2/">P5 Dictation 2</a></p>
     </section>
 
     <section id="travel" class="screen">
@@ -1987,29 +1992,6 @@
       { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
-    // Independent revision pack. Not merged into SCHOOL_WORDS or RULES_WORDS.
-    // `word` is the graded target (no a/an). `say` is Hear Word / auto-read only.
-    const REVISION_P5_DICTATION2_WORDS = [
-      { word: 'vest', say: 'a vest', clue: 'A vest is a short jacket with no sleeves.' },
-      { word: 'mittens', say: 'mittens', clue: 'Mittens keep your hands warm, with one pocket for the thumb.' },
-      { word: 'suit', say: 'a suit', clue: 'A suit is a matching jacket and trousers.' },
-      { word: 'umbrella', say: 'an umbrella', clue: 'An umbrella keeps the rain off you.' },
-      { word: 'jeans', say: 'jeans', clue: 'Jeans are strong blue trousers.' },
-      { word: 'mirror', say: 'a mirror', clue: 'A mirror shows what you look like.' },
-      { word: 'backpack', say: 'a backpack', clue: 'A backpack is a bag you wear on your back.' },
-      { word: 'hairbrush', say: 'a hairbrush', clue: 'A hairbrush smooths your hair.' },
-      { word: 'earrings', say: 'earrings', clue: 'Earrings are jewelry you wear on your ears.' },
-      { word: 'comb', say: 'a comb', clue: 'A comb has teeth that tidy your hair.' },
-      { word: 'looks', say: 'looks', clue: 'She looks happy when she smiles.' },
-      { word: 'wears', say: 'wears', clue: 'He wears a red cap to school.' },
-      { word: 'sunglasses', say: 'sunglasses', clue: 'Sunglasses protect your eyes from bright sun.' },
-      { word: 'sisters', say: 'sisters', clue: 'Sisters are girls born in the same family.' },
-      { word: 'singing', say: 'singing', clue: 'Singing is making music with your voice.' },
-      { word: 'dancing', say: 'dancing', clue: 'Dancing is moving your body to music.' },
-      { word: 'theirs', say: 'theirs', clue: 'That blue bag is theirs, not ours.' },
-      { word: 'mine', say: 'mine', clue: 'This pencil is mine.' }
-    ];
-
     // Both stages: first normal HP 1, other normals HP 6, mini 14, boss 28.
     // A correct Attack subtracts ATK. HP at 0 is a knockout.
     const STAGE_ONE_MONSTERS = [
@@ -2036,28 +2018,6 @@
       { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 28, atk: 2, role: 'boss' }
     ];
 
-    // Repeat Stage One's roster (same role / HP / ATK) until every revision word has a fight.
-    function cycleRoster(roster, count) {
-      const fights = [];
-      for (let i = 0; i < count; i += 1) {
-        const src = roster[i % roster.length];
-        fights.push({
-          id: `${src.id}-c${i + 1}`,
-          name: src.name,
-          img: src.img,
-          hp: src.hp,
-          atk: src.atk,
-          role: src.role
-        });
-      }
-      return fights;
-    }
-
-    const REVISION_P5_DICTATION2_MONSTERS = cycleRoster(
-      STAGE_ONE_MONSTERS,
-      REVISION_P5_DICTATION2_WORDS.length
-    );
-
     const STAGES = [
       {
         id: 'stage1',
@@ -2072,15 +2032,6 @@
         labelEn: 'Stage Two',
         words: RULES_WORDS,
         monsters: STAGE_TWO_MONSTERS
-      },
-      {
-        id: 'revision-p5-dictation2',
-        label: '溫習・P5 Dictation 2',
-        labelEn: 'Revision · P5 Dictation 2',
-        words: REVISION_P5_DICTATION2_WORDS,
-        monsters: REVISION_P5_DICTATION2_MONSTERS,
-        fillOnly: true,
-        onceEach: true
       }
     ];
 
@@ -2389,20 +2340,13 @@
     }
 
     const TITLE_COPY = {
-      story: {
-        blurb: 'Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!',
-        hint: 'Pick a stage, then start. Each attack is Fill, Pick, or Fix from the same word bank.'
-      },
-      revision: {
-        blurb: 'Walk forward through 18 battles. Each revision word appears once. Spell it to attack and earn gear!',
-        hint: 'Pick a stage, then start. This pack is Fill only: listen, spell the word, then Attack.'
-      }
+      blurb: 'Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!',
+      hint: 'Pick a stage, then start. Each attack is Fill, Pick, or Fix from the same word bank.'
     };
 
     function renderTitleCopy() {
-      const copy = state.stageId === 'revision-p5-dictation2' ? TITLE_COPY.revision : TITLE_COPY.story;
-      if (els.titleBlurb) els.titleBlurb.textContent = copy.blurb;
-      if (els.titleHint) els.titleHint.textContent = copy.hint;
+      if (els.titleBlurb) els.titleBlurb.textContent = TITLE_COPY.blurb;
+      if (els.titleHint) els.titleHint.textContent = TITLE_COPY.hint;
     }
 
     function setStageSelection(stageId) {
@@ -2518,17 +2462,6 @@
           state.attackWord = forced;
           return forced;
         }
-      }
-      // One target per fight, in the shuffled run order. Later attacks on the
-      // same monster stay on that word so the pack is not drawn twice.
-      if (state.stage && state.stage.onceEach) {
-        const pinned = state.words[state.index] || null;
-        if (!pinned) return null;
-        if (!state.attackWord || state.attackWord.word !== pinned.word) {
-          state.wordDrawCounts[pinned.word] = (state.wordDrawCounts[pinned.word] || 0) + 1;
-        }
-        state.attackWord = pinned;
-        return pinned;
       }
       const buckets = { short: [], long: [] };
       state.words.forEach((entry) => {
@@ -3080,8 +3013,6 @@
     }
 
     function pickMode() {
-      // Revision stays on Fill. The second-puzzle mode swap must not block it.
-      if (state.stage && state.stage.fillOnly) return 'fill';
       // forceMode / forceWord are inert unless a local check sets them.
       if (state.forceMode && MODES.includes(state.forceMode)) return state.forceMode;
       // Amulet fills letters, so the fight it is spent on opens on Fill or Fix.
@@ -3690,7 +3621,6 @@
     function startAdventure() {
       state.stage = getStageById(state.stageId);
       state.words = loadWords(state.stage.words);
-      if (state.stage && state.stage.onceEach) state.words = shuffle(state.words);
       state.wordDrawCounts = {};
       state.attackWord = null;
       state.index = 0;
