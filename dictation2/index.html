@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5 Dictation 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0f2a24;
+      --muted: #4d6b62;
+      --panel: #fffdf7;
+      --leaf: #1f9d6c;
+      --leaf-dark: #147a52;
+      --sky: #2f9fbf;
+      --sun: #f0b429;
+      --coral: #e85d4c;
+      --mist: #d8f3e7;
+      --shadow: 0 10px 28px rgba(15, 42, 36, 0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Nunito', system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(240, 180, 41, 0.28), transparent 32%),
+        radial-gradient(circle at 88% 10%, rgba(47, 159, 191, 0.22), transparent 30%),
+        linear-gradient(160deg, #e8faf2 0%, #f7fbff 45%, #fff6e8 100%);
+      padding: clamp(0.7rem, 2.5vw, 1.4rem);
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 0.85rem; }
+    h1 {
+      margin: 0;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.7rem, 5vw, 2.2rem);
+      letter-spacing: 0.01em;
+    }
+    .sub {
+      margin: 0.2rem 0 0;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .panel {
+      background: var(--panel);
+      border: 3px solid rgba(31, 157, 108, 0.18);
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow);
+      padding: clamp(1rem, 3vw, 1.4rem);
+    }
+    .panel[hidden] { display: none !important; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.9rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: var(--mist);
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+    .pill strong { font-family: 'Fredoka', cursive, sans-serif; font-weight: 600; }
+    .mute-btn, .btn, .key, .hear-btn {
+      font-family: inherit;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .mute-btn {
+      margin-left: auto;
+      border: 2px solid #b9dfcd;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 0.35rem 0.8rem;
+    }
+    .mute-btn[aria-pressed="true"] {
+      background: #ffe8e4;
+      border-color: #f0b2a8;
+    }
+    .clue {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.02rem, 2.8vw, 1.2rem);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+    .hear-row { margin-bottom: 0.85rem; }
+    .hear-btn, .btn {
+      border: none;
+      color: #fff;
+      font-weight: 800;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #39c989, var(--leaf));
+      box-shadow: 0 5px 0 var(--leaf-dark);
+    }
+    .hear-btn { padding: 0.7rem 1.15rem; font-size: 1rem; }
+    .btn { padding: 0.8rem 1.4rem; font-size: 1.05rem; }
+    .hear-btn:active, .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--leaf-dark); }
+    .slots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      min-height: 4.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .slot {
+      width: clamp(1.85rem, 8vw, 3.15rem);
+      height: clamp(2.5rem, 11vw, 4rem);
+      border-radius: 0.85rem;
+      border: 3px solid #cfe8dc;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.15rem, 4.6vw, 1.75rem);
+      font-weight: 700;
+      box-shadow: 0 4px 0 #d7ebe1;
+    }
+    .slot.active {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 4px rgba(47, 159, 191, 0.18), 0 4px 0 #b7dce8;
+    }
+    .slot.filled { background: #fff9e8; border-color: #efd27a; }
+    .slot.correct {
+      background: #e5f9ef;
+      border-color: var(--leaf);
+    }
+    .slot.wrong {
+      background: #ffe8e4;
+      border-color: var(--coral);
+      color: #b53b2d;
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .feedback {
+      min-height: 1.5rem;
+      margin: 0 0 0.8rem;
+      text-align: center;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .feedback.ok { color: var(--leaf-dark); }
+    .feedback.bad { color: #b53b2d; }
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.4rem;
+      margin-bottom: 0.9rem;
+    }
+    @media (min-width: 640px) {
+      .keyboard { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+    }
+    .key {
+      border: 2px solid #b9dfcd;
+      min-height: 2.9rem;
+      border-radius: 0.8rem;
+      background: var(--mist);
+      color: var(--ink);
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 4px 0 #b9dfcd;
+      text-transform: uppercase;
+    }
+    .key:active { transform: translateY(2px); box-shadow: 0 2px 0 #b9dfcd; }
+    .key.wide { grid-column: span 2; font-size: 0.95rem; text-transform: none; }
+    .actions { text-align: center; }
+    .done {
+      text-align: center;
+      padding: 1.4rem 1rem 1.1rem;
+    }
+    .score-kicker {
+      margin: 0;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.3rem;
+    }
+    .final-score {
+      margin: 0.3rem 0 1rem;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(2.4rem, 8vw, 3.4rem);
+      color: var(--leaf-dark);
+    }
+    .back {
+      margin: 0.9rem 0 0;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+    .back a { color: var(--leaf-dark); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>P5 Dictation 2</h1>
+      <p class="sub">Listen, then fill in the word.</p>
+    </header>
+
+    <section id="play" class="panel">
+      <div class="meta">
+        <span class="pill"><span class="pill-label">Word</span> <strong id="progress-pill">1 / 18</strong></span>
+        <span class="pill"><span class="pill-label">Score</span> <strong id="score-pill">0 / 18</strong></span>
+        <button type="button" class="mute-btn" id="mute-btn" aria-pressed="false" aria-label="Mute word reading">Mute</button>
+      </div>
+      <p class="clue" id="clue"></p>
+      <div class="hear-row">
+        <button type="button" class="hear-btn" id="hear-btn">Hear</button>
+      </div>
+      <div class="slots" id="slots" aria-live="polite"></div>
+      <p class="feedback" id="feedback" role="status"></p>
+      <div class="keyboard" id="keyboard"></div>
+      <div class="actions">
+        <button type="button" class="btn" id="check-btn">Check</button>
+      </div>
+    </section>
+
+    <section id="done" class="panel done" hidden>
+      <p class="score-kicker">Score</p>
+      <p class="final-score" id="final-score">0 / 18</p>
+      <button type="button" class="btn" id="replay-btn">Replay</button>
+    </section>
+
+    <p class="back"><a href="../">Back to Spelling Hero</a></p>
+  </div>
+
+  <script>
+    // Graded target is `word` (no a/an). `say` is Hear / auto-read only.
+    const WORDS = [
+      { word: 'vest', say: 'a vest', clue: 'A vest is a short jacket with no sleeves.' },
+      { word: 'mittens', say: 'mittens', clue: 'Mittens keep your hands warm, with one pocket for the thumb.' },
+      { word: 'suit', say: 'a suit', clue: 'A suit is a matching jacket and trousers.' },
+      { word: 'umbrella', say: 'an umbrella', clue: 'An umbrella keeps the rain off you.' },
+      { word: 'jeans', say: 'jeans', clue: 'Jeans are strong blue trousers.' },
+      { word: 'mirror', say: 'a mirror', clue: 'A mirror shows what you look like.' },
+      { word: 'backpack', say: 'a backpack', clue: 'A backpack is a bag you wear on your back.' },
+      { word: 'hairbrush', say: 'a hairbrush', clue: 'A hairbrush smooths your hair.' },
+      { word: 'earrings', say: 'earrings', clue: 'Earrings are jewelry you wear on your ears.' },
+      { word: 'comb', say: 'a comb', clue: 'A comb has teeth that tidy your hair.' },
+      { word: 'looks', say: 'looks', clue: 'She looks happy when she smiles.' },
+      { word: 'wears', say: 'wears', clue: 'He wears a red cap to school.' },
+      { word: 'sunglasses', say: 'sunglasses', clue: 'Sunglasses protect your eyes from bright sun.' },
+      { word: 'sisters', say: 'sisters', clue: 'Sisters are girls born in the same family.' },
+      { word: 'singing', say: 'singing', clue: 'Singing is making music with your voice.' },
+      { word: 'dancing', say: 'dancing', clue: 'Dancing is moving your body to music.' },
+      { word: 'theirs', say: 'theirs', clue: 'That blue bag is theirs, not ours.' },
+      { word: 'mine', say: 'mine', clue: 'This pencil is mine.' }
+    ];
+
+    const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const TOTAL = WORDS.length;
+
+    const els = {
+      play: document.getElementById('play'),
+      done: document.getElementById('done'),
+      progress: document.getElementById('progress-pill'),
+      score: document.getElementById('score-pill'),
+      finalScore: document.getElementById('final-score'),
+      clue: document.getElementById('clue'),
+      slots: document.getElementById('slots'),
+      feedback: document.getElementById('feedback'),
+      keyboard: document.getElementById('keyboard'),
+      hear: document.getElementById('hear-btn'),
+      mute: document.getElementById('mute-btn'),
+      check: document.getElementById('check-btn'),
+      replay: document.getElementById('replay-btn')
+    };
+
+    const state = {
+      order: [],
+      index: 0,
+      blanks: [],
+      cursor: 0,
+      locked: false,
+      score: 0,
+      muted: false,
+      finished: false
+    };
+
+    let roundToken = 0;
+    let pendingAdvance = null;
+
+    function clearPendingAdvance() {
+      if (pendingAdvance) window.clearTimeout(pendingAdvance);
+      pendingAdvance = null;
+    }
+
+    function shuffle(list) {
+      const copy = list.slice();
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function currentItem() {
+      return state.order[state.index] || null;
+    }
+
+    function spokenForm(item) {
+      if (!item) return '';
+      const say = String(item.say || '').trim();
+      return say || item.word;
+    }
+
+    function cancelSpeech() {
+      if (!window.speechSynthesis) return;
+      try { window.speechSynthesis.cancel(); } catch (err) { /* no engine */ }
+    }
+
+    function speakCurrent(opts) {
+      const auto = !!(opts && opts.auto);
+      if (state.muted || state.finished) return;
+      const item = currentItem();
+      if (!item || !window.speechSynthesis || typeof SpeechSynthesisUtterance !== 'function') {
+        if (!auto) setFeedback('This browser cannot speak the word.', 'bad');
+        return;
+      }
+      try {
+        cancelSpeech();
+        const utterance = new SpeechSynthesisUtterance(spokenForm(item));
+        utterance.lang = 'en-US';
+        utterance.rate = 0.315;
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        if (!auto) setFeedback('This browser cannot speak the word.', 'bad');
+      }
+    }
+
+    function setFeedback(text, kind) {
+      els.feedback.textContent = text;
+      els.feedback.className = kind ? `feedback ${kind}` : 'feedback';
+    }
+
+    function renderMute() {
+      const muted = !!state.muted;
+      els.mute.setAttribute('aria-pressed', muted ? 'true' : 'false');
+      els.mute.textContent = muted ? 'Unmute' : 'Mute';
+      els.mute.setAttribute('aria-label', muted ? 'Unmute word reading' : 'Mute word reading');
+    }
+
+    function renderScore() {
+      els.score.textContent = `${state.score} / ${TOTAL}`;
+    }
+
+    function renderSlots() {
+      const item = currentItem();
+      if (!item) return;
+      els.slots.innerHTML = '';
+      const chars = [...item.word];
+      chars.forEach((ch, i) => {
+        const slot = document.createElement('button');
+        slot.type = 'button';
+        slot.className = 'slot';
+        slot.dataset.index = String(i);
+        const blank = state.blanks.find((entry) => entry.index === i);
+        slot.textContent = blank && blank.value ? blank.value.toUpperCase() : '';
+        if (blank && blank.value) slot.classList.add('filled');
+        if (blank && blank.wrong) slot.classList.add('wrong');
+        if (state.blanks[state.cursor] && state.blanks[state.cursor].index === i && !state.locked) {
+          slot.classList.add('active');
+        }
+        slot.addEventListener('click', () => {
+          if (state.locked) return;
+          const idx = state.blanks.findIndex((entry) => entry.index === i);
+          if (idx === -1) return;
+          state.cursor = idx;
+          renderSlots();
+        });
+        els.slots.appendChild(slot);
+      });
+    }
+
+    function showWord(opts) {
+      const item = currentItem();
+      if (!item) return;
+      state.blanks = [...item.word].map((_, index) => ({ index, value: '', wrong: false }));
+      state.cursor = 0;
+      state.locked = false;
+      els.progress.textContent = `${state.index + 1} / ${TOTAL}`;
+      renderScore();
+      els.clue.textContent = item.clue || 'Listen, then fill in the word.';
+      setFeedback('', '');
+      els.check.disabled = false;
+      renderSlots();
+      if (!opts || opts.speak !== false) speakCurrent({ auto: true });
+    }
+
+    function startRound() {
+      clearPendingAdvance();
+      roundToken += 1;
+      state.order = shuffle(WORDS);
+      state.index = 0;
+      state.score = 0;
+      state.finished = false;
+      state.locked = false;
+      els.done.hidden = true;
+      els.play.hidden = false;
+      showWord();
+    }
+
+    function finishRound() {
+      state.finished = true;
+      state.locked = true;
+      cancelSpeech();
+      els.play.hidden = true;
+      els.done.hidden = false;
+      els.finalScore.textContent = `${state.score} / ${TOTAL}`;
+    }
+
+    function advance() {
+      clearPendingAdvance();
+      state.index += 1;
+      if (state.index >= TOTAL) finishRound();
+      else showWord();
+    }
+
+    function queueAdvance() {
+      const token = roundToken;
+      clearPendingAdvance();
+      pendingAdvance = window.setTimeout(() => {
+        pendingAdvance = null;
+        if (token !== roundToken) return;
+        advance();
+      }, 650);
+    }
+
+    function typeLetter(letter) {
+      if (state.locked || state.finished || !state.blanks.length) return;
+      const blank = state.blanks[state.cursor];
+      if (!blank) return;
+      blank.value = String(letter || '').toLowerCase();
+      blank.wrong = false;
+      const next = state.blanks.findIndex((entry, i) => i > state.cursor && !entry.value);
+      state.cursor = next === -1 ? state.cursor : next;
+      if (els.feedback.classList.contains('bad')) setFeedback('', '');
+      renderSlots();
+    }
+
+    function backspace() {
+      if (state.locked || state.finished || !state.blanks.length) return;
+      const blank = state.blanks[state.cursor];
+      if (blank && blank.value) {
+        blank.value = '';
+        blank.wrong = false;
+      } else if (state.cursor > 0) {
+        state.cursor -= 1;
+        state.blanks[state.cursor].value = '';
+        state.blanks[state.cursor].wrong = false;
+      }
+      renderSlots();
+    }
+
+    function guessWord() {
+      const item = currentItem();
+      if (!item) return '';
+      return state.blanks.map((blank) => blank.value || '').join('');
+    }
+
+    function checkAnswer() {
+      if (state.locked || state.finished) return;
+      const item = currentItem();
+      if (!item) return;
+      if (state.blanks.some((blank) => !blank.value)) {
+        setFeedback('Fill every letter.', 'bad');
+        return;
+      }
+      const guess = guessWord();
+      const ok = guess === item.word;
+      if (ok) {
+        state.score += 1;
+        renderScore();
+        state.locked = true;
+        state.blanks.forEach((blank) => { blank.wrong = false; });
+        els.slots.querySelectorAll('.slot').forEach((slot) => {
+          slot.classList.remove('wrong', 'active');
+          slot.classList.add('correct');
+        });
+        setFeedback('Correct', 'ok');
+        queueAdvance();
+        return;
+      }
+      state.blanks.forEach((blank) => {
+        blank.wrong = blank.value !== item.word[blank.index];
+      });
+      setFeedback('Try again', 'bad');
+      renderSlots();
+    }
+
+    function toggleMute() {
+      state.muted = !state.muted;
+      if (state.muted) cancelSpeech();
+      renderMute();
+    }
+
+    function buildKeyboard() {
+      els.keyboard.innerHTML = '';
+      LETTERS.forEach((letter) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'key';
+        btn.textContent = letter;
+        btn.addEventListener('click', () => typeLetter(letter));
+        els.keyboard.appendChild(btn);
+      });
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'key wide';
+      del.textContent = 'Delete';
+      del.addEventListener('click', backspace);
+      els.keyboard.appendChild(del);
+    }
+
+    els.hear.addEventListener('click', () => speakCurrent());
+    els.mute.addEventListener('click', toggleMute);
+    els.check.addEventListener('click', checkAnswer);
+    els.replay.addEventListener('click', startRound);
+
+    document.addEventListener('keydown', (event) => {
+      if (state.finished) return;
+      if (event.key === 'Enter') {
+        if (event.target instanceof HTMLButtonElement) return;
+        event.preventDefault();
+        checkAnswer();
+      } else if (event.key === 'Backspace') {
+        event.preventDefault();
+        backspace();
+      } else if (/^[a-zA-Z]$/.test(event.key)) {
+        event.preventDefault();
+        typeLetter(event.key);
+      }
+    });
+
+    buildKeyboard();
+    renderMute();
+    startRound();
+
+    window.__DICTATION2 = {
+      WORDS,
+      state,
+      startRound,
+      showWord,
+      typeLetter,
+      checkAnswer,
+      speakCurrent,
+      spokenForm,
+      currentItem,
+      guessWord,
+      flushAdvance() {
+        if (!pendingAdvance) return false;
+        const timer = pendingAdvance;
+        pendingAdvance = null;
+        window.clearTimeout(timer);
+        advance();
+        return true;
+      }
+    };
+  </script>
+</body>
+</html>
