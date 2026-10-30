@@ -997,6 +997,15 @@
     .pick-choices[hidden] {
       display: none !important;
     }
+    /* Pick only: Attack, pocket, then choices in the keyboard band. Fill keeps source order. */
+    #battle.mode-pick > .play-dock {
+      display: flex;
+      flex-direction: column;
+    }
+    #battle.mode-pick > .play-dock > .battle-actions { order: 1; }
+    #battle.mode-pick > .play-dock > .pocket { order: 2; }
+    #battle.mode-pick > .play-dock > .pick-choices { order: 3; }
+    #battle.mode-pick > .play-dock > .keyboard { order: 4; }
     .spell-hero {
       text-align: center;
       margin: 0 0 0.55rem;
@@ -1076,6 +1085,15 @@
       }
       #battle.screen.active:has(.keyboard[hidden]) {
         padding-bottom: 10.5rem;
+      }
+      /* Pick keeps this dock in the column. A fixed sheet would cover the question. */
+      #battle.screen.active.mode-pick:has(#pick-choices:not([hidden])) {
+        padding-bottom: 0.5rem;
+      }
+      #battle.screen.active.mode-pick > .play-dock {
+        position: relative;
+        inset: auto;
+        z-index: auto;
       }
       #battle .play-dock {
         position: fixed;
@@ -1187,6 +1205,10 @@
       #battle.screen.active:has(.keyboard[hidden]) {
         padding-bottom: 0.12rem;
         scroll-padding-bottom: 0;
+      }
+      /* In-flow dock already includes the choices. Do not keep the fixed-dock cushion. */
+      #battle.screen.active.mode-pick:has(#pick-choices:not([hidden])) {
+        padding-bottom: 0.12rem;
       }
       #battle.screen.active > * {
         flex: 0 0 auto;
@@ -2266,7 +2288,6 @@
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="pick-stem" id="pick-stem" hidden></p>
-      <div class="pick-choices" id="pick-choices" hidden></div>
       <div class="spell-hero" id="spell-hero" hidden aria-live="polite">
         <p class="spell-hero-kicker" id="spell-hero-kicker">Correct</p>
         <p class="spell-hero-word" id="spell-hero-word"></p>
@@ -2284,6 +2305,7 @@
           <div class="pocket-slots" id="pocket-slots"></div>
         </div>
         <div class="keyboard" id="keyboard"></div>
+        <div class="pick-choices" id="pick-choices" hidden></div>
         <div class="actions battle-actions center">
           <button type="button" class="btn" id="check-btn">Attack!</button>
           <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
@@ -3630,6 +3652,7 @@
       const typing = state.mode === 'fill';
       els.slots.hidden = !typing;
       els.keyboard.hidden = !typing;
+      if (els.battle) els.battle.classList.toggle('mode-pick', state.mode === 'pick');
       if (typing) {
         els.pickChoices.hidden = true;
         els.pickChoices.innerHTML = '';
