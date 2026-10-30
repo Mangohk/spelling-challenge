@@ -293,6 +293,59 @@ test('G3 G4 pick stem is the answer prefix and fill still types', async () => {
   assert.equal(document.getElementById('pick-choices').hidden, true);
 });
 
+test('L1 L2 L3 pick choices sit in the Fill keyboard band under Attack and pocket', async () => {
+  const { document, window } = load('test=1&stage=stage3&skipTravel=1&forceMode=pick&forceWord=apple');
+  document.getElementById('start-btn').click();
+  await new Promise((r) => setTimeout(r, 30));
+
+  const arena = document.getElementById('arena');
+  const img = document.getElementById('word-prompt-img');
+  const stem = document.getElementById('pick-stem');
+  const attack = document.getElementById('check-btn');
+  const pocket = document.getElementById('pocket-bar');
+  const choices = document.getElementById('pick-choices');
+  const slots = document.getElementById('slots');
+  const keyboard = document.getElementById('keyboard');
+  const dock = document.getElementById('play-dock');
+  const main = document.getElementById('battle-main');
+
+  assert.equal(choices.parentElement, dock);
+  assert.equal(keyboard.parentElement, dock);
+  assert.equal(stem.parentElement, main);
+  assert.equal(slots.parentElement, main);
+  assert.equal(slots.hidden, true);
+  assert.equal(keyboard.hidden, true);
+  assert.equal(choices.hidden, false);
+  assert.equal(choices.querySelectorAll('.pick-choice').length, 3);
+
+  const follows = (earlier, later) => Boolean(
+    earlier.compareDocumentPosition(later) & window.Node.DOCUMENT_POSITION_FOLLOWING
+  );
+  assert.ok(follows(arena, img));
+  assert.ok(follows(img, stem));
+  assert.ok(follows(stem, dock));
+  assert.ok(follows(pocket, choices));
+  assert.ok(follows(keyboard, choices));
+  assert.ok(follows(choices, attack));
+
+  const dockIds = [...dock.children].map((el) => el.id || el.className);
+  assert.deepEqual(dockIds, ['pocket-bar', 'keyboard', 'pick-choices', 'actions battle-actions center']);
+  assert.match(html, /#battle \.play-dock:has\(#pick-choices:not\(\[hidden\]\)\) > \.battle-actions \{\s*order: -1;/);
+
+  window.__SPELL.state.forceMode = 'fill';
+  window.__SPELL.state.forceWord = 'apple';
+  window.__SPELL.state.index = 0;
+  window.__SPELL.preparePuzzle();
+  assert.equal(document.getElementById('slots').hidden, false);
+  assert.equal(document.getElementById('keyboard').hidden, false);
+  assert.equal(document.getElementById('pick-choices').hidden, true);
+  assert.equal(document.getElementById('slots').parentElement, main);
+  assert.deepEqual(
+    [...dock.children].map((el) => el.id || el.className),
+    ['pocket-bar', 'keyboard', 'pick-choices', 'actions battle-actions center']
+  );
+});
+
 test('G5 G6 G7 attack loot stays at or below 3 and respects the atk gate', () => {
   const { spell } = load('test=1&stage=stage3&skipTravel=1');
   const hero = {

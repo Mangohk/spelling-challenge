@@ -997,6 +997,20 @@
     .pick-choices[hidden] {
       display: none !important;
     }
+    /* Pick choices share Fill's keyboard band inside the same dock.
+       Attack stays above the pocket (same stack as phone Fill).
+       Hidden choices do not match, so Fill's dock order is unchanged. */
+    #battle .play-dock:has(#pick-choices:not([hidden])) {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    #battle .play-dock:has(#pick-choices:not([hidden])) > .battle-actions {
+      order: -1;
+    }
+    #battle .play-dock > #pick-choices {
+      margin: 0;
+    }
     .spell-hero {
       text-align: center;
       margin: 0 0 0.55rem;
@@ -1076,6 +1090,12 @@
       }
       #battle.screen.active:has(.keyboard[hidden]) {
         padding-bottom: 10.5rem;
+      }
+      /* Fixed dock only (500–560). Choices replace the keyboard, so the
+         clearance has to cover Attack + pocket + three buttons. ≤499
+         puts the dock back in flow and resets this. */
+      #battle.screen.active:has(#pick-choices:not([hidden])) {
+        padding-bottom: 23rem;
       }
       #battle .play-dock {
         position: fixed;
@@ -1185,6 +1205,10 @@
         --battle-bottom-clearance: var(--play-dock-safari-buffer, 56px);
       }
       #battle.screen.active:has(.keyboard[hidden]) {
+        padding-bottom: 0.12rem;
+        scroll-padding-bottom: 0;
+      }
+      #battle.screen.active:has(#pick-choices:not([hidden])) {
         padding-bottom: 0.12rem;
         scroll-padding-bottom: 0;
       }
@@ -2266,7 +2290,6 @@
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
       <p class="pick-stem" id="pick-stem" hidden></p>
-      <div class="pick-choices" id="pick-choices" hidden></div>
       <div class="spell-hero" id="spell-hero" hidden aria-live="polite">
         <p class="spell-hero-kicker" id="spell-hero-kicker">Correct</p>
         <p class="spell-hero-word" id="spell-hero-word"></p>
@@ -2284,6 +2307,7 @@
           <div class="pocket-slots" id="pocket-slots"></div>
         </div>
         <div class="keyboard" id="keyboard"></div>
+        <div class="pick-choices" id="pick-choices" hidden></div>
         <div class="actions battle-actions center">
           <button type="button" class="btn" id="check-btn">Attack!</button>
           <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
