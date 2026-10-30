@@ -19,7 +19,8 @@
       --coral: #e85d4c;
       --mist: #d8f3e7;
       --shadow: 0 10px 28px rgba(15, 42, 36, 0.12);
-      /* Fixed cushion for the Safari toolbar. Separate from safe-area (48–64px). */
+      /* No-visualViewport cushion (48–56px), separate from safe-area.
+         While visualViewport is anchoring the dock, script sets this to 0px. */
       --play-dock-safari-buffer: 56px;
     }
     *, *::before, *::after { box-sizing: border-box; }
@@ -1219,11 +1220,10 @@
         flex: 0 0 auto;
       }
       /* Arena takes leftover space and shrinks first so the letter grid is not clipped.
-         The floor drops by the Safari buffer so that cushion comes out of the
-         battlefield, not out of the letter tiles or the Correct line (H1/H3). */
+         Floor stays in the 48–64px band and is not reduced by the Safari cushion. */
       #battle.screen.active .arena {
         flex: 1 1 auto;
-        min-height: max(0px, calc(64px - var(--battle-bottom-clearance, var(--play-dock-safari-buffer, 56px))));
+        min-height: 64px;
         height: auto;
         margin-bottom: 0.12rem;
       }
@@ -1305,8 +1305,11 @@
         margin-bottom: 0.1rem;
       }
       #battle .meaning .word-prompt-img {
-        width: 48px;
-        height: 48px;
+        width: 68px;
+        height: 68px;
+        min-width: 68px;
+        min-height: 68px;
+        flex-shrink: 0;
         border-width: 2px;
         border-radius: 0.65rem;
       }
@@ -1360,8 +1363,8 @@
         inset: auto;
         z-index: auto;
         flex: 0 0 auto;
-        /* Buffer sits on top of the existing 0.45rem padding and safe-area.
-           It is not a stand-in for the Safari toolbar height. */
+        /* Cushion is 0px while visualViewport anchors the dock, otherwise the
+           48–56px fallback. Safe-area is added separately, not inside that range. */
         padding-bottom: calc(0.45rem + var(--battle-bottom-clearance, 56px) + env(safe-area-inset-bottom, 0px));
       }
       #battle .keyboard {
@@ -1410,10 +1413,6 @@
       }
       #battle:has(#spell-hero:not([hidden])) .word-prompt {
         margin-bottom: 0.1rem;
-      }
-      #battle:has(#spell-hero:not([hidden])) .meaning .word-prompt-img {
-        width: 40px;
-        height: 40px;
       }
     }
     @keyframes pop {
@@ -2497,9 +2496,13 @@
       const clear = () => {
         root.style.removeProperty('--vv-height');
         root.style.removeProperty('--vv-offset-top');
+        root.style.removeProperty('--play-dock-safari-buffer');
       };
       const vv = readVisualViewport();
-      if (!vv) return;
+      if (!vv) {
+        clear();
+        return;
+      }
       const battle = document.getElementById('battle');
       const active = !!(battle && battle.classList.contains('active'));
       let narrow = false;
@@ -2520,6 +2523,7 @@
       }
       root.style.setProperty('--vv-height', height + 'px');
       root.style.setProperty('--vv-offset-top', (Number.isFinite(offsetTop) ? Math.max(0, offsetTop) : 0) + 'px');
+      root.style.setProperty('--play-dock-safari-buffer', '0px');
     }
 
     function schedulePlayDockAnchor() {
