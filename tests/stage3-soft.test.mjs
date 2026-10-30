@@ -351,6 +351,11 @@ test('G5 G6 G7 attack loot stays at or below 3 and respects the atk gate', () =>
   spell.applyLoot({ id: 'wood_sword', name: 'Wood Sword', kind: 'atk', value: 1 });
   assert.equal(hero.atk, 3);
   spell.applyLoot({ id: 'lucky_feather', name: 'Lucky Feather', kind: 'double', value: 1 });
+  assert.equal(hero.doubleNext, false);
+  assert.equal(hero.pocket.length, 1);
+  assert.equal(hero.pocket[0].name, 'Lucky Feather');
+  spell.usePocketItem(0);
   assert.equal(hero.doubleNext, true);
+  assert.equal(hero.pocket.length, 0);
   assert.equal(hero.atk, 3);
 });
