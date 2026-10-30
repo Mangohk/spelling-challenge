@@ -199,7 +199,7 @@
       box-shadow: 0 5px 0 #c48c12;
       color: #5c4300;
     }
-    /* Attack is the solid primary. Hint is solid sun. End stays the ghost button. */
+    /* Attack is the solid primary. End stays the ghost button. */
     #check-btn {
       background: var(--leaf);
       color: #fff;
@@ -209,16 +209,6 @@
     }
     #check-btn:active {
       box-shadow: 0 2px 0 var(--leaf-dark);
-    }
-    #letter-hint-btn {
-      background: var(--sun);
-      color: var(--ink);
-      font-weight: 800;
-      text-shadow: none;
-      box-shadow: 0 5px 0 #c48c12;
-    }
-    #letter-hint-btn:active {
-      box-shadow: 0 2px 0 #c48c12;
     }
     .btn:disabled {
       opacity: 0.55;
@@ -275,24 +265,25 @@
       background: #ffe8e4;
       color: #6e2218;
     }
-    /* Last 5s of the 25s hint turn. Digit only; lives in the meta row, not over letters. */
+    /* 15s auto-hint timer. Centered in the arena gap between hero and monster.
+       Separate control from the enemy-head turn count (.turn-count). */
     #hint-countdown {
       position: absolute;
       z-index: 8;
       left: 50%;
-      top: 0.35rem;
-      transform: translateX(-50%);
+      top: 54%;
+      transform: translate(-50%, -50%);
       pointer-events: none;
-      background: var(--sun);
-      color: var(--ink);
-      border: 2px solid #c98a12;
+      background: rgba(231, 246, 251, 0.92);
+      color: #1a6f86;
+      border: 2px solid #1a6f86;
       font-family: 'Fredoka', cursive, sans-serif;
-      font-size: 1.15rem;
+      font-size: 1.35rem;
       line-height: 1;
-      min-width: 2.15rem;
+      min-width: 2.6rem;
       justify-content: center;
-      padding: 0.28rem 0.55rem;
-      box-shadow: 0 2px 0 rgba(138, 101, 8, 0.25);
+      padding: 0.28rem 0.5rem;
+      box-shadow: 0 2px 0 rgba(26, 111, 134, 0.25);
     }
     #hint-countdown[hidden] { display: none !important; }
     .progress {
@@ -1003,8 +994,7 @@
     }
     .keyboard[hidden],
     .slots[hidden],
-    .pick-choices[hidden],
-    #letter-hint-btn[hidden] {
+    .pick-choices[hidden] {
       display: none !important;
     }
     .spell-hero {
@@ -1112,13 +1102,6 @@
         min-height: 2.85rem;
         padding: 0.55rem 0.7rem;
         font-size: 1.02rem;
-        font-weight: 800;
-      }
-      #battle .play-dock #letter-hint-btn {
-        flex: 0 0 auto;
-        min-height: 2.85rem;
-        padding: 0.45rem 0.6rem;
-        font-size: 0.92rem;
         font-weight: 800;
       }
       #battle .play-dock #quit-btn {
@@ -1376,7 +1359,6 @@
         font-size: 1.2rem;
       }
       #battle .play-dock #check-btn,
-      #battle .play-dock #letter-hint-btn,
       #battle .play-dock #quit-btn {
         min-height: 44px;
       }
@@ -2122,7 +2104,6 @@
         <div class="arena-sky" aria-hidden="true"></div>
         <div class="arena-ground" aria-hidden="true"></div>
         <div class="float-dmg" id="float-dmg" aria-hidden="true"></div>
-        <div class="pill" id="hint-countdown" hidden></div>
         <div class="telegraph" id="telegraph" hidden aria-hidden="true"><span id="telegraph-glyph">!</span></div>
         <div class="celebrate" id="celebrate" aria-live="polite">
           <div class="celebrate-stars" aria-hidden="true">★ ★ ★</div>
@@ -2144,6 +2125,7 @@
             <span class="hp-num" id="hero-hp-text">10/10</span>
           </div>
         </div>
+        <div class="pill mid-countdown" id="hint-countdown" hidden aria-live="polite"></div>
         <div class="fighter monster" id="monster-panel">
           <h3 id="monster-name">Monster</h3>
           <p class="tag" id="monster-tag">Monster</p>
@@ -2187,7 +2169,6 @@
         </div>
         <div class="keyboard" id="keyboard"></div>
         <div class="actions battle-actions center">
-          <button type="button" class="btn sun" id="letter-hint-btn">Hint One Letter</button>
           <button type="button" class="btn" id="check-btn">Attack!</button>
           <button type="button" class="btn ghost" id="quit-btn">End Adventure</button>
         </div>
@@ -2369,9 +2350,9 @@
       return 1;
     }
 
-    // 25s still auto-fills one blank. It does not cost HP and does not spend the enemy turn.
-    const HINT_TIMEOUT_MS = 25000;
-    const HINT_COUNTDOWN_LEAD_MS = 5000;
+    // 15s with no letter input auto-fills one blank and spends one enemy turn.
+    // No hint HP penalty. A letter input restarts the 15s.
+    const HINT_TIMEOUT_MS = 15000;
     const HINT_TOAST_MS = 1200;
     const POCKET_CAP = 5;
     const ATTACK_LOOT_CHANCE = 0.12;
@@ -2622,7 +2603,6 @@
       speakBtn: document.getElementById('speak-btn'),
       muteBtn: document.getElementById('mute-btn'),
       slashFx: document.getElementById('slash-fx'),
-      letterHintBtn: document.getElementById('letter-hint-btn'),
       checkBtn: document.getElementById('check-btn'),
       quitBtn: document.getElementById('quit-btn'),
       lootSub: document.getElementById('loot-sub'),
@@ -3226,6 +3206,7 @@
       els.feedback.className = 'feedback';
       Sfx.play('tap');
       renderSlots();
+      startHintClock();
     }
 
     function backspace() {
@@ -3331,6 +3312,15 @@
       }
       els.hintCountdown.hidden = true;
       els.hintCountdown.textContent = '';
+      els.hintCountdown.removeAttribute('aria-label');
+    }
+
+    function paintHintCountdown(remainMs) {
+      const sec = Math.max(1, Math.ceil(remainMs / 1000));
+      const label = `${sec}s`;
+      if (els.hintCountdown.textContent !== label) els.hintCountdown.textContent = label;
+      els.hintCountdown.hidden = false;
+      els.hintCountdown.setAttribute('aria-label', `Auto letter in ${sec} seconds`);
     }
 
     function focusNextHintCursor() {
@@ -3346,8 +3336,8 @@
       state.cursor = firstEmptyCursor();
     }
 
-    // Hint One Letter fills one cell and spends one enemy turn. No HP cost.
-    // Timeout passes spendTurn:false so the auto-fill is not an answer.
+    // Fills one cell and spends one enemy turn. No hint HP cost.
+    // The 15s timeout uses kind 'empty' and the default spendTurn.
     function performHintFill(kind, opts) {
       const spendTurn = !opts || opts.spendTurn !== false;
       if (state.locked || state.mode === 'pick' || !currentWord()) return false;
@@ -3371,24 +3361,22 @@
       return true;
     }
 
-    function useLetterHint() {
-      performHintFill('button');
-    }
-
     function handleHintTimeout() {
-      performHintFill('empty', { spendTurn: false });
-      if (!state.locked && state.mode !== 'pick' && els.battle.classList.contains('active')) {
-        startHintClock();
-      }
+      performHintFill('empty');
+      if (state.locked || state.mode === 'pick' || !els.battle.classList.contains('active')) return;
+      if (!hintTargets('empty').length) return;
+      startHintClock();
     }
 
     function startHintClock() {
       clearHintClock();
       if (state.locked || state.mode === 'pick' || !els.battle.classList.contains('active')) return;
+      if (!hintTargets('empty').length) return;
       const puzzle = state.puzzlesServed;
       const round = state.roundId;
       const started = Date.now();
       const limit = hintLimitMs();
+      paintHintCountdown(limit);
       hintClock = setInterval(() => {
         if (round !== state.roundId || puzzle !== state.puzzlesServed || state.locked || state.mode === 'pick') {
           clearHintClock();
@@ -3400,15 +3388,7 @@
           handleHintTimeout();
           return;
         }
-        if (remain <= HINT_COUNTDOWN_LEAD_MS) {
-          const sec = Math.min(5, Math.max(1, Math.ceil(remain / 1000)));
-          const label = String(sec);
-          if (els.hintCountdown.textContent !== label) els.hintCountdown.textContent = label;
-          els.hintCountdown.hidden = false;
-        } else if (!els.hintCountdown.hidden) {
-          els.hintCountdown.hidden = true;
-          els.hintCountdown.textContent = '';
-        }
+        paintHintCountdown(remain);
       }, 200);
     }
 
@@ -3534,7 +3514,6 @@
       const typing = state.mode === 'fill';
       els.slots.hidden = !typing;
       els.keyboard.hidden = !typing;
-      els.letterHintBtn.hidden = !typing;
       if (typing) {
         els.pickChoices.hidden = true;
         els.pickChoices.innerHTML = '';
@@ -3599,7 +3578,6 @@
       els.checkBtn.disabled = false;
       els.checkBtn.textContent = 'Attack!';
       els.speakBtn.disabled = false;
-      els.letterHintBtn.disabled = false;
       hideSpellHero();
       if (item.img) {
         els.wordPromptImg.hidden = false;
@@ -3823,7 +3801,6 @@
         if (!state.hero || state.hero.hp > 0) {
           state.locked = false;
           if (els.checkBtn) els.checkBtn.disabled = false;
-          if (els.letterHintBtn && state.mode !== 'pick') els.letterHintBtn.disabled = false;
           return;
         }
         heroFell();
@@ -4506,7 +4483,6 @@
       clearHintClock();
       state.locked = true;
       els.checkBtn.disabled = true;
-      els.letterHintBtn.disabled = true;
       els.speakBtn.disabled = true;
 
       if (ok) {
@@ -4630,7 +4606,6 @@
       Sfx.ensure();
       speakCurrentWord();
     });
-    els.letterHintBtn.addEventListener('click', useLetterHint);
     if (els.pocketToggle) els.pocketToggle.addEventListener('click', togglePocketOpen);
     els.checkBtn.addEventListener('click', checkAnswer);
     els.quitBtn.addEventListener('click', () => finishAdventure(false));
@@ -4687,7 +4662,6 @@
         REVIEW_MIN_MS,
         TELEGRAPH_MS,
         HINT_TIMEOUT_MS,
-        HINT_COUNTDOWN_LEAD_MS,
         POCKET_CAP,
         ATTACK_LOOT_CHANCE,
         TURN_RESET_MS,
@@ -4716,7 +4690,6 @@
         applyLoot,
         applyGear,
         TRAVEL_MS,
-        useLetterHint,
         calcAttackDamage,
         performHintFill,
         handleHintTimeout,
