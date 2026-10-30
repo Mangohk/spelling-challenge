@@ -2161,7 +2161,7 @@
       </div>
       <div class="play-dock" id="play-dock">
         <div class="pocket" id="pocket-bar">
-          <button type="button" class="pocket-toggle" id="pocket-toggle">Pocket <span id="pocket-count">0/5</span></button>
+          <button type="button" class="pocket-toggle" id="pocket-toggle">Pocket</button>
           <div class="pocket-slots" id="pocket-slots"></div>
         </div>
         <div class="keyboard" id="keyboard"></div>
@@ -2622,7 +2622,6 @@
       heroBits: document.getElementById('hero-bits'),
       pocketBar: document.getElementById('pocket-bar'),
       pocketToggle: document.getElementById('pocket-toggle'),
-      pocketCount: document.getElementById('pocket-count'),
       pocketSlots: document.getElementById('pocket-slots'),
       battleToast: document.getElementById('battle-toast'),
       equipBanner: document.getElementById('equip-banner'),
@@ -3857,7 +3856,6 @@
       if (!root || !state.hero) return;
       if (!state.hero.pocket) state.hero.pocket = [];
       const pocket = state.hero.pocket;
-      if (els.pocketCount) els.pocketCount.textContent = `${pocket.length}/${POCKET_CAP}`;
       if (els.pocketBar) els.pocketBar.classList.toggle('open', state.pocketOpen !== false);
       root.innerHTML = '';
       for (let i = 0; i < POCKET_CAP; i += 1) {

@@ -162,6 +162,8 @@ test('P1–P6 pocket cap, manual use, and no opening prefill or pocket max-HP it
   assert.equal(hero.pocket.length, 5);
   assert.match(document.getElementById('battle-toast').textContent, /口袋已滿/);
   assert.equal(document.querySelectorAll('.pocket-slot').length, 5);
+  assert.equal(document.getElementById('pocket-toggle').textContent.trim(), 'Pocket');
+  assert.equal(document.getElementById('pocket-count'), null);
 
   spell.usePocketItem(0);
   assert.equal(hero.pocket.length, 4);
