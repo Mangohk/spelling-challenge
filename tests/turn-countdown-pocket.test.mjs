@@ -82,23 +82,19 @@ test('T2 C1 countdown opens at 3 for normal and mini, and 2 for boss', async () 
   assert.equal(document.getElementById('turn-count-num').textContent, '2');
 });
 
-test('T1 T6 C3 timeout fills one letter without HP loss or a turn spend; Hint spends a turn', async () => {
-  const { spell } = await boot('test=1&stage=stage1&skipTravel=1');
+test('E1 E2 E3 timeout fills one letter, spends a turn, and does not apply a hint HP penalty', async () => {
+  const { spell, document } = await boot('test=1&stage=stage1&skipTravel=1');
   armFill(spell, 'library', 0);
   const hp = spell.state.hero.hp;
   const before = spell.state.blanks.filter((b) => b.value).length;
   const turn = spell.state.turnLeft;
+  assert.equal(turn, 3);
   spell.handleHintTimeout();
   assert.equal(spell.state.hero.hp, hp);
-  assert.equal(spell.state.turnLeft, turn);
-  assert.equal(spell.state.blanks.filter((b) => b.value).length, before + 1);
-
-  const hp2 = spell.state.hero.hp;
-  const filled = spell.state.blanks.filter((b) => b.value).length;
-  spell.useLetterHint();
-  assert.equal(spell.state.hero.hp, hp2);
   assert.equal(spell.state.turnLeft, turn - 1);
-  assert.equal(spell.state.blanks.filter((b) => b.value).length, filled + 1);
+  assert.equal(spell.state.blanks.filter((b) => b.value).length, before + 1);
+  assert.equal(document.getElementById('letter-hint-btn'), null);
+  assert.equal(spell.useLetterHint, undefined);
 });
 
 test('T3 T4 a wrong answer spends a turn and only the enemy atk hits when the count reaches 0', async () => {
@@ -318,7 +314,7 @@ test('F3 item FX does not disable the letter keys or Attack', async () => {
   spell.state.hero.hp = 5;
   spell.usePocketItem(0);
   assert.equal(document.getElementById('check-btn').disabled, false);
-  assert.equal(document.getElementById('letter-hint-btn').disabled, false);
+  assert.equal(document.getElementById('letter-hint-btn'), null);
   assert.equal(document.getElementById('keyboard').hidden, false);
   assert.equal(spell.state.locked, false);
 });
