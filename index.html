@@ -1831,7 +1831,7 @@
           <p id="title-blurb">Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!</p>
         </div>
       </div>
-      <p class="hint" id="title-hint">Pick a stage, then start. Each attack is Fill, Pick, or Fix from the same word bank.</p>
+      <p class="hint" id="title-hint">Pick a stage, then start. Each attack is Fill or Pick from the same word bank.</p>
       <div class="stage-pick" role="group" aria-label="Choose stage">
         <button type="button" class="stage-btn" id="stage-btn-1" data-stage="stage1" aria-pressed="true">
           <strong>Stage One</strong>
@@ -1920,7 +1920,7 @@
 
       <div class="meaning" id="word-meaning">
         <div class="word-prompt">
-          <img class="word-prompt-img" id="word-prompt-img" src="assets/words/art-room.png" alt="Spell this word">
+          <img class="word-prompt-img" id="word-prompt-img" alt="" hidden>
           <button type="button" class="btn secondary" id="speak-btn">🔊 Hear Word</button>
         </div>
         <p class="word-clue" id="word-clue"></p>
@@ -2045,36 +2045,36 @@
     ];
 
     // Stage 3 pool A. Shared by normal and mini fights. "MTR" stays uppercase.
+    // "by bus" is not in the drawable set.
     const TRAVEL_WORDS = [
-      { word: 'on foot' },
-      { word: 'on walk' },
-      { word: 'by school bus' },
-      { word: 'by taxi' },
-      { word: 'by car' },
-      { word: 'by minibus' },
-      { word: 'by bus' },
-      { word: 'by tram' },
-      { word: 'by ferry' },
-      { word: 'by MTR' },
-      { word: 'by train' },
-      { word: 'by light rail' },
-      { word: 'apple' },
-      { word: 'banana' },
-      { word: 'mango' },
-      { word: 'pear' },
-      { word: 'kiwi' },
-      { word: 'live in japan' },
-      { word: 'live in thailand' },
-      { word: 'every day' },
-      { word: 'little sister niko' },
-      { word: 'like a dog' },
-      { word: 'taxi driver' },
-      { word: "i don't mind" },
-      { word: 'chat with' }
+      { word: 'on foot', img: 'assets/words/on-foot.png' },
+      { word: 'on walk', img: 'assets/words/on-walk.png' },
+      { word: 'by school bus', img: 'assets/words/by-school-bus.png' },
+      { word: 'by taxi', img: 'assets/words/by-taxi.png' },
+      { word: 'by car', img: 'assets/words/by-car.png' },
+      { word: 'by minibus', img: 'assets/words/by-minibus.png' },
+      { word: 'by tram', img: 'assets/words/by-tram.png' },
+      { word: 'by ferry', img: 'assets/words/by-ferry.png' },
+      { word: 'by MTR', img: 'assets/words/by-mtr.png' },
+      { word: 'by train', img: 'assets/words/by-train.png' },
+      { word: 'by light rail', img: 'assets/words/by-light-rail.png' },
+      { word: 'apple', img: 'assets/words/apple.png' },
+      { word: 'banana', img: 'assets/words/banana.png' },
+      { word: 'mango', img: 'assets/words/mango.png' },
+      { word: 'pear', img: 'assets/words/pear.png' },
+      { word: 'kiwi', img: 'assets/words/kiwi.png' },
+      { word: 'live in japan', img: 'assets/words/live-in-japan.png' },
+      { word: 'live in thailand', img: 'assets/words/live-in-thailand.png' },
+      { word: 'every day', img: 'assets/words/every-day.png' },
+      { word: 'little sister niko', img: 'assets/words/little-sister-niko.png' },
+      { word: 'like a dog', img: 'assets/words/like-a-dog.png' },
+      { word: 'taxi driver', img: 'assets/words/taxi-driver.png' },
+      { word: "i don't mind", img: 'assets/words/i-dont-mind.png' },
+      { word: 'chat with', img: 'assets/words/chat-with.png' }
     ];
     // Boss fight only. Never part of pool A.
     const TRAVEL_BOSS_WORDS = [
-      { word: 'i live on hong kong island.' }
+      { word: 'i live on hong kong island.', img: 'assets/words/i-live-on-hong-kong-island.png' }
     ];
     const STAGE_THREE_MONSTERS = [
       { id: 's3-m01', name: 'Footprint Slime', img: 'assets/monsters/m-footprint-slime.png', hp: 1, atk: 1, role: 'normal' },
@@ -2392,11 +2392,10 @@
 
     let hintClock = null;
 
-    const MODES = ['fill', 'pick', 'fix'];
+    const MODES = ['fill', 'pick'];
     const MODE_COPY = {
       fill: { pill: 'Fill', hint: 'Fill: listen, fill every blank, then Attack!' },
-      pick: { pill: 'Pick', hint: 'Pick: choose the correct spelling, then Attack!' },
-      fix: { pill: 'Fix', hint: 'Fix: fill the empty letters, then Attack!' }
+      pick: { pill: 'Pick', hint: 'Pick: choose the correct spelling, then Attack!' }
     };
 
     function getStageById(id) {
@@ -2421,7 +2420,7 @@
 
     const TITLE_COPY = {
       blurb: 'Walk forward through 8 battles (6 monsters + Mini-Boss + final Boss). Spell words to attack and earn gear!',
-      hint: 'Pick a stage, then start. Each attack is Fill, Pick, or Fix from the same word bank.'
+      hint: 'Pick a stage, then start. Each attack is Fill or Pick from the same word bank.'
     };
 
     function renderTitleCopy() {
@@ -2506,11 +2505,14 @@
       return copy;
     }
 
+    // Fights 1–3 / 4–5 / 6 / 7 / 8. Letters only; B = min(L, max(1, round(L * ratio))).
     function blankRatioForEncounter(index) {
-      const total = activeMonsters().length;
-      if (total <= 1) return 1;
-      // Smooth ramp: encounter 1 → 30%, final Boss → 100%.
-      return 0.3 + (index / (total - 1)) * 0.7;
+      const i = index | 0;
+      if (i <= 2) return 0.30;
+      if (i <= 4) return 0.55;
+      if (i === 5) return 0.75;
+      if (i === 6) return 0.90;
+      return 1;
     }
 
     function pickBlankIndexes(word, ratio) {
@@ -2518,10 +2520,10 @@
       for (let i = 0; i < word.length; i += 1) {
         if (/[a-z]/i.test(word[i])) candidates.push(i);
       }
-      if (!candidates.length) return new Set();
-      const target = Math.max(1, Math.round(candidates.length * ratio));
-      const count = Math.min(candidates.length, target);
-      return new Set(shuffle(candidates).slice(0, count));
+      const L = candidates.length;
+      if (!L) return new Set();
+      const B = Math.min(L, Math.max(1, Math.round(L * ratio)));
+      return new Set(shuffle(candidates).slice(0, B));
     }
 
     function createHero() {
@@ -2840,7 +2842,7 @@
     }
 
     function typeLetter(letter) {
-      if (state.locked || state.mode === 'pick' || !state.blanks.length) return;
+      if (state.locked || state.mode !== 'fill' || !state.blanks.length) return;
       const blank = state.blanks[state.cursor];
       if (!blank) return;
       blank.value = letter.toLowerCase();
@@ -2852,7 +2854,7 @@
     }
 
     function backspace() {
-      if (state.locked || !state.blanks.length) return;
+      if (state.locked || state.mode !== 'fill' || !state.blanks.length) return;
       const blank = state.blanks[state.cursor];
       if (blank?.value) {
         blank.value = '';
@@ -3137,17 +3139,24 @@
       return shuffle([item.word, ...distractors]);
     }
 
+    // Fights 1–3 may be pick or fill. Fights 4–8 are fill only. Fix is never a mode.
+    function modesForEncounter(index) {
+      return (index | 0) <= 2 ? MODES.slice() : ['fill'];
+    }
+
     function pickMode() {
+      const allowed = modesForEncounter(state.index);
       // forceMode / forceWord are inert unless a local check sets them.
-      if (state.forceMode && MODES.includes(state.forceMode)) return state.forceMode;
-      // Amulet fills letters, so the fight it is spent on opens on Fill or Fix.
-      if (state.amuletArmed) return Math.random() < 0.5 ? 'fill' : 'fix';
-      // Second puzzle of a run is forced onto a new mode so one adventure shows at least two.
+      // A forced fix, or a forced pick after fight 3, is ignored.
+      if (state.forceMode && allowed.includes(state.forceMode)) return state.forceMode;
+      // Amulet pre-fills letters, so that puzzle opens on Fill.
+      if (state.amuletArmed && allowed.includes('fill')) return 'fill';
+      // Second puzzle of a run prefers a mode not yet seen, still inside this fight's gate.
       if (state.puzzlesServed >= 1 && state.modesSeen.size < 2) {
-        const others = MODES.filter((mode) => !state.modesSeen.has(mode));
-        return others[Math.floor(Math.random() * others.length)];
+        const others = allowed.filter((mode) => !state.modesSeen.has(mode));
+        if (others.length) return others[Math.floor(Math.random() * others.length)];
       }
-      const bag = ['fill', 'fill', 'pick', 'fix'];
+      const bag = ['fill', 'fill', 'pick'].filter((mode) => allowed.includes(mode));
       return bag[Math.floor(Math.random() * bag.length)];
     }
 
@@ -3160,7 +3169,7 @@
         els.pickStem.hidden = true;
         els.pickStem.textContent = '';
       }
-      const typing = state.mode !== 'pick';
+      const typing = state.mode === 'fill';
       els.slots.hidden = !typing;
       els.keyboard.hidden = !typing;
       els.letterHintBtn.hidden = !typing;
@@ -3245,6 +3254,7 @@
         const stem = pickStem(item.word);
         els.pickStem.hidden = false;
         els.pickStem.textContent = stem;
+        els.slots.innerHTML = '';
         renderPickChoices();
       } else renderSlots();
       applyAmuletOpening();
@@ -3855,10 +3865,10 @@
           Sfx.play('tap');
           renderPickChoices();
         }
-      } else if (state.mode !== 'pick' && /^[a-zA-Z]$/.test(event.key)) {
+      } else if (state.mode === 'fill' && /^[a-zA-Z]$/.test(event.key)) {
         event.preventDefault();
         typeLetter(event.key);
-      } else if (event.key === 'Backspace') {
+      } else if (state.mode === 'fill' && event.key === 'Backspace') {
         event.preventDefault();
         backspace();
       } else if (event.key === 'Enter') {

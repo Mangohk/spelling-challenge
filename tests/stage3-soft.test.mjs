@@ -29,7 +29,6 @@ const POOL_A = [
   'by taxi',
   'by car',
   'by minibus',
-  'by bus',
   'by tram',
   'by ferry',
   'by MTR',
@@ -174,11 +173,12 @@ test('S3 title, travel, and battle backgrounds follow the active stage', async (
   assert.equal(stage2.document.getElementById('monster-name').textContent, 'Rock Shroom');
 });
 
-test('W1 W2 W4 pool A keeps MTR case and does not show a Stage 1 word image', async () => {
+test('W1 W2 W4 pool A keeps MTR case and shows its Stage 3 word image', async () => {
   const { document, spell } = load('test=1&stage=stage3&skipTravel=1&forceMode=fill&forceWord=on%20foot');
   document.getElementById('start-btn').click();
   await new Promise((r) => setTimeout(r, 30));
   assert.deepEqual(wordList(spell.state.words), POOL_A);
+  assert.equal(spell.state.words.some((w) => w.word === 'by bus'), false);
   assert.ok(spell.state.words.some((w) => w.word === 'by MTR'));
   assert.equal(spell.state.words.some((w) => w.word === 'by mtr'), false);
   for (const fruit of ['apple', 'banana', 'mango', 'pear', 'kiwi']) {
@@ -187,9 +187,10 @@ test('W1 W2 W4 pool A keeps MTR case and does not show a Stage 1 word image', as
   assert.ok(spell.state.words.some((w) => w.word === 'on foot'));
   assert.ok(spell.state.words.some((w) => w.word === 'on walk'));
   const img = document.getElementById('word-prompt-img');
-  assert.equal(img.hidden, true);
+  assert.equal(img.hidden, false);
   const src = img.getAttribute('src') || '';
-  assert.equal(/assets\/words\//.test(src), false);
+  assert.match(src, /assets\/words\/on-foot\.png$/);
+  assert.doesNotMatch(src, /art-room|library|students|sit-still/);
 
   const stage1 = load('test=1&stage=stage1&skipTravel=1&forceMode=fill&forceWord=art%20room');
   stage1.document.getElementById('start-btn').click();
@@ -256,14 +257,22 @@ test('G3 G4 pick stem is the answer prefix and fill still types', async () => {
     ['by school bus', 'by s'],
     [BOSS_ONLY, 'i live on']
   ];
+  const pool = spell.state.words.slice();
   for (const [word, expect] of cases) {
-    spell.state.index = word === BOSS_ONLY ? 7 : 0;
+    // Pick is legal on fights 1–3. The island sentence stays boss-only in the
+    // real pool; inject it here so the stem rule can still be checked.
+    spell.state.index = 0;
+    spell.state.words = word === BOSS_ONLY
+      ? pool.concat([{ word: BOSS_ONLY, img: '', clue: '' }])
+      : pool;
     spell.state.forceMode = 'pick';
     spell.state.forceWord = word;
     spell.preparePuzzle();
+    assert.equal(spell.state.mode, 'pick', word);
     assert.equal(document.getElementById('pick-stem').textContent, expect, word);
     assert.equal(document.querySelectorAll('.pick-choice').length, 3, word);
   }
+  spell.state.words = pool;
 
   spell.state.index = 0;
   spell.state.forceMode = 'fill';
@@ -274,9 +283,11 @@ test('G3 G4 pick stem is the answer prefix and fill still types', async () => {
   assert.equal(document.getElementById('slots').hidden, false);
   assert.ok(document.querySelectorAll('#slots .slot').length > 1);
 
+  spell.state.index = 3;
   spell.state.forceMode = 'fix';
   spell.state.forceWord = 'kiwi';
   spell.preparePuzzle();
+  assert.equal(spell.state.mode, 'fill');
   assert.equal(document.getElementById('slots').hidden, false);
   assert.equal(document.getElementById('keyboard').hidden, false);
   assert.equal(document.getElementById('pick-choices').hidden, true);
