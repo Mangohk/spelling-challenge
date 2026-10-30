@@ -340,6 +340,17 @@
       border-top: 3px solid rgba(255, 255, 255, 0.5);
       z-index: 0;
     }
+    /* Stage photo (Stage 3 city day) replaces the painted sky and ground. */
+    .arena.arena-photo {
+      background-color: #c8e9f5;
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .arena.arena-photo .arena-sky,
+    .arena.arena-photo .arena-ground {
+      display: none;
+    }
     /* Stance fills the arena height and sits on the ground line.
        The picture box is 60% of that height (S1: 55–65% of .arena). */
     .fighter {
@@ -748,6 +759,9 @@
       box-shadow: 0 6px 14px rgba(15, 42, 36, 0.1);
       flex-shrink: 0;
     }
+    .meaning .word-prompt-img[hidden] {
+      display: none !important;
+    }
     @media (max-width: 560px) {
       .meaning .word-prompt-img {
         width: 112px;
@@ -924,6 +938,23 @@
       box-shadow: 0 0 0 3px rgba(232, 93, 76, 0.28), 0 4px 0 #f0b2a8;
       animation: shake 0.4s ease;
     }
+    .pick-stem {
+      margin: 0 0 0.45rem;
+      text-align: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: clamp(1.2rem, 4vw, 1.55rem);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+    }
+    .pick-stem::before {
+      content: 'Starts with ';
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .pick-stem[hidden] { display: none !important; }
     .pick-choices {
       display: grid;
       gap: 0.55rem;
@@ -1810,6 +1841,10 @@
           <strong>Stage Two</strong>
           <span>School rules &amp; assembly dictation</span>
         </button>
+        <button type="button" class="stage-btn" id="stage-btn-3" data-stage="stage3" aria-pressed="false">
+          <strong>Stage Three</strong>
+          <span>Traveling means</span>
+        </button>
       </div>
       <div class="actions center">
         <button type="button" class="btn" id="start-btn">Start Adventure</button>
@@ -1892,6 +1927,7 @@
         <small id="mode-hint">Fill: listen, fill every blank, then Attack!</small>
       </div>
       <div class="slots" id="slots" aria-live="polite"></div>
+      <p class="pick-stem" id="pick-stem" hidden></p>
       <div class="pick-choices" id="pick-choices" hidden></div>
       <div class="spell-hero" id="spell-hero" hidden aria-live="polite">
         <p class="spell-hero-kicker" id="spell-hero-kicker">Correct</p>
@@ -2008,6 +2044,49 @@
       { id: 's2-boss', name: 'Storm Eagle', img: 'assets/monsters/m19-stormeagle.png', hp: 28, atk: 2, role: 'boss' }
     ];
 
+    // Stage 3 pool A. Shared by normal and mini fights. "MTR" stays uppercase.
+    const TRAVEL_WORDS = [
+      { word: 'on foot' },
+      { word: 'on walk' },
+      { word: 'by school bus' },
+      { word: 'by taxi' },
+      { word: 'by car' },
+      { word: 'by minibus' },
+      { word: 'by bus' },
+      { word: 'by tram' },
+      { word: 'by ferry' },
+      { word: 'by MTR' },
+      { word: 'by train' },
+      { word: 'by light rail' },
+      { word: 'apple' },
+      { word: 'banana' },
+      { word: 'mango' },
+      { word: 'pear' },
+      { word: 'kiwi' },
+      { word: 'live in japan' },
+      { word: 'live in thailand' },
+      { word: 'every day' },
+      { word: 'little sister niko' },
+      { word: 'like a dog' },
+      { word: 'taxi driver' },
+      { word: "i don't mind" },
+      { word: 'chat with' }
+    ];
+    // Boss fight only. Never part of pool A.
+    const TRAVEL_BOSS_WORDS = [
+      { word: 'i live on hong kong island.' }
+    ];
+    const STAGE_THREE_MONSTERS = [
+      { id: 's3-m01', name: 'Footprint Slime', img: 'assets/monsters/m-footprint-slime.png', hp: 1, atk: 1, role: 'normal' },
+      { id: 's3-m02', name: 'Zebra Cross Crab', img: 'assets/monsters/m-zebra-cross-crab.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's3-m03', name: 'Schoolbus Beetle', img: 'assets/monsters/m-schoolbus-beetle.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's3-m04', name: 'Taxi Toad', img: 'assets/monsters/m-taxi-toad.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's3-m05', name: 'Minibus Moth', img: 'assets/monsters/m-minibus-moth.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's3-m06', name: 'Tram Turtle', img: 'assets/monsters/m-tram-turtle.png', hp: 6, atk: 1, role: 'normal' },
+      { id: 's3-mini', name: 'Ferry Fox', img: 'assets/monsters/m-ferry-fox.png', hp: 14, atk: 2, role: 'mini' },
+      { id: 's3-boss', name: 'Island Guide', img: 'assets/monsters/m-island-guide.png', hp: 28, atk: 2, role: 'boss' }
+    ];
+
     const STAGES = [
       {
         id: 'stage1',
@@ -2022,6 +2101,15 @@
         labelEn: 'Stage Two',
         words: RULES_WORDS,
         monsters: STAGE_TWO_MONSTERS
+      },
+      {
+        id: 'stage3',
+        label: 'Stage Three',
+        labelEn: 'Stage Three',
+        words: TRAVEL_WORDS,
+        bossWords: TRAVEL_BOSS_WORDS,
+        monsters: STAGE_THREE_MONSTERS,
+        bg: 'assets/bg-city-travel-day.png'
       }
     ];
 
@@ -2227,6 +2315,8 @@
       monsterHpText: document.getElementById('monster-hp-text'),
       meaning: document.getElementById('word-meaning'),
       wordPromptImg: document.getElementById('word-prompt-img'),
+      pickStem: document.getElementById('pick-stem'),
+      arena: document.getElementById('arena'),
       wordClue: document.getElementById('word-clue'),
       slots: document.getElementById('slots'),
       spellHero: document.getElementById('spell-hero'),
@@ -2346,6 +2436,29 @@
         btn.setAttribute('aria-pressed', btn.dataset.stage === stageId ? 'true' : 'false');
       });
       renderTitleCopy();
+      applyStageBackdrop(state.stage);
+    }
+
+    const DEFAULT_STAGE_BG = 'assets/scene.png';
+
+    function stageBackground(stage) {
+      return (stage && stage.bg) || DEFAULT_STAGE_BG;
+    }
+
+    function applyStageBackdrop(stage) {
+      const current = stage || state.stage;
+      const bg = stageBackground(current);
+      const url = `url('${bg}')`;
+      if (els.titleScene) els.titleScene.style.backgroundImage = url;
+      if (els.travelBg) els.travelBg.style.backgroundImage = url;
+      if (!els.arena) return;
+      if (current && current.bg) {
+        els.arena.classList.add('arena-photo');
+        els.arena.style.backgroundImage = url;
+      } else {
+        els.arena.classList.remove('arena-photo');
+        els.arena.style.backgroundImage = '';
+      }
     }
 
     function showScreen(name) {
@@ -2363,7 +2476,10 @@
       if (!parts.length) return false;
       const letterCount = phrase.replace(/[^a-z]/gi, '').length;
       if (letterCount < 2) return false;
-      return parts.every((part) => /^[a-z]+(?:'[a-z]+)?$/i.test(part));
+      return parts.every((part, index) => {
+        const token = index === parts.length - 1 ? part.replace(/\.$/, '') : part;
+        return /^[a-z]+(?:'[a-z]+)?$/i.test(token);
+      });
     }
 
     function loadWords(list) {
@@ -2372,7 +2488,7 @@
           const phraseRaw = String(item.word || '').trim().replace(/\s+/g, ' ');
           if (!isValidPhrase(phraseRaw)) return null;
           return {
-            word: phraseRaw.toLowerCase(),
+            word: phraseRaw,
             img: item.img || '',
             clue: String(item.clue || '').trim(),
             say: String(item.say || '').trim()
@@ -2433,41 +2549,53 @@
       return state.attackWord;
     }
 
-    // Length buckets for fair draws (spaces do not count):
-    // short = 1–6 letters, long = 7+. Both stages have words in each bucket.
-    // A draw picks a non-empty bucket with equal probability, then a least-used
-    // word inside that bucket. This keeps short and long words equally frequent
-    // even when one bucket holds more entries.
+    // Length buckets stay as a tie-break inside the unused subset only.
+    // short = 1–6 letters, long = 7+ (spaces do not count).
     const SHORT_LETTER_MAX = 6;
+    const ATK_CAP = 3;
 
     function lengthBucket(word) {
       return letterCount(word) <= SHORT_LETTER_MAX ? 'short' : 'long';
     }
 
+    function attackWordPool() {
+      const pool = state.words.slice();
+      const extras = currentMonsterDef()?.role === 'boss' ? (state.bossExtraWords || []) : [];
+      extras.forEach((entry) => {
+        if (!pool.some((item) => item.word === entry.word)) pool.push(entry);
+      });
+      return pool;
+    }
+
     function pickNextAttackWord() {
-      if (!state.words.length) return null;
+      const all = attackWordPool();
+      if (!all.length) return null;
       if (state.forceWord) {
-        const forced = state.words.find((entry) => entry.word === state.forceWord);
+        const forced = all.find((entry) => entry.word === state.forceWord);
         if (forced) {
           state.attackWord = forced;
           return forced;
         }
       }
+      if (!state.usedWords) state.usedWords = new Set();
+      let unused = all.filter((entry) => !state.usedWords.has(entry.word));
+      if (!unused.length) {
+        all.forEach((entry) => state.usedWords.delete(entry.word));
+        unused = all.slice();
+      }
       const buckets = { short: [], long: [] };
-      state.words.forEach((entry) => {
+      unused.forEach((entry) => {
         buckets[lengthBucket(entry.word)].push(entry);
       });
       const names = ['short', 'long'].filter((name) => buckets[name].length);
       const bucketName = names[Math.floor(Math.random() * names.length)];
       let pool = buckets[bucketName];
-      const counts = pool.map((entry) => state.wordDrawCounts[entry.word] || 0);
-      const min = Math.min(...counts);
-      pool = pool.filter((entry) => (state.wordDrawCounts[entry.word] || 0) === min);
       if (state.attackWord && pool.length > 1) {
         const withoutLast = pool.filter((entry) => entry.word !== state.attackWord.word);
         if (withoutLast.length) pool = withoutLast;
       }
       const picked = pool[Math.floor(Math.random() * pool.length)];
+      state.usedWords.add(picked.word);
       state.wordDrawCounts[picked.word] = (state.wordDrawCounts[picked.word] || 0) + 1;
       state.attackWord = picked;
       return state.attackWord;
@@ -2990,6 +3118,13 @@
       return shuffle(candidates).slice(0, Math.min(candidates.length, want));
     }
 
+    function pickStem(answer) {
+      const text = String(answer || '');
+      const n = text.length;
+      const k = n >= 1 ? Math.max(1, Math.floor(n / 3)) : 0;
+      return text.slice(0, k);
+    }
+
     function buildPickOptions(item) {
       const target = letterCount(item.word);
       const others = state.words.filter((w) => w.word !== item.word);
@@ -3021,6 +3156,10 @@
       els.modePill.textContent = copy.pill;
       els.modePill.className = state.mode === 'pick' ? 'pill sky' : state.mode === 'fix' ? 'pill sun' : 'pill';
       els.modeHint.textContent = copy.hint;
+      if (els.pickStem && state.mode !== 'pick') {
+        els.pickStem.hidden = true;
+        els.pickStem.textContent = '';
+      }
       const typing = state.mode !== 'pick';
       els.slots.hidden = !typing;
       els.keyboard.hidden = !typing;
@@ -3091,13 +3230,23 @@
       els.speakBtn.disabled = false;
       els.letterHintBtn.disabled = false;
       hideSpellHero();
-      const imgSrc = item.img || 'assets/words/art-room.png';
-      els.wordPromptImg.src = imgSrc;
-      els.wordPromptImg.alt = 'Spell this word';
+      if (item.img) {
+        els.wordPromptImg.hidden = false;
+        els.wordPromptImg.src = item.img;
+        els.wordPromptImg.alt = 'Spell this word';
+      } else {
+        els.wordPromptImg.hidden = true;
+        els.wordPromptImg.removeAttribute('src');
+        els.wordPromptImg.alt = '';
+      }
       els.wordClue.textContent = item.clue || 'Listen carefully, then spell the word.';
       applyModeChrome();
-      if (state.mode === 'pick') renderPickChoices();
-      else renderSlots();
+      if (state.mode === 'pick') {
+        const stem = pickStem(item.word);
+        els.pickStem.hidden = false;
+        els.pickStem.textContent = stem;
+        renderPickChoices();
+      } else renderSlots();
       applyAmuletOpening();
       updateHud();
       // Tell is visible while the question stays open — it does not lock typing.
@@ -3221,32 +3370,48 @@
       return dealt;
     }
 
-    function pickLoot() {
-      // Every stage/run: first equipment drop is always an ATK-up (Wood Sword).
-      if (!state.hero.equipment.length) {
-        const starter = EQUIPMENT.find((e) => e.id === 'wood_sword') || EQUIPMENT.find((e) => e.kind === 'atk');
-        return { ...starter };
-      }
-      const used = new Set(state.hero.equipment.map((e) => e.id));
-      const pool = EQUIPMENT.filter((e) => {
-        if (e.kind === 'heal' || e.kind === 'double') return true;
-        return !used.has(e.id);
+    function atkLootAllowed(item) {
+      if (!item || item.kind !== 'atk') return true;
+      const atk = state.hero?.atk ?? 1;
+      if (atk >= ATK_CAP) return false;
+      if (atk === 2) return item.value === 1;
+      return true;
+    }
+
+    function legalLootList(excludeIds) {
+      const banned = new Set(excludeIds || []);
+      const used = new Set((state.hero.equipment || []).map((e) => e.id));
+      const pool = EQUIPMENT.filter((item) => {
+        if (banned.has(item.id) || !atkLootAllowed(item)) return false;
+        if (item.kind === 'heal' || item.kind === 'double') return true;
+        return !used.has(item.id);
       });
-      const source = pool.length ? pool : EQUIPMENT;
+      if (pool.length) return pool;
+      return EQUIPMENT.filter((item) => (
+        !banned.has(item.id) && item.kind !== 'atk' && (item.kind === 'heal' || item.kind === 'double')
+      ));
+    }
+
+    function pickLoot() {
+      const source = legalLootList();
+      // First equipment drop prefers Wood Sword, still obeying the ATK gate.
+      if (!state.hero.equipment.length) {
+        const starter = source.find((e) => e.id === 'wood_sword');
+        if (starter) return { ...starter };
+      }
       if (isEliteEncounter()) {
-        const preferred = currentMonsterDef()?.role === 'boss' ? 'iron_sword' : 'wood_sword';
-        const strong = source.find((e) => e.id === preferred)
-          || source.find((e) => e.kind === 'atk')
-          || source.find((e) => e.id === 'iron_sword')
-          || source[0];
-        return { ...strong };
+        const preferredId = currentMonsterDef()?.role === 'boss' ? 'iron_sword' : 'wood_sword';
+        const preferred = source.find((e) => e.id === preferredId);
+        if (preferred) return { ...preferred };
+        const atk = source.find((e) => e.kind === 'atk');
+        if (atk) return { ...atk };
       }
       return { ...source[Math.floor(Math.random() * source.length)] };
     }
 
     function applyLoot(item) {
       state.hero.equipment.push(item);
-      if (item.kind === 'atk') state.hero.atk += item.value;
+      if (item.kind === 'atk') state.hero.atk = Math.min(ATK_CAP, state.hero.atk + item.value);
       if (item.kind === 'def') state.hero.def += item.value;
       if (item.kind === 'heal') {
         state.hero.hp = Math.min(state.hero.maxHp, state.hero.hp + item.value);
@@ -3256,14 +3421,7 @@
     }
 
     function lootPool(excludeIds) {
-      const banned = new Set(excludeIds || []);
-      const used = new Set(state.hero.equipment.map((e) => e.id));
-      const pool = EQUIPMENT.filter((item) => {
-        if (banned.has(item.id)) return false;
-        if (item.kind === 'heal' || item.kind === 'double') return true;
-        return !used.has(item.id);
-      });
-      return pool.length ? pool : EQUIPMENT.filter((item) => !banned.has(item.id));
+      return legalLootList(excludeIds);
     }
 
     function pickLootPair() {
@@ -3505,7 +3663,7 @@
           Sfx.play('warn');
           return;
         }
-        const ok = state.pickChoice === item.word;
+        const ok = state.pickChoice.toLowerCase() === item.word.toLowerCase();
         markPick();
         resolveRound(ok, state.pickChoice);
         return;
@@ -3520,7 +3678,7 @@
       }
 
       const guess = guessWord();
-      const ok = guess === item.word;
+      const ok = guess.toLowerCase() === item.word.toLowerCase();
       revealFullWord();
       resolveRound(ok, guess);
     }
@@ -3611,6 +3769,8 @@
     function startAdventure() {
       state.stage = getStageById(state.stageId);
       state.words = loadWords(state.stage.words);
+      state.bossExtraWords = loadWords(state.stage.bossWords || []);
+      state.usedWords = new Set();
       state.wordDrawCounts = {};
       state.attackWord = null;
       state.index = 0;
@@ -3646,9 +3806,6 @@
       Sfx.play('click');
       showScreen('title');
     }
-
-    els.titleScene.style.backgroundImage = "url('assets/scene.png')";
-    els.travelBg.style.backgroundImage = "url('assets/scene.png')";
 
     setStageSelection(state.stageId);
     document.querySelectorAll('.stage-btn').forEach((btn) => {
@@ -3734,6 +3891,7 @@
         speakCurrentWord,
         toggleMute,
         showLoot,
+        pickLoot,
         pickLootPair,
         chooseLoot,
         confirmLoot,
