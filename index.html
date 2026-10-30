@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Spelling Hero · Version Two</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +19,9 @@
       --coral: #e85d4c;
       --mist: #d8f3e7;
       --shadow: 0 10px 28px rgba(15, 42, 36, 0.12);
+      /* No-visualViewport cushion (48–56px), separate from safe-area.
+         While visualViewport is anchoring the dock, script sets this to 0px. */
+      --play-dock-safari-buffer: 56px;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -1142,9 +1145,22 @@
        inside the viewport. Width ≥500 keeps the previous layout.
        Letter cells and keys stay ≥44px. touch-action stays on the keys. */
     @media (max-width: 499px) {
+      /* Battle fills the visual viewport, not the layout viewport Safari draws
+         under the URL/toolbar. --vv-* is set from visualViewport; without it
+         the 100dvh box plus the dock buffer below still keeps the keys clear. */
+      html:has(#battle.screen.active) {
+        height: 100%;
+        overflow: hidden;
+      }
       body:has(#battle.screen.active) {
-        height: 100dvh;
-        max-height: 100dvh;
+        position: fixed;
+        top: var(--vv-offset-top, 0px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        min-height: 0;
+        height: var(--vv-height, 100dvh);
+        max-height: var(--vv-height, 100dvh);
         overflow: hidden;
         padding: 0.25rem 0.35rem 0;
         display: flex;
@@ -1182,6 +1198,8 @@
         overflow: hidden;
         padding: 0.28rem 0.32rem 0.12rem;
         scroll-padding-bottom: 0;
+        /* Shared with the dock band so tiles / Correct stay above it (H1/H3). */
+        --battle-bottom-clearance: var(--play-dock-safari-buffer, 56px);
       }
       #battle.screen.active:has(.keyboard[hidden]) {
         padding-bottom: 0.12rem;
@@ -1201,7 +1219,8 @@
       #battle .battle-main > :not(.arena) {
         flex: 0 0 auto;
       }
-      /* Arena takes leftover space and shrinks first so the letter grid is not clipped. */
+      /* Arena takes leftover space and shrinks first so the letter grid is not clipped.
+         Floor stays in the 48–64px band and is not reduced by the Safari cushion. */
       #battle.screen.active .arena {
         flex: 1 1 auto;
         min-height: 64px;
@@ -1286,8 +1305,11 @@
         margin-bottom: 0.1rem;
       }
       #battle .meaning .word-prompt-img {
-        width: 48px;
-        height: 48px;
+        width: 68px;
+        height: 68px;
+        min-width: 68px;
+        min-height: 68px;
+        flex-shrink: 0;
         border-width: 2px;
         border-radius: 0.65rem;
       }
@@ -1341,6 +1363,9 @@
         inset: auto;
         z-index: auto;
         flex: 0 0 auto;
+        /* Cushion is 0px while visualViewport anchors the dock, otherwise the
+           48–56px fallback. Safe-area is added separately, not inside that range. */
+        padding-bottom: calc(0.45rem + var(--battle-bottom-clearance, 56px) + env(safe-area-inset-bottom, 0px));
       }
       #battle .keyboard {
         gap: 0.16rem;
@@ -1388,10 +1413,6 @@
       }
       #battle:has(#spell-hero:not([hidden])) .word-prompt {
         margin-bottom: 0.1rem;
-      }
-      #battle:has(#spell-hero:not([hidden])) .meaning .word-prompt-img {
-        width: 40px;
-        height: 40px;
       }
     }
     @keyframes pop {
@@ -2749,6 +2770,73 @@
       }
     }
 
+    function readVisualViewport() {
+      try {
+        return window.visualViewport || null;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    let playDockAnchorRaf = 0;
+
+    function anchorPlayDockToVisualViewport() {
+      const root = document.documentElement;
+      const clear = () => {
+        root.style.removeProperty('--vv-height');
+        root.style.removeProperty('--vv-offset-top');
+        root.style.removeProperty('--play-dock-safari-buffer');
+      };
+      const vv = readVisualViewport();
+      if (!vv) {
+        clear();
+        return;
+      }
+      const battle = document.getElementById('battle');
+      const active = !!(battle && battle.classList.contains('active'));
+      let narrow = false;
+      try {
+        narrow = window.matchMedia('(max-width: 499px)').matches;
+      } catch (err) {
+        narrow = false;
+      }
+      if (!active || !narrow) {
+        clear();
+        return;
+      }
+      const height = Number(vv.height);
+      const offsetTop = Number(vv.offsetTop);
+      if (!Number.isFinite(height) || height <= 0) {
+        clear();
+        return;
+      }
+      root.style.setProperty('--vv-height', height + 'px');
+      root.style.setProperty('--vv-offset-top', (Number.isFinite(offsetTop) ? Math.max(0, offsetTop) : 0) + 'px');
+      root.style.setProperty('--play-dock-safari-buffer', '0px');
+    }
+
+    function schedulePlayDockAnchor() {
+      if (playDockAnchorRaf) return;
+      playDockAnchorRaf = requestAnimationFrame(() => {
+        playDockAnchorRaf = 0;
+        anchorPlayDockToVisualViewport();
+      });
+    }
+
+    function bindPlayDockVisualViewport() {
+      const vv = readVisualViewport();
+      if (!vv || typeof vv.addEventListener !== 'function') return;
+      vv.addEventListener('resize', schedulePlayDockAnchor);
+      vv.addEventListener('scroll', schedulePlayDockAnchor);
+      window.addEventListener('resize', schedulePlayDockAnchor);
+      window.addEventListener('orientationchange', schedulePlayDockAnchor);
+      try {
+        window.matchMedia('(max-width: 499px)').addEventListener('change', schedulePlayDockAnchor);
+      } catch (err) {
+        /* resize already retargets the narrow battle */
+      }
+    }
+
     function showScreen(name) {
       [els.title, els.travel, els.battle, els.loot, els.result].forEach((screen) => {
         screen.classList.toggle('active', screen.id === name);
@@ -2757,6 +2845,7 @@
         cancelSpeech();
         if (els.slashFx) els.slashFx.classList.remove('show');
       }
+      anchorPlayDockToVisualViewport();
     }
 
     function isValidPhrase(phrase) {
@@ -4583,6 +4672,8 @@
 
     document.addEventListener('pointerdown', () => Sfx.ensure(), { once: true });
     document.addEventListener('keydown', () => Sfx.ensure(), { once: true });
+    bindPlayDockVisualViewport();
+    anchorPlayDockToVisualViewport();
 
     if (PAGE_TEST && PAGE_PARAMS.get('autostart') === '1') {
       setTimeout(() => startAdventure(), 0);
