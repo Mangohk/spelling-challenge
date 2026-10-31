@@ -1,5 +1,5 @@
 /**
- * Soft accept: no Hint One Letter button, 15s mid-arena countdown.
+ * Soft accept: no Hint One Letter button, 10s mid-arena countdown.
  * Run: NODE_PATH=/tmp/stage3-test/node_modules node --test tests/hint-mid-countdown.test.mjs
  */
 import assert from 'node:assert/strict';
@@ -73,13 +73,14 @@ test('B1 the battle dock has no Hint One Letter button', async () => {
   assert.equal(document.getElementById('check-btn').textContent.trim(), 'Attack!');
 });
 
-test('H1 the idle auto-hint threshold is 15 seconds', () => {
+test('H1 the idle auto-hint threshold is 10 seconds', () => {
   const { spell } = load('test=1&stage=stage1&skipTravel=1');
-  assert.equal(spell.HINT_TIMEOUT_MS, 15000);
-  assert.equal(spell.hintLimitMs(), 15000);
+  assert.equal(spell.HINT_TIMEOUT_MS, 10000);
+  assert.equal(spell.hintLimitMs(), 10000);
+  assert.doesNotMatch(html, /HINT_TIMEOUT_MS\s*=\s*15000/);
 });
 
-test('U1 U2 N3 the 15s countdown sits between hero and monster and stays distinct from the enemy count', async () => {
+test('U1 U2 N3 the 10s countdown sits between hero and monster and stays distinct from the enemy count', async () => {
   const { document, spell } = await boot('test=1&stage=stage1&skipTravel=1');
   armFill(spell, 'library', 0);
   const countdown = document.getElementById('hint-countdown');
@@ -94,7 +95,7 @@ test('U1 U2 N3 the 15s countdown sits between hero and monster and stays distinc
   assert.equal(turn.closest('#monster-panel'), monster);
   assert.notEqual(countdown, turn);
   assert.equal(countdown.hidden, false);
-  assert.match(countdown.textContent, /^15s$/);
+  assert.match(countdown.textContent, /^10s$/);
   assert.equal(document.getElementById('turn-count-num').textContent, '3');
   assert.notEqual(countdown.textContent, document.getElementById('turn-count-num').textContent);
   assert.match(html, /#hint-countdown\s*\{[^}]*left:\s*50%/s);
