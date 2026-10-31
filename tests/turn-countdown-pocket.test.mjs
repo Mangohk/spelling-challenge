@@ -129,7 +129,8 @@ test('T3 T4 a wrong answer spends a turn and only the enemy atk hits when the co
 test('T3 a correct answer spends a turn and the enemy does not hit after a knockout', async () => {
   const { spell } = await boot('test=1&stage=stage1&skipTravel=1');
   armFill(spell, 'draw', 0);
-  assert.equal(spell.state.monster.hp, 1);
+  // Normal HP jitters at battle start. Pin 1 so one correct hit still knocks out.
+  spell.state.monster.hp = 1;
   const hp = spell.state.hero.hp;
   spell.state.blanks.forEach((b) => {
     b.value = spell.currentWord().word[b.index].toLowerCase();

@@ -265,7 +265,7 @@
       background: #ffe8e4;
       color: #6e2218;
     }
-    /* 15s auto-hint timer. Centered in the arena gap between hero and monster.
+    /* 10s auto-hint timer. Centered in the arena gap between hero and monster.
        Separate control from the enemy-head turn count (.turn-count). */
     #hint-countdown {
       position: absolute;
@@ -2386,7 +2386,8 @@
       { word: 'pay attention', img: 'assets/words/pay-attention.jpg', clue: 'Listen carefully and look at the teacher.' }
     ];
 
-    // Both stages: first normal HP 1, other normals HP 6, mini 14, boss 28.
+    // Table bases: first normal HP 1, other normals HP 6, mini 14, boss 28.
+    // Normal fights jitter that base by ±2 when the battle starts. Mini and boss stay fixed.
     // A correct Attack subtracts ATK. HP at 0 is a knockout.
     const STAGE_ONE_MONSTERS = [
       { id: 's1-m01', name: 'Green Slime', img: 'assets/monsters/m01-slime.png', hp: 1, atk: 1, role: 'normal' },
@@ -2488,9 +2489,9 @@
       return 1;
     }
 
-    // 15s with no letter input auto-fills one blank and spends one enemy turn.
-    // No hint HP penalty. A letter input restarts the 15s.
-    const HINT_TIMEOUT_MS = 15000;
+    // 10s with no letter input auto-fills one blank and spends one enemy turn.
+    // No hint HP penalty. A letter input restarts the 10s.
+    const HINT_TIMEOUT_MS = 10000;
     const HINT_TOAST_MS = 1200;
     const POCKET_CAP = 5;
     const ATTACK_LOOT_CHANCE = 0.12;
@@ -3098,17 +3099,29 @@
       return state.attackWord;
     }
 
+    // Inclusive integer in [min, max]. Normal-monster HP uses −2..+2.
+    function randIntInclusive(min, max) {
+      const span = (max - min) + 1;
+      return min + Math.floor(Math.random() * span);
+    }
+
     function createMonster() {
       const def = currentMonsterDef();
+      const role = def.role || 'normal';
+      // Keep the table number as the base. Jitter only role 'normal', at this instantiation.
+      // maxHp equals the starting hp so the fight opens at full health.
+      const hp = role === 'normal'
+        ? Math.max(1, def.hp + randIntInclusive(-2, 2))
+        : def.hp;
       return {
         id: def.id,
         name: def.name,
         img: def.img,
-        hp: def.hp,
-        maxHp: def.hp,
+        hp,
+        maxHp: hp,
         atk: def.atk,
-        role: def.role || 'normal',
-        boss: def.role === 'boss' || def.role === 'mini',
+        role,
+        boss: role === 'boss' || role === 'mini',
         spells: []
       };
     }
@@ -3475,7 +3488,7 @@
     }
 
     // Fills one cell and spends one enemy turn. No hint HP cost.
-    // The 15s timeout uses kind 'empty' and the default spendTurn.
+    // The 10s timeout uses kind 'empty' and the default spendTurn.
     function performHintFill(kind, opts) {
       const spendTurn = !opts || opts.spendTurn !== false;
       if (state.locked || state.mode === 'pick' || !currentWord()) return false;
